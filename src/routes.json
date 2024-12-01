@@ -1,0 +1,38 @@
+{
+    "GET": {
+        "/backuser/login": "handle_get_backuser_login",
+
+        "/customer/login": "handle_get_customer_login",
+        
+        "/ecounit/login": "handle_get_ecounit_login",
+        "/ecounit/configuration/update": "handle_get_ecounit_config",
+        "/ecounit/configuration/rollback": "handle_get_ecounit_config"
+    },
+    "POST": {
+        "/backuser": "handle_post_backuser",
+        "/customer": "handle_post_backuser",
+        "/ecounit": "handle_post_backuser",
+
+        "/ecounit/diagnostic": "handle_post_unit_diagnostic",
+        "/ecounit/configuration": "handle_post_unit_config",
+        "/ecounit/environment_state": "handle_post_unit_environment_state"
+    },
+    "PUT": {
+        "/backuser": "handle_put_backuser",
+        "/customer": "handle_put_backuser",
+        "/ecounit": "handle_put_backuser",
+
+        "/ecounit/diagnostic": "handle_put_unit_diagnostic",
+        "/ecounit/configuration": "handle_put_unit_config",
+        "/ecounit/environment_state": "handle_put_unit_environment_state"
+    },
+    "DELETE": {
+        "/backuser": "handle_delete_backuser",
+        "/customer": "handle_delete_backuser",
+        "/ecounit": "handle_delete_backuser",
+
+        "/ecounit/diagnostic": "handle_delete_unit_diagnostic",
+        "/ecounit/configuration": "handle_delete_unit_config",
+        "/ecounit/environment_state": "handle_delete_unit_environment_state"
+    }
+  }
