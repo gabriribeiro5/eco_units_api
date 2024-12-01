@@ -6,21 +6,6 @@ AUTH_TOKEN = "my_secret_token"
 class SimpleHandler(BaseHTTPRequestHandler):
     data_store = []
 
-    # Inicializa as rotas de forma dinâmica
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.routes_get = self.load_routes("routes.json")
-
-    # Carrega rotas de um arquivo JSON
-    @staticmethod
-    def load_routes(file_path):
-        try:
-            with open(file_path, "r") as file:
-                return json.load(file)
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Erro ao carregar rotas: {e}")
-            return {}
-
     # Verifica se a requisição está autenticada
     def is_authenticated(self):
         auth_header = self.headers.get("Authorization")
