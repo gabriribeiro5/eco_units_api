@@ -1,0 +1,35 @@
+import datetime
+from utils.definitions import ALLOWED_INPUT_TABLES
+
+class I_AgentInput():
+    def __init__(self) -> None:
+        self.agent_input_id:int
+        self.agent_id:int
+        self.eco_unit_id:int
+        self.date_time:datetime.datetime
+        self.failed_communication:bool
+
+class I_EcoUnitInput(I_AgentInput):
+    def __init__(self, *args, **kwargs) -> None:
+        I_AgentInput.__init__(self, *args, **kwargs)
+        self.allowed_tables = ALLOWED_INPUT_TABLES["eco_unit"]
+
+class I_CustomerInput(I_AgentInput):
+    def __init__(self, *args, **kwargs) -> None:
+        I_AgentInput.__init__(self, *args, **kwargs)
+        self.allowed_tables = ALLOWED_INPUT_TABLES["customer"]
+
+class I_BackUserInput(I_AgentInput):
+    def __init__(self, *args, **kwargs) -> None:
+        I_AgentInput.__init__(self, *args, **kwargs)
+        self.allowed_tables = ALLOWED_INPUT_TABLES["back_user"]
+
+class I_BackUserAdminInput(I_AgentInput):
+    def __init__(self, *args, **kwargs) -> None:
+        I_AgentInput.__init__(self, *args, **kwargs)
+        self.allowed_tables = ALLOWED_INPUT_TABLES["back_user_admin"]
+
+class I_SystemAdminInput(I_AgentInput):
+    def __init__(self, *args, **kwargs) -> None:
+        I_AgentInput.__init__(self, *args, **kwargs)
+        self.allowed_tables = ALLOWED_INPUT_TABLES["system_admin"]

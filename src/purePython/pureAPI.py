@@ -1,10 +1,17 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from routes import RoutesManager
 
 AUTH_TOKEN = "my_secret_token"
 
-class SimpleHandler(BaseHTTPRequestHandler):
-    data_store = []
+class EcoUnitHandler(BaseHTTPRequestHandler, RoutesManager):
+    def __init__(self, *args, **kwargs):
+        RoutesManager.__init__(self, *args, **kwargs)
+        self.data_store = []
+
+    def test(self): 
+        b = self.routes_POST
+        print(f"<<< POST >>> {b}")
 
     # Verifica se a requisição está autenticada
     def is_authenticated(self):
@@ -27,34 +34,16 @@ class SimpleHandler(BaseHTTPRequestHandler):
         else:
             self.send_error(404, "Not Found")
 
-    # Handlers para as rotas
-    def handle_get_data(self):
-        self.send_response(200)
-        self.send_header("Content-type", "application/json")
-        self.end_headers()
-        response = {"data": self.data_store}
-        self.wfile.write(json.dumps(response).encode())
-
-    def handle_get_status(self):
-        self.send_response(200)
-        self.send_header("Content-type", "application/json")
-        self.end_headers()
-        response = {"status": "API is running"}
-        self.wfile.write(json.dumps(response).encode())
-
-    def handle_get_version(self):
-        self.send_response(200)
-        self.send_header("Content-type", "application/json")
-        self.end_headers()
-        response = {"version": "1.0.0"}
-        self.wfile.write(json.dumps(response).encode())
+    
 
 # Define e executa o servidor
-def run(server_class=HTTPServer, handler_class=SimpleHandler, port=8000):
+def run(server_class=HTTPServer, handler_class=EcoUnitHandler, port=8000):
     server_address = ("", port)
     httpd = server_class(server_address, handler_class)
     print(f"Starting server on port {port}...")
     httpd.serve_forever()
 
 if __name__ == "__main__":
-    run()
+    # run()
+    e = EcoUnitHandler()
+    e.test()
