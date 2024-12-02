@@ -9,10 +9,6 @@ class EcoUnitHandler(BaseHTTPRequestHandler, RoutesManager):
         RoutesManager.__init__(self, *args, **kwargs)
         self.data_store = []
 
-    def test(self): 
-        b = self.routes_POST
-        print(f"<<< POST >>> {b}")
-
     # Verifica se a requisição está autenticada
     def is_authenticated(self):
         auth_header = self.headers.get("Authorization")
