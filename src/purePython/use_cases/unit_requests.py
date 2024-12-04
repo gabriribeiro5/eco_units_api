@@ -1,6 +1,6 @@
 import json
 
-class Handlers():
+class GET_Handlers():
 
     # Handlers para as rotas
     def handle_get_data(self):
@@ -9,3 +9,4 @@ class Handlers():
         self.end_headers()
         response = {"data": self.data_store}
         self.wfile.write(json.dumps(response).encode())
+    
