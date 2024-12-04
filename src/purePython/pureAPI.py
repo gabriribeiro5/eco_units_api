@@ -10,6 +10,9 @@ class MasterHandler(BaseHTTPRequestHandler):
         self.auth = Auth()
         self.data_store = []
 
+    def test(self):
+        pass
+    
     def require_authentication(self):
         if not self.auth.is_authenticated(self):
             self.send_error(401, "Unauthorized")
@@ -104,5 +107,4 @@ def run(server_class=HTTPServer, handler_class=MasterHandler, port=8000):
     httpd.serve_forever()
 
 if __name__ == "__main__":
-    mh = MasterHandler()
-    mh.test()
+    run()
