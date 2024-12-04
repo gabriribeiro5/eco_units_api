@@ -1,10 +1,10 @@
-import os
-from pathlib import PurePath
+from pathlib import Path
 
 ### DIRECTORIES ###
-SRC_DIR = os.path.dirname(PurePath(os.path.abspath(__file__)).parent.parent)
-LOG_DIR = os.path.join(PurePath(SRC_DIR).parent,"logs","purePython")
-ROUTES_DIR = os.path.join(SRC_DIR, 'routes.json')
+SRC_DIR = Path(__file__).resolve().parent.parent
+LOG_DIR = SRC_DIR.parent / "logs"
+ROUTES_DIR = SRC_DIR / "routes.json"
+
 
 ### CONFIGURATION ###
 AGENT_INPUT_TABLES = ("agent_input", "diagnostic", "configuration", "environment_state")
