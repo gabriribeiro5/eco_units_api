@@ -1,5 +1,5 @@
-# Dealing with ImportError: attempted relative import with no known parent package
 import pdb
+# Dealing with ImportError: attempted relative import with no known parent package
 import sys
 sys.path.append('.')
 
@@ -11,10 +11,8 @@ import inspect
 
 def enableLog(dirName:str=".", logFileName:str="logfile"):
     """
-
     dirName: where must the lofile be saved?
     logFileName: what is the logfile name (usually the application name)?
-
     """
 
     # fileName = fileManager.loadConfigFile()

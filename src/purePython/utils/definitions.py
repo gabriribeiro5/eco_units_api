@@ -1,8 +1,12 @@
 import os
 from pathlib import PurePath
 
-SRC_DIR = os.path.dirname(PurePath(os.path.abspath(__file__)).parent.parent) # This is your Project Root
-ROUTES_PATH = os.path.join(SRC_DIR, 'routes.json')  # requires `import os`
+### DIRECTORIES ###
+SRC_DIR = os.path.dirname(PurePath(os.path.abspath(__file__)).parent.parent)
+LOG_DIR = os.path.join(PurePath(SRC_DIR).parent,"logs","purePython")
+ROUTES_DIR = os.path.join(SRC_DIR, 'routes.json')
+
+### CONFIGURATION ###
 AGENT_INPUT_TABLES = ("agent_input", "diagnostic", "configuration", "environment_state")
 ALLOWED_INPUT_TABLES = {
     "eco_unit": (AGENT_INPUT_TABLES),
