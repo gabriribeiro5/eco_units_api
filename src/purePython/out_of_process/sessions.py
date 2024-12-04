@@ -49,9 +49,9 @@ class SessionManager():
                                                 last_access = datetime.now())
         except:
             print(f"nao foi possivel encontrar o grupo de sessões {session_group_name}")
-
+    
     def new_session_id(self, client_label):
-        match client_label:
+        match client_label: # match statement requires python >= 3.10
             case "eco_unit":
                 session_group_name = f"{client_label}_sessions"
                 session_id = self.create_session_id(session_group_name)
@@ -91,7 +91,7 @@ class SessionManager():
     def session_cleanup_task(self):
         while True:
             time.sleep(60)  # Run cleanup every minute
-            SessionManager.cleanup_sessions()
+            self.cleanup_sessions()
 
 
 def test_session_manager():
