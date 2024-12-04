@@ -1,6 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from routes import RoutesManager as Routes
-from eco_units_api.src.purePython.out_of_process.auth import AuthManager as Auth
+from out_of_process.auth import AuthManager as Auth
 from utils.definitions import LOG_DIR
 from utils.logSetUp import enableLog
 
@@ -97,7 +97,7 @@ class MasterHandler(BaseHTTPRequestHandler):
 
 # Define e executa o servidor
 def run(server_class=HTTPServer, handler_class=MasterHandler, port=8000):
-    # enableLog(LOG_DIR, "purePython")
+    enableLog(LOG_DIR, "purePython")
     server_address = ("", port)
     httpd = server_class(server_address, handler_class)
     print(f"Starting server on port {port}...")
