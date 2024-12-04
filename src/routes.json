@@ -1,38 +1,49 @@
 {
-    "GET": {
-        "/backuser/login": "handle_get_backuser_login",
-
-        "/customer/login": "handle_get_customer_login",
-        
-        "/ecounit/login": "handle_get_ecounit_login",
-        "/ecounit/configuration/update": "handle_get_ecounit_config",
-        "/ecounit/configuration/rollback": "handle_get_ecounit_config"
+    "TRACE": {
+        "_comment": "TRACE is used for diagnostics. It simply returns a diagnostic trace that logs data from the request-response cycle",
+        "pureAPI/": "handle_trace"
+    },
+    "OPTIONS": {
+        "_comment": "OPTIONS is used to describe the communication options for the target resource. It helps the client understand what methods and headers are allowed",
+        "pureAPI/": "handle_options"
     },
     "POST": {
-        "/backuser": "handle_post_backuser",
-        "/customer": "handle_post_backuser",
-        "/ecounit": "handle_post_backuser",
+        "pureAPI/backuser": "handle_post_backuser",
+        "pureAPI/customer": "handle_post_backuser",
+        "pureAPI/ecounit": "handle_post_backuser",
 
-        "/ecounit/diagnostic": "handle_post_unit_diagnostic",
-        "/ecounit/configuration": "handle_post_unit_config",
-        "/ecounit/environment_state": "handle_post_unit_environment_state"
+        "pureAPI/ecounit/diagnostic": "handle_post_unit_diagnostic",
+        "pureAPI/ecounit/configuration": "handle_post_unit_config",
+        "pureAPI/ecounit/environment_state": "handle_post_unit_environment_state"
+    },
+    "GET": {
+        "pureAPI/backuser/login": "handle_get_backuser_login",
+
+        "pureAPI/customer/login": "handle_get_customer_login",
+        
+        "pureAPI/ecounit/login": "handle_get_ecounit_login",
+        "pureAPI/ecounit/configuration/update": "handle_get_ecounit_config",
+        "pureAPI/ecounit/configuration/rollback": "handle_get_ecounit_config"
     },
     "PUT": {
-        "/backuser": "handle_put_backuser",
-        "/customer": "handle_put_backuser",
-        "/ecounit": "handle_put_backuser",
+        "pureAPI/backuser": "handle_put_backuser",
+        "pureAPI/customer": "handle_put_backuser",
+        "pureAPI/ecounit": "handle_put_backuser",
 
-        "/ecounit/diagnostic": "handle_put_unit_diagnostic",
-        "/ecounit/configuration": "handle_put_unit_config",
-        "/ecounit/environment_state": "handle_put_unit_environment_state"
+        "pureAPI/ecounit/diagnostic": "handle_put_unit_diagnostic",
+        "pureAPI/ecounit/configuration": "handle_put_unit_config",
+        "pureAPI/ecounit/environment_state": "handle_put_unit_environment_state"
+    },
+    "PATCH": {
+        "_comment": "PATCH serves as a set of instructions for modifying a resource (a field), whereas PUT represents a complete replacement of the resource"
     },
     "DELETE": {
-        "/backuser": "handle_delete_backuser",
-        "/customer": "handle_delete_backuser",
-        "/ecounit": "handle_delete_backuser",
+        "pureAPI/backuser": "handle_delete_backuser",
+        "pureAPI/customer": "handle_delete_backuser",
+        "pureAPI/ecounit": "handle_delete_backuser",
 
-        "/ecounit/diagnostic": "handle_delete_unit_diagnostic",
-        "/ecounit/configuration": "handle_delete_unit_config",
-        "/ecounit/environment_state": "handle_delete_unit_environment_state"
+        "pureAPI/ecounit/diagnostic": "handle_delete_unit_diagnostic",
+        "pureAPI/ecounit/configuration": "handle_delete_unit_config",
+        "pureAPI/ecounit/environment_state": "handle_delete_unit_environment_state"
     }
   }

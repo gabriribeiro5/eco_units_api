@@ -1,16 +1,17 @@
 import json
-from utils.definitions import ROUTES_PATH, SRC_DIR
+from utils.definitions import ROUTES_DIR, SRC_DIR
 
 class RoutesManager():
     # Inicializa as rotas de forma dinâmica
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        print(f"root dir: {SRC_DIR}")
-        self.routes = self.load_routes(ROUTES_PATH)
-        self.routes_GET = self.routes["GET"]
-        self.routes_POST = self.routes["POST"]
-        self.routes_PUT = self.routes["PUT"]
-        self.routes_DELETE = self.routes["DELETE"]
+    def __init__(self):
+        self.all = self.load_routes(ROUTES_DIR)
+        self.only_POST = self.all["POST"]
+        self.only_GET = self.all["GET"]
+        self.only_PUT = self.all["PUT"]
+        self.only_PATCH = self.all["PATCH"]
+        self.only_DELETE = self.all["DELETE"]
+        self.only_TRACE = self.all["TRACE"]
+        self.only_OPTIONS = self.all["OPTIONS"]
         
 
     # Carrega rotas de um arquivo JSON
