@@ -1,7 +1,7 @@
 from pathlib import Path
 
 ### DIRECTORIES ###
-SRC_DIR = Path(__file__).resolve().parent.parent
+SRC_DIR = Path(__file__).resolve().parent.parent.parent
 LOG_DIR = SRC_DIR.parent / "logs"
 ROUTES_DIR = SRC_DIR / "routes.json"
 

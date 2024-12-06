@@ -3,6 +3,7 @@ from routes import RoutesManager as Routes
 from out_of_process.auth import AuthManager as Auth
 from utils.definitions import LOG_DIR
 from utils.logSetUp import enableLog
+import logging
 
 class MasterHandler(BaseHTTPRequestHandler):
     def __init__(self):
@@ -103,7 +104,9 @@ def run(server_class=HTTPServer, handler_class=MasterHandler, port=8000):
     enableLog(LOG_DIR, "purePython")
     server_address = ("", port)
     httpd = server_class(server_address, handler_class)
-    print(f"Starting server on port {port}...")
+    msg = f"Starting server on port {port}..."
+    logging.info('msg')
+    print(msg)
     httpd.serve_forever()
 
 if __name__ == "__main__":
