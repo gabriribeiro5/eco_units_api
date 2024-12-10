@@ -8,6 +8,26 @@ import inspect
 from pathlib import Path
 
 class LogSetUp():
+    '''
+    Key features
+    Dynamic Log Directory and File Creation:
+        The **createLogDir** method ensures that the specified log directory is created if it doesn't already exist. This is critical for ensuring the logging system works seamlessly without manual intervention.
+
+    Configuring the Logging System:
+        The **logFileCreateAndConfig** method sets up the basic configuration for logging and writes an initial headline to the log file, showing the calling module that enabled the logger.
+
+    Comprehensive Logging Tests:
+        The **runTests** method writes test messages to the log file for all log levels (DEBUG, INFO, WARNING, ERROR, CRITICAL) to ensure the logger is functioning correctly.
+
+    User-Friendly API:
+        The **enableLog** method provides a simple interface to initialize logging. It takes in a directory name and a log file name, sets up the directory, configures logging, and runs the tests.
+
+    Robust Error Handling:
+        Several **try-except blocks** handle exceptions that might occur during directory creation, logging configuration, or file writing.
+        
+    Inspector-Based Calling Module Identification:
+        The use of inspect to determine and log the calling module is a nice touch for **traceability and debugging**.
+    '''
     def __init__(self) -> None:
         self.logDir:Path
         self.logFile:Path
