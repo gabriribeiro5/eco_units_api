@@ -2,96 +2,104 @@ import uuid
 from datetime import datetime, timedelta
 import threading
 import time
-from utils.definitions import SESSION_GROUPS_AND_TIMEOUTS
+from purePython.utils.definitions import SESSION_GROUPS_AND_TIMEOUTS
 
-AUTH_TOKENS = {"client_address": "my_secret_token", "other_client_address": "not_my_token"}
-class SessionManager():
+class SessionManager:
     def __init__(self) -> None:
-        '''
-            Controla todas as sessões ativas
-        '''
-        # create class variables to represent sessions
-        for g, t in SESSION_GROUPS_AND_TIMEOUTS.items():
-            setattr(self, g, {})
-            setattr(self, f"{g}_timeout", timedelta(minutes=t))
-        
-        # Deamon threads: If the main program exits while daemon threads are running,
-        #   they are abruptly stopped without completing their execution
-        # Non-daemon threads, on the other hand, keep the program running until they finish
+        """
+        Controls all active sessions.
+        """
+        # Initialize session groups and timeouts
+        for group_name, timeout in SESSION_GROUPS_AND_TIMEOUTS.items():
+            setattr(self, group_name, {})  # Each group is a dictionary of session data
+            setattr(self, f"{group_name}_timeout", timedelta(minutes=timeout))
+
+        # Start a daemon thread for periodic session cleanup
         cleanup_thread = threading.Thread(target=self.session_cleanup_task, daemon=True)
         cleanup_thread.start()
-    
-    def create_session_id(self, session_group):
-        random_hash = str(uuid.uuid4())
-        session_id = f"{session_group}:{random_hash}"
-        return session_id
-    
-    def cache_session_id(self, session_id, session_group_name):
-        '''
-        This module is basically running
-            > dict.update(key = value, ...)
-        in a sofisticated way
 
-        An actual exemple migh be
-            > self.eco_unit_sessions.update(session_id = session_id,
-                                            created_at = datetime.now(),
-                                            last_access = datetime.now())            
-        Where 
-            > getattr(self, session_group_name)
-        is equal to
-            > self.eco_unit_sessions
-            > self.customer_sessions
-            > ...
-        '''
-        try:
-            getattr(self, session_group_name).update(session_id = session_id,
-                                                created_at = datetime.now(),
-                                                last_access = datetime.now())
-        except:
-            print(f"nao foi possivel encontrar o grupo de sessões {session_group_name}")
-    
-    def new_session_id(self, client_label):
-        match client_label: # match statement requires python >= 3.10
+    def _create_session_id(self, session_group: str) -> str:
+        """
+        Generates a unique session ID for the specified group.
+        """
+        random_hash = str(uuid.uuid4())
+        return f"{session_group}:{random_hash}"
+
+    def _cache_session_id(self, session_group: str, session_id: str):
+        """
+        Caches a new session ID in the corresponding session group.
+        """
+        now = datetime.now()
+        session_data = {
+            "session_id": session_id,
+            "created_at": now,
+            "last_access": now,
+        }
+        group_sessions = getattr(self, session_group, None)
+        if group_sessions is not None:
+            group_sessions[session_id] = session_data
+        else:
+            raise ValueError(f"Session group '{session_group}' does not exist.")
+
+    def new_session_id(self, client_label: str) -> str:
+        """
+        Public method for creating a new session ID based on the client label.
+        Delegates session group determination and caching to internal methods.
+        """
+        session_group = self._determine_session_group(client_label)
+        session_id = self._create_session_id(session_group)
+        self._cache_session_id(session_group, session_id)
+        return session_id
+
+    def _determine_session_group(self, client_label: str) -> str:
+        """
+        Maps client labels to corresponding session groups.
+        """
+        match client_label:  # Requires Python 3.10 or newer
             case "eco_unit":
-                session_group_name = f"{client_label}_sessions"
-                session_id = self.create_session_id(session_group_name)
-                self.cache_session_id(session_id, session_group_name)
-                return session_id
+                return "eco_unit_sessions"
             case "customer":
-                session_group_name = f"{client_label}_sessions"
-                session_id = self.create_session_id(session_group_name)
-                self.cache_session_id(session_id, session_group_name)
-                return session_id
+                return "customer_sessions"
+            case "backoffice":
+                return "backoffice_sessions"
             case _:
-                session_group_name = f"backoffice_sessions"
-                session_id = self.create_session_id(session_group_name)
-                self.cache_session_id(session_id, session_group_name)
-                return session_id
-    
-    def delete_session(self, session_id):
-        if session_id in self.sessions:
-            del self.sessions[session_id]
+                raise ValueError(f"Unknown client label '{client_label}'")
+
+    def delete_session(self, session_id: str):
+        """
+        Deletes a session ID from all session groups.
+        """
+        for group_name in SESSION_GROUPS_AND_TIMEOUTS:
+            group_sessions = getattr(self, group_name, {})
+            if session_id in group_sessions:
+                del group_sessions[session_id]
+                break
 
     def cleanup_sessions(self):
+        """
+        Removes expired sessions across all session groups.
+        """
         now = datetime.now()
-        
-        # Access each session group
-        for session_group, session_timeout in SESSION_GROUPS_AND_TIMEOUTS.items():
-            sessions = getattr(self, session_group, [])
+        for group_name, timeout_minutes in SESSION_GROUPS_AND_TIMEOUTS.items():
+            group_sessions = getattr(self, group_name, {})
+            timeout = timedelta(minutes=timeout_minutes)
             expired_sessions = [
                 session_id
-                for session_id, created_at, last_access in sessions
-                if (now - last_access > session_timeout) or (now - created_at > session_timeout * 5)
+                for session_id, data in group_sessions.items()
+                if (now - data["last_access"] > timeout)
             ]
-
             for session_id in expired_sessions:
                 self.delete_session(session_id)
 
-
     def session_cleanup_task(self):
+        """
+        Periodic task to clean up expired sessions.
+        """
         while True:
             time.sleep(60)  # Run cleanup every minute
             self.cleanup_sessions()
+
+
 
 
 def test_session_manager():
