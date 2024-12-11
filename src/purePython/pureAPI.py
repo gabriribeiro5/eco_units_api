@@ -1,21 +1,28 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from routes import RoutesManager as Routes
-from out_of_process.auth import AuthManager as Auth
-from utils.definitions import LOG_DIR
-from utils.logSetUp import enableLog
+from purePython.routes import RoutesManager as Routes
+from purePython.out_of_process.auth import AuthManager as Auth
+from purePython.use_cases.trace import TraceHandler as Trace
+from purePython.use_cases.options import OptionsHandler as Options
+from purePython.use_cases.post import PostHandler as Post
+from purePython.use_cases.get import GetHandler as Get
+from purePython.use_cases.put import PutHandler as Put
+from purePython.use_cases.patch import PatchHandler as Patch
+from purePython.use_cases.delete import DeleteHandler as Delete
+from purePython.utils.definitions import LOG_DIR
+from purePython.utils.logSetUp import LogSetUp
 import logging
 
-class MasterHandler(BaseHTTPRequestHandler):
+class MasterHandler(Auth, Routes, Trace, Options, Post, Get, Put, Patch, Delete):
+    
     def __init__(self):
         self.routes = Routes()
-        self.auth = Auth()
         self.data_store = []
 
     def test(self):
         pass
     
     def require_authentication(self):
-        if not self.auth.is_authenticated(self):
+        if not self.is_authenticated(self):
             self.send_error(401, "Unauthorized")
             return
     

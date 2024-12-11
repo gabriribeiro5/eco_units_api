@@ -1,5 +1,5 @@
 import json
-from utils.definitions import ROUTES_DIR, SRC_DIR
+from purePython.utils.definitions import ROUTES_DIR, SRC_DIR
 
 class RoutesManager():
     # Inicializa as rotas de forma dinâmica
