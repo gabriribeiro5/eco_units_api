@@ -22,8 +22,7 @@ class SessionManager:
         """
         Generates a unique session ID for the specified group.
         """
-        random_hash = str(uuid.uuid4())
-        return f"{session_group}:{random_hash}"
+        return f"{session_group}:{uuid.uuid4()}"
 
     def _cache_session_id(self, session_group: str, session_id: str):
         """
