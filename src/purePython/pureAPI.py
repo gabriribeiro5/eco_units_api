@@ -105,10 +105,16 @@ class MasterHandler(Auth, Routes, Trace, Options, Post, Get, Put, Patch, Delete)
         handler_name = self.routes.only_POST.get(self.path)
         self.run_handler(handler_name)
 
+def test():
+    mh = MasterHandler()
+    mh.test()
+    print(MasterHandler.__mro__)
+
 
 # Define e executa o servidor
 def run(server_class=HTTPServer, handler_class=MasterHandler, port=8000):
-    enableLog(LOG_DIR, "purePython")
+    logger = LogSetUp()
+    logger.enableLog(LOG_DIR, "purePython")
     server_address = ("", port)
     httpd = server_class(server_address, handler_class)
     msg = f"Starting server on port {port}..."
@@ -117,4 +123,4 @@ def run(server_class=HTTPServer, handler_class=MasterHandler, port=8000):
     httpd.serve_forever()
 
 if __name__ == "__main__":
-    run()
+    test()
