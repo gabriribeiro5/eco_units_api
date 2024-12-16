@@ -2,8 +2,8 @@ import uuid
 from datetime import datetime, timedelta
 import threading
 import time
-from purePython.utils.definitions import SESSION_GROUPS_AND_TIMEOUTS
-from purePython.out_of_process.sessions import SessionManager as Sessions
+from utils.definitions import SESSION_GROUPS_AND_TIMEOUTS
+from out_of_process.sessions import SessionManager as Sessions
 
 AUTH_TOKENS = {"client_address": "my_secret_token", "other_client_address": "not_my_token"}
 

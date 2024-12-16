@@ -2,13 +2,13 @@ import uuid
 from datetime import datetime, timedelta
 import threading
 import time
-from purePython.utils.definitions import SESSION_GROUPS_AND_TIMEOUTS
+from utils.definitions import SESSION_GROUPS_AND_TIMEOUTS
 
 class SessionManager:
-    def __init__(self) -> None:
-        """
-        Controls all active sessions.
-        """
+    """
+    Controls all active sessions.
+    """
+    def __init__(self, *args, **kwargs):
         # Initialize session groups and timeouts
         for group_name, timeout in SESSION_GROUPS_AND_TIMEOUTS.items():
             setattr(self, group_name, {})  # Each group is a dictionary of session data
@@ -17,6 +17,7 @@ class SessionManager:
         # Start a daemon thread for periodic session cleanup
         cleanup_thread = threading.Thread(target=self.session_cleanup_task, daemon=True)
         cleanup_thread.start()
+        super().__init__(*args, **kwargs)
 
     def _create_session_id(self, session_group: str) -> str:
         """
