@@ -1,8 +1,8 @@
-from purePython.entities.handler import BaseHandler
+from entities.handler import BaseHandler
 
 class OptionsHandler(BaseHandler):
-    def __init__(self):
-        pass
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
         
 
     def handle_options(self):
