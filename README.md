@@ -22,11 +22,34 @@ Robust Error Handling:
 Inspector-Based Calling Module Identification:
     The use of inspect to determine and log the calling module is a nice touch for **traceability and debugging**.
 
-## Application design reference
+## Design reference
     Entities: Core business rules and models.
     Use Cases: Application-specific business logic (the actions the application performs).
     Interfaces/Controllers: Act as the bridge to handle incoming requests (HTTP requests, API calls, etc.), orchestrating the appropriate use cases and formatting the response.
     Out of Process (Microservices): These can act as external services that are abstracted away from the main application, but which provide critical features like authentication and session management.
+
+### Building and Running the Docker Container
+
+To set up and run the API in a Docker container, follow these steps:
+
+1. **Build the Docker Image**  
+Open a terminal in the project root directory and execute:  
+```bash
+    docker build -t <image_name>:<tag> .
+```
+
+2. **Run the Docker Container**
+Start a container from the built image with:
+```bash
+    docker run -p 8080:8080 eco_units_api:latest
+    The API will now be accessible at http://localhost:8080.
+```
+
+3. **Stop the Container**
+To stop the running container, press Ctrl+C or use:
+```bash
+    docker stop <container_id>
+```
 
 ### RESTfull API run on por <8080>
 
