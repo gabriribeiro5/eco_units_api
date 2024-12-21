@@ -23,10 +23,10 @@ Inspector-Based Calling Module Identification:
     The use of inspect to determine and log the calling module is a nice touch for **traceability and debugging**.
 
 ## Design reference
-    Entities: Core business rules and models.
-    Use Cases: Application-specific business logic (the actions the application performs).
-    Interfaces/Controllers: Act as the bridge to handle incoming requests (HTTP requests, API calls, etc.), orchestrating the appropriate use cases and formatting the response.
-    Out of Process (Microservices): These can act as external services that are abstracted away from the main application, but which provide critical features like authentication and session management.
+Entities: Core business rules and models.
+Use Cases: Application-specific business logic (the actions the application performs).
+Interfaces/Controllers: Act as the bridge to handle incoming requests (HTTP requests, API calls, etc.), orchestrating the appropriate use cases and formatting the response.
+Out of Process (Microservices): These can act as external services that are abstracted away from the main application, but which provide critical features like authentication and session management.
 
 ### Building and Running the Docker Container
 
@@ -35,7 +35,7 @@ To set up and run the API in a Docker container, follow these steps:
 1. **Build the Docker Image**  
 Open a terminal in the project root directory and execute:  
 ```bash
-    docker build -t <image_name>:<tag> .
+    docker build -t eco_units_api:latest .
 ```
 
 2. **Run the Docker Container**
