@@ -2,10 +2,13 @@
 FROM python:3.12-slim
 
 # Set working directory
-WORKDIR /src
+WORKDIR /src/eco_units_api
 
 # Copy the app code
 COPY . .
+
+# Set PYTHONPATH to the parent directory
+ENV PYTHONPATH="/src/eco_units_api/src/purePython"
 
 # Copy the requirements file and install dependencies
 COPY src/purePython/requirements.txt src/purePython/
