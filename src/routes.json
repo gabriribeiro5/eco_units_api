@@ -1,11 +1,11 @@
 {
     "TRACE": {
         "_comment": "TRACE is used for diagnostics. It simply returns a diagnostic trace that logs data from the request-response cycle",
-        "/pureAPI/": "handle_trace"
+        "/pureAPI": "handle_trace"
     },
     "OPTIONS": {
         "_comment": "OPTIONS is used to describe the communication options for the target resource. It helps the client understand what methods and headers are allowed",
-        "/pureAPI/": "handle_options"
+        "/pureAPI": "handle_options"
     },
     "POST": {
         "/pureAPI/backuser": "handle_post_backuser",
