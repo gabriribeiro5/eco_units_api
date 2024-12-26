@@ -1,34 +1,30 @@
 # eco_units_api
-An api that collects data from Eco Units and provide them with behaviour updates to maintain their Ecosystems
+This API collects data from IoT devices (called eco units) and provide them with behaviour updates.
 
-## Features
+Those devices are designed to maintain control over micro-ecosystems, leveraging from sensors (to collect data) and actuators (to interact with their environment).
 
-### 1. LogSetup.py
-Dynamic Log Directory and File Creation:
-    The **createLogDir** method ensures that the specified log directory is created if it doesn't already exist. This is critical for ensuring the logging system works seamlessly without manual intervention.
+Foreseeable versions of this API will support human inputs, so they can interact with the database as Customer or Backoffice Agents.
 
-Configuring the Logging System:
-    The **logFileCreateAndConfig** method sets up the basic configuration for logging and writes an initial headline to the log file, showing the calling module that enabled the logger.
+Still, the first and main purpose of this API is to provide eco units with proper support for data management and eventual behavior changes.
 
-Comprehensive Logging Tests:
-    The **runTests** method writes test messages to the log file for all log levels (DEBUG, INFO, WARNING, ERROR, CRITICAL) to ensure the logger is functioning correctly.
+## Design (Clean architecture applied to Microservices)
 
-User-Friendly API:
-    The **enableLog** method provides a simple interface to initialize logging. It takes in a directory name and a log file name, sets up the directory, configures logging, and runs the tests.
+- **Entities/Interfaces**: Core business rules and models.
+    - agent: might be an eco unit, a customer or a backoffice user. They are all agents.
+    - agentInput: any database update regarding unit's configuration, self diagnostics or environment state.
+    - handler: the base interface for http implementation.\
 
-Robust Error Handling:
-    Several **try-except blocks** handle exceptions that might occur during directory creation, logging configuration, or file writing.
-    
-Inspector-Based Calling Module Identification:
-    The use of inspect to determine and log the calling module is a nice touch for **traceability and debugging**.
+- **Use Cases**: Application-specific business logic (the actions the application performs).
 
-## Design reference
-Entities: Core business rules and models.
-Use Cases: Application-specific business logic (the actions the application performs).
-Interfaces/Controllers: Act as the bridge to handle incoming requests (HTTP requests, API calls, etc.), orchestrating the appropriate use cases and formatting the response.
-Out of Process (Microservices): These can act as external services that are abstracted away from the main application, but which provide critical features like authentication and session management.
+- **Controllers**: Act as the bridge to handle incoming requests (HTTP requests, API calls, etc.), orchestrating the appropriate use cases and formatting the response.
 
-### Building and Running the Docker Container
+- **Tests**: Unit tests that must run before the application starts.
+
+- **Utils**: Utilities that enhance flexibility and control over the application.
+
+- **Out of Process (Microservices)**: These can act as external services that are abstracted away from the main application, but which provide critical features like authentication and session management.
+
+## Building Docker Container and Running the Application
 
 To set up and run the API in a Docker container, follow these steps:
 
@@ -42,10 +38,17 @@ Open a terminal in the project root directory and execute:
 Start a container from the built image with:
 ```bash
     docker run -p 8080:8080 eco_units_api:latest
-    The API will now be accessible at http://localhost:8080.
+```
+The API will now be accessible at http://localhost:8080.
+
+3. **Read logs**
+All logs will be written to the /src/eco_units_api/logs.
+Use the following command to read log updates in real time:
+```bash
+    tail -f /src/eco_units_api/logs/purePython.log
 ```
 
-3. **Stop the Container**
+4. **Stop the Container**
 To stop the running container, press Ctrl+C or use:
 ```bash
     docker stop <container_id>
