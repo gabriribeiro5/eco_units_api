@@ -8,7 +8,7 @@ WORKDIR /src/eco_units_api
 COPY . .
 
 # Set PYTHONPATH to the parent directory
-ENV PYTHONPATH="/src/eco_units_api/src/purePython"
+ENV PYTHONPATH="/src/eco_units_api/src:/src/eco_units_api/src/purePython"
 
 # Copy the requirements file and install dependencies
 COPY src/purePython/requirements.txt src/purePython/
