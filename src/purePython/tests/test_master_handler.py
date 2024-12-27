@@ -15,7 +15,7 @@ class TestMasterHandler(unittest.TestCase):
         # Create a MasterHandler instance
         self.handler = MasterHandler(self.mock_request, self.mock_client_address, self.mock_server)
         self.handler.request_version = "HTTP/1.1"
-        self.handler.command = "UNIT TEST"
+        self.handler.command = "unit test command"
         self.handler.headers = {"Content-Type": "message/http"}
         self.handler.requestline = ""
         self.handler.send_response = MagicMock()
@@ -32,7 +32,7 @@ class TestMasterHandler(unittest.TestCase):
 
         # Check response
         self.handler.send_response.assert_called_with(200)
-        self.assertIn(b"UNIT TEST", self.handler.wfile.getvalue())
+        self.assertIn(b"unit test command", self.handler.wfile.getvalue())
 
 if __name__ == "__main__":
     unittest.main()

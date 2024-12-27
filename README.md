@@ -28,6 +28,9 @@ Still, the first and main purpose of this API is to provide eco units with prope
 
 To set up and run the API in a Docker container, follow these steps:
 
+0. **Start Docker Engine**
+Run the Docker Desktop application.
+
 1. **Build the Docker Image**  
 Open a terminal in the project root directory and execute:  
 ```bash

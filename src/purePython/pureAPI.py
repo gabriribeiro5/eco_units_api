@@ -100,7 +100,7 @@ def test():
 
 
 # Define e executa o servidor
-def run(server_class=HTTPServer, handler_class=MasterHandler, port=8000):
+def run(server_class=HTTPServer, handler_class=MasterHandler, port=8080):
     logger = LogSetUp()
     logger.enableLog(LOG_DIR, "purePython")
     server_address = ("", port)
@@ -110,4 +110,5 @@ def run(server_class=HTTPServer, handler_class=MasterHandler, port=8000):
     httpd.serve_forever()
 
 if __name__ == "__main__":
+    print("I am a master handler")
     run()
