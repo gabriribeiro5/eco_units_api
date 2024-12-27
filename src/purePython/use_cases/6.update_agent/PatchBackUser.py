@@ -1,6 +1,6 @@
-from purePython.entities.handler import BaseHandler
+from purePython.entities.handler import I_BaseHandler
 
-class PatchBackUser(BaseHandler):
+class PatchBackUser(I_BaseHandler):
     def __init__(self):
         pass
         

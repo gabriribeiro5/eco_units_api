@@ -1,7 +1,7 @@
-from entities.handler import BaseHandler
+from entities.handler import I_BaseHandler
 import logging
 
-class TraceHandler(BaseHandler):
+class TraceHandler(I_BaseHandler):
     """
     Handles the TRACE HTTP method.
     Reflects the request back to the client as per the HTTP/1.1 specification.
@@ -19,12 +19,15 @@ class TraceHandler(BaseHandler):
 
         # Reflect the request back to the client
         # Fetch the raw HTTP request
-        request_line = f"{self.command} {self.path} {self.protocol_version}\r\n"
+        request_line = f'''/
+                        Successfull trace.
+                        Here is your request:
+                        {self.command} {self.path} {self.protocol_version}'''
         headers = "".join(f"{key}: {value}\r\n" for key, value in self.headers.items())
 
         # Send the reflected request back
-        self.wfile.write(request_line.encode("utf-8"))
         self.wfile.write(headers.encode("utf-8"))
+        self.wfile.write(request_line.encode("utf-8"))
         self.wfile.write(b"\r\n")  # Add a final CRLF as a delimiter
 
         logging.info(f"(handle_trace): done")

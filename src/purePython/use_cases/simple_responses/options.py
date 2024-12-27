@@ -1,6 +1,6 @@
-from entities.handler import BaseHandler
+from entities.handler import I_BaseHandler
 
-class OptionsHandler(BaseHandler):
+class OptionsHandler(I_BaseHandler):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         

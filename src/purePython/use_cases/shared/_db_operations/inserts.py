@@ -1,4 +1,4 @@
-from purePython.entities.handler import BaseHandler
+from purePython.entities.handler import I_BaseHandler
 import json
 import warnings
 
@@ -8,7 +8,7 @@ It is meant to be used only by use cases within 'use_cases/'.
 External services or modules should NOT directly access this module.  
 """
 
-class IndexTables(BaseHandler):
+class IndexTables(I_BaseHandler):
 
     # Handlers para as rotas
     def handle_delete_some_data(self):
@@ -18,7 +18,7 @@ class IndexTables(BaseHandler):
         response = {"data": self.data_store}
         self.wfile.write(json.dumps(response).encode())
 
-class AgentTables(BaseHandler):
+class AgentTables(I_BaseHandler):
 
     # Handlers para as rotas
     def handle_delete_some_data(self):
@@ -28,7 +28,7 @@ class AgentTables(BaseHandler):
         response = {"data": self.data_store}
         self.wfile.write(json.dumps(response).encode())
 
-class AgentInputTables(BaseHandler):
+class AgentInputTables(I_BaseHandler):
 
     # Handlers para as rotas
     def handle_delete_some_data(self):

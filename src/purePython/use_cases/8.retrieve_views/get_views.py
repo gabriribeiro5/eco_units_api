@@ -1,6 +1,6 @@
-from purePython.entities.handler import BaseHandler
+from purePython.entities.handler import I_BaseHandler
 
-class View(BaseHandler):
+class View(I_BaseHandler):
     def __init__(self):
         pass
         
