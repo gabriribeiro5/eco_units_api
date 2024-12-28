@@ -1,56 +1,249 @@
 {
     "TRACE": {
         "_comment": "TRACE is used for diagnostics. It simply returns a diagnostic trace that logs data from the request-response cycle",
-        "/pureAPI": {
-            "method": "handle_trace",
+        "/pureAPI": {"method": "handle_trace",
             "parameters": {},
-            "target agents": ["back_user_admin"],
+            "target agents": ["backuser_admin"],
             "status": "implemented",
             "description": "Returns the request back to the client. Useful for API diagnostics."
         }
     },
     "OPTIONS": {
         "_comment": "OPTIONS is used to describe the communication options for the target resource. It helps the client understand what methods and headers are allowed",
-        "/pureAPI": {
-            "method": "handle_options",
-            "parameters": {},
-            "target agents": ["customer", "back_user", "back_user_admin"],
+        "/pureAPI": {"method": "handle_options",
+            "parameters": {"agent": "(str) ecounit, customer, backuser or backuser_admin"},
+            "target agents": ["customer", "backuser", "backuser_admin"],
             "status": "require improvements",
             "description": "Returns the API implemented options and their details.\n Tailored details for each egent might be implemented in the future"
         }
     },
     "POST": {
-        "/pureAPI/backuser": {
-            "method": "handle_post_backuser",
-            "parameters": {},
-            "target agents": ["back_user", "back_user_admin"],
+        "/pureAPI/ecounit": {"method": "handle_post_ecounit",
+            "parameters": {"ecounit_id":"(uuid): optional"},
+            "target agents": ["backuser"],
             "status": "to do",
-            "description": "create a backoffice user"
+            "description": "Create an eco unit then return its id and temporary token. If ecounit_id is provided, return new temporary token"
         },
-        "/pureAPI/customer": {
-            "method": "handle_post_customer",
-            "parameters": {},
-            "target agents": ["back_user"],
-            "status": "to do",
-            "description": "create a backoffice user"
-        },
-        "/pureAPI/ecounit": "handle_post_eco_unit",
 
-        "/pureAPI/ecounit/diagnostic": "handle_post_unit_diagnostic",
-        "/pureAPI/ecounit/configuration": "handle_post_unit_config",
-        "/pureAPI/ecounit/environment_state": "handle_post_unit_environment_state"
+        "/pureAPI/ecounit/signature_request": {"method": "handle_post_ecounit_signature_request",
+            "parameters": {"ecounit_id": "(encrypted uuid): required",
+                "temporary_token": "(encrypted uuid): required"
+            },
+            "target agents": ["ecounit"],
+            "status": "to do",
+            "description": "If ecounit is disabled and token is valid, return unit's encrypted signature"
+        },
+        
+        "/pureAPI/backuser": {"method": "handle_post_backuser",
+            "parameters": {},
+            "target agents": ["backuser", "backuser_admin"],
+            "status": "to do",
+            "description": "create a backoffice user"
+        },
+
+        "/pureAPI/backuser/enabler_token_request": {"method": "handle_post_backuser_enabler_token_request",
+            "parameters": {"user_email": "(str): required"},
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "If email is in backuser table, send validation link (token attached) to this address with explicit expire date and hidden token"
+        },
+
+        "/pureAPI/backuser/validate_token": {"method": "handle_post_backuser_validate_token",
+            "parameters": {"token": "(encrypted string): required"},
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "If token is valid, redirect to link save_secret"
+        },
+
+        "/pureAPI/backuser/save_secret": {"method": "handle_post_backuser_save_secret",
+            "parameters": {"token": "(encrypted string): required",
+                "secret":"(encrypted string): required",
+                "confirmed_secret":"(encrypted string): optional"
+            },
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "If token is still valid and secrets match, save secret. Log warning if the optional secret was not provided, save secret anyway."
+        },
+
+        "/pureAPI/backuser/request_secret_reset": {"method": "handle_post_backuser_request_secret_reset",
+            "parameters": {"email": "(encrypted string): required"},
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "If email is in customer table, send validation link (token attached) to this address with explicit expire date and hidden token"
+        },
+
+        "/pureAPI/customer": {"method": "handle_post_ecounit",
+            "parameters": {},
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "create a customer"
+        },
+
+        "/pureAPI/customer/enabler_token_request": {"method": "handle_post_customer_enabler_token_request",
+            "parameters": {"user_email": "(str): required"},
+            "target agents": ["customer"],
+            "status": "to do",
+            "description": "If email is in customer table, send validation link (token attached) to this address with explicit expire date and hidden token"
+        },
+
+        "/pureAPI/customer/validate_token": {"method": "handle_post_customer_validate_token",
+            "parameters": {"token": "(encrypted string): required"},
+            "target agents": ["customer"],
+            "status": "to do",
+            "description": "If token is valid, redirect to link save_secret"
+        },
+
+        "/pureAPI/customer/save_secret": {"method": "handle_post_customer_save_secret",
+            "parameters": {"token": "(encrypted string): required",
+                "secret":"(encrypted string): required",
+                "confirmed_secret":"(encrypted string): optional"
+            },
+            "target agents": ["customer"],
+            "status": "to do",
+            "description": "If token is still valid and secrets match, save secret. Log warning if the optional secret was not provided, save secret anyway."
+        },
+
+        "/pureAPI/customer/request_secret_reset": {"method": "handle_post_customer_request_secret_reset",
+            "parameters": {"email": "(encrypted string): required"},
+            "target agents": ["customer"],
+            "status": "to do",
+            "description": "If email is in customer table, send validation link (token attached) to this address with explicit expire date and hidden token"
+        },
+
+        "/pureAPI/ecounit/diagnostic": {"method": "handle_post_unit_diagnostic",
+            "parameters": {},
+            "target agents": ["ecounit"],
+            "status": "to do",
+            "description": "Save unit's diagnostics. Returns transaction identifier (agent_input)"
+        },
+        
+        "/pureAPI/ecounit/configuration": {"method": "handle_post_unit_config",
+            "parameters": {},
+            "target agents": ["ecounit"],
+            "status": "to do",
+            "description": "Save unit's configuration. Returns transaction identifier (agent_input)"
+        },
+
+        "/pureAPI/ecounit/environment_state": {"method": "handle_post_unit_environment_state",
+            "parameters": {},
+            "target agents": ["ecounit"],
+            "status": "to do",
+            "description": "Save unit's environment state. Returns transaction identifier (agent_input)"
+        },
+
+        "/pureAPI/backuser/unit_diagnostics": {"method": "handle_post_unit_diagnostics_from_backuser",
+            "parameters": {"unit_ids": "(list): optional, default None",
+                "evironment_category": "(list): optional, default None",
+                "customer_id": "(list): optional, default None",
+                "unit_location": "(list): optional, default None"
+            },
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "Send unit's diagnostics to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
+        },
+
+        "/pureAPI/backuser/unit_configurations": {"method": "handle_post_unit_configurations_from_backuser",
+            "parameters": {"unit_ids": "(list): optional, default None",
+                "evironment_category": "(list): optional, default None",
+                "customer_id": "(list): optional, default None",
+                "unit_location": "(list): optional, default None"
+            },
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "Send unit's configuration to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
+        },
+
+        "/pureAPI/customer/unit_diagnostics": {"method": "handle_post_unit_diagnostics_from_customer",
+            "parameters": {"customer_id": "(list): required",
+                "unit_ids": "(list): optional, default None",
+                "evironment_category": "(list): optional, default None"
+            },
+            "target agents": ["customer"],
+            "status": "to do",
+            "description": "Send unit's diagnostics to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
+        },
+
+        "/pureAPI/customer/unit_configurations": {"method": "handle_post_unit_configurations_from_customer",
+            "parameters": {"customer_id": "(list): required",
+                "unit_ids": "(list): optional, default None",
+                "evironment_category": "(list): optional, default None"
+            },
+            "target agents": ["customer"],
+            "status": "to do",
+            "description": "Send unit's configuration to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
+        }
     },
     "GET": {
-        "/pureAPI/backuser/login": "handle_get_backuser_login",
-        "/pureAPI/customer/login": "handle_get_customer_login",
-        "/pureAPI/ecounit/login": "handle_get_ecounit_login",
+        "/pureAPI/backuser/login": {"method": "handle_get_backuser_login",
+            "parameters": {"user_email": "(str): required",
+                "password": "(encrypted string): required"
+            },
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "Returns session token"
+        },
+        
+        "/pureAPI/customer/login": {"method": "handle_get_customer_login",
+            "parameters": {"user_email": "(str): required",
+                "password": "(encrypted string): required"
+            },
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "Returns session token"
+        },
 
-        "/pureAPI/ecounit/configuration/update": "handle_get_ecounit_config_update",
-        "/pureAPI/ecounit/configuration/rollback": "handle_get_ecounit_config_rollback",
+        "/pureAPI/ecounit/login": {"method": "handle_get_ecounit_login",
+            "parameters": {"device_ip": "(str): required",
+                "secret_token": "(encrypted string): required"
+            },
+            "target agents": ["ecounit"],
+            "status": "to do",
+            "description": "Returns session token"
+        },
 
-        "/pureAPI/ecounit/configuration": "handle_get_ecounit_config",
-        "/pureAPI/ecounit/diagnostics": "handle_get_ecounit_diag",
-        "/pureAPI/ecounit/environment_state": "handle_get_ecounit_environment_state"
+        "/pureAPI/ecounit/configuration/update": {"method": "handle_get_ecounit_config_update",
+            "parameters": {"ecounit_id": "(uuid): required"},
+            "target agents": ["ecounit"],
+            "status": "to do",
+            "description": "Returns the latest configuration for a given eco unit"
+        },
+
+        "/pureAPI/ecounit/configuration/rollback": {"method": "handle_get_ecounit_config_rollback",
+            "parameters": {"ecounit_id": "(uuid): required"},
+            "target agents": ["ecounit"],
+            "status": "to do",
+            "description": "Returns the previous configuration for a given eco unit"
+        },
+
+        "/pureAPI/backuser/unit_configurations": {"method": "handle_get_ecounit_configuration_for_backuser",
+            "parameters": {"ecounit_id": "(uuid list): optional",
+                "unit_location": "(str list): optional",
+                "evironment_category": "(str list): optional"
+            },
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "Returns a set of ecounit configurations matching the given parameters"
+        },
+
+        "/pureAPI/backuser/unit_diagnostics": {"method": "handle_get_ecounit_diagnostics_for_backuser",
+            "parameters": {"ecounit_id": "(uuid list): optional",
+                "unit_location": "(str list): optional",
+                "evironment_category": "(str list): optional"
+            },
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "Returns a set of ecounit diagnostics matching the given parameters"
+        },
+
+        "/pureAPI/backuser/unit_environment_states": {"method": "handle_get_ecounit_environment_states_for_backuser",
+            "parameters": {"ecounit_id": "(uuid list): optional",
+                "unit_location": "(str list): optional",
+                "evironment_category": "(str list): optional"
+            },
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "Returns a set of ecounit environment states matching the given parameters"
+        }
     },
     "PUT": {
         "/pureAPI/backuser": "handle_put_backuser",
@@ -63,13 +256,37 @@
     },
     "PATCH": {
         "_comment": "PATCH serves as a set of instructions for modifying a resource (a field), whereas PUT represents a complete replacement of the resource",
-        "/pureAPI/backuser": "handle_put_backuser",
-        "/pureAPI/customer": "handle_put_backuser",
-        "/pureAPI/ecounit": "handle_put_backuser",
-
-        "/pureAPI/ecounit/diagnostic": "handle_put_unit_diagnostic",
-        "/pureAPI/ecounit/configuration": "handle_put_ecounit_config",
-        "/pureAPI/ecounit/environment_state": "handle_put_ecounit_environment_state"
+        
+        "/pureAPI/backuser/save_new_secret": {"method": "handle_patch_backuser_save_new_secret",
+            "parameters": {"token": "(encrypted string): required",
+                "secret":"(encrypted string): required",
+                "confirmed_secret":"(encrypted string): required"
+            },
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "If token is still valid and secrets match, save secret. All parameters are required."
+        },
+        
+        "/pureAPI/ecounit/disable": {"method": "handle_patch_ecounit_disable",
+            "parameters": {"ecounit_id": "(uuid): required"},
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "Change agent status. Returns confirmation message."
+        },
+        
+        "/pureAPI/backuser/disable": {"method": "handle_patch_backuser_disable",
+            "parameters": {"backuser_id": "(uuid): required"},
+            "target agents": ["backuser_admin"],
+            "status": "to do",
+            "description": "Change agent status. Returns confirmation message."
+        },
+        
+        "/pureAPI/customer/disable": {"method": "handle_patch_customer_disable",
+            "parameters": {"customer_id": "(uuid): required"},
+            "target agents": ["backuser"],
+            "status": "to do",
+            "description": "Change agent status. Returns confirmation message."
+        }
     },
     "DELETE": {
         "/pureAPI/backuser": "handle_delete_backuser",
