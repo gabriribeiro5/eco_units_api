@@ -19,16 +19,6 @@ class MasterHandler(Auth, RouteOptions, Trace, Options):
         if not self.is_authenticated(self):
             self.send_error(401, "Unauthorized")
             return
-    
-    def format_and_send(self, response_data):
-        logging.info(f"formating and sending response")
-        status, headers, body = response_data
-        self.send_response(status)
-        for header, value in headers.items():
-            self.send_header(header, value)
-        self.end_headers()
-        if body:
-            self.wfile.write(body.encode("utf-8"))
 
     def run_handler(self, handler_name):
         logging.info(f"calling handler: {handler_name}")
@@ -39,6 +29,16 @@ class MasterHandler(Auth, RouteOptions, Trace, Options):
         else:
             logging.error(f"handler {handler_name} not found")
             self.send_error(404, "Not Found")
+    
+    def format_and_send(self, response_data):
+        logging.info(f"formating and sending response")
+        status, headers, body = response_data
+        self.send_response(status)
+        for header, value in headers.items():
+            self.send_header(header, value)
+        self.end_headers()
+        if body:
+            self.wfile.write(body.encode("utf-8"))
     
     def do_TRACE(self):
         logging.info(f"(do_TRACE): activated by {self.client_address}")
