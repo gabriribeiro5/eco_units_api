@@ -9,25 +9,19 @@ class TraceHandler(I_BaseHandler):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         
-
+    
     def handle_trace(self):
         logging.info(f"(handle_trace): running")
-        self.log_request(200)  # Logs the request for debugging
-        self.send_response(200)  # Send a success response to buffer
-        self.send_header("Content-Type", "message/http")  # Specify the content type
-        self.end_headers()
-
-        # Reflect the request back to the client
-        # Fetch the raw HTTP request
-        request_line = f'''/
+    
+        # Construct the response components
+        status = 200
+        headers = {"Content-Type": "message/http"}
+        request_line = f'''
                         Successfull trace.
                         Here is your request:
                         {self.command} {self.path} {self.protocol_version}'''
-        headers = "".join(f"{key}: {value}\r\n" for key, value in self.headers.items())
-
-        # Send the reflected request back
-        self.wfile.write(headers.encode("utf-8"))
-        self.wfile.write(request_line.encode("utf-8"))
-        self.wfile.write(b"\r\n")  # Add a final CRLF as a delimiter
-
+        header_lines = "".join(f"{key}: {value}\r\n" for key, value in self.headers.items())
+        body = request_line + header_lines + "\r\n"
+    
         logging.info(f"(handle_trace): done")
+        return status, headers, body
