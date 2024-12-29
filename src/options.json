@@ -2,7 +2,7 @@
     "TRACE": {
         "_comment": "TRACE is used for diagnostics. It simply returns a diagnostic trace that logs data from the request-response cycle",
         "/pureAPI": {"method": "handle_trace",
-            "expected_headers": {"Content-Type": "text/plain"},
+            "used_headers": {"Content-Type": "text/plain"},
             "parameters": {},
             "target_agents": ["backuser_admin"],
             "status": "implemented",
@@ -11,8 +11,15 @@
     },
     "OPTIONS": {
         "_comment": "OPTIONS is used to describe the communication options for the target resource. It helps the client understand what methods and headers are allowed",
-        "/pureAPI": {"method": "handle_options",
-            "allowed_headers": {"Content-Type": "application/json"},
+        "/pureAPI": {"method": "handle_options_for_unauthenticated_client",
+            "used_headers": {"Content-Type": "application/json"},
+            "parameters": {"agent_type": "(list) ecounit, customer, backuser or backuser_admin"},
+            "target_agents": ["customer", "backuser", "backuser_admin"],
+            "status": "require improvements",
+            "description": "Returns the API implemented options and their details.\n Tailored details for each egent might be implemented in the future"
+        },
+        "/pureAPI/backuser": {"method": "handle_options",
+            "used_headers": {"Content-Type": "application/json"},
             "parameters": {"agent_type": "(str) ecounit, customer, backuser or backuser_admin"},
             "target_agents": ["customer", "backuser", "backuser_admin"],
             "status": "require improvements",
@@ -21,6 +28,9 @@
     },
     "POST": {
         "/pureAPI/ecounit": {"method": "handle_post_ecounit",
+            "used_headers": {"Content-Type": "application/json",
+                "Accept-Post":"application/json"
+            },
             "parameters": {"unit_ip":"(uuid): optional", 
                 "customer_id":"(uuid): optional"
             },
@@ -30,6 +40,9 @@
         },
 
         "/pureAPI/ecounit/signature_request": {"method": "handle_post_ecounit_signature_request",
+            "used_headers": {"Content-Type": "application/json",
+                "Accept-Post":"application/json"
+            },
             "parameters": {"ecounit_id": "(encrypted uuid): required",
                 "temporary_token": "(encrypted uuid): required"
             },
