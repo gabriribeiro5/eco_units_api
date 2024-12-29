@@ -2,20 +2,22 @@
 FROM python:3.12-slim
 
 # Set working directory
-WORKDIR /src/eco_units_api
+WORKDIR /src
 
-# Copy the app code
-COPY . .
+# Copy requirements file and install dependencies
+COPY ./src/purePython/requirements.txt /src/eco_units_api/src/purePython/
+RUN pip install --no-cache-dir -r /src/eco_units_api/src/purePython/requirements.txt
 
-# Set PYTHONPATH to the parent directory
+# Copy the rest of the app code
+COPY ./src /src/eco_units_api/src
+
+# Set PYTHONPATH to the app directories
 ENV PYTHONPATH="/src/eco_units_api/src:/src/eco_units_api/src/purePython"
 
-# Copy the requirements file and install dependencies
-COPY src/purePython/requirements.txt src/purePython/
-RUN pip install --no-cache-dir -r src/purePython/requirements.txt
-
-# Expose the port your API runs on
+# Expose the default port
 EXPOSE 8080
 
-# Use a shell environment to run unit tests and the API
-CMD ["/bin/sh", "-c", "python3 -m unittest discover -s src/purePython/tests/ && python3 src/purePython/pureAPI.py"]
+WORKDIR /src/eco_units_api/src/purePython
+
+# Run unit tests and then start the API
+CMD ["python3", "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py", "&&", "python3", "/src/eco_units_api/src/purePython/pureAPI.py"]

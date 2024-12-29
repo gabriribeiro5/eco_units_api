@@ -1,0 +1,14 @@
+services:
+  api:
+    image: eco_units_api_image:latest
+    container_name: eco_units_api_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./src:/src/eco_units_api/src  # Bind mount the 'src' directory to '/src' inside the container
+      - ./logs:/var/log/eco_units_api  # Example: bind mount logs directory
+    environment:
+      - PYTHONUNBUFFERED=1  # Optional, for better logging
