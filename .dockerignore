@@ -1,5 +1,6 @@
 *_exemple.*
 *_trash.*
+*_ignore.*
 __pycache__/
 *.pyc
 .env

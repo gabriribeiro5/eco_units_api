@@ -1,5 +1,6 @@
-*_exemple.py
-*_trash.py
+*_exemple.*
+*_trash.*
+*_ignore.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

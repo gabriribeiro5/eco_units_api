@@ -18,7 +18,7 @@
             "status": "require improvements",
             "description": "Returns the API implemented options and their details.\n Tailored details for each egent might be implemented in the future"
         },
-        "/pureAPI/backuser": {"method": "handle_options",
+        "/pureAPI/backuser": {"method": "handle_options_for_backuser",
             "used_headers": {"Content-Type": "application/json"},
             "parameters": {"agent_type": "(str) ecounit, customer, backuser or backuser_admin"},
             "target_agents": ["customer", "backuser", "backuser_admin"],
