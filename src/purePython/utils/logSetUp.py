@@ -20,7 +20,7 @@ class MethodFilter(logging.Filter):
         record.method = record.funcName  # Use the funcName attribute as 'method'
         return True
     
-class LogSetUp():
+class LogSetup():
     '''
     Key features
     Dynamic Log Directory and File Creation:
@@ -132,19 +132,20 @@ class LogSetUp():
         if time_delta.total_seconds() > 2:
             self.runTests(logFilePathAndName)
         
-
 def log_running_and_done(func):
         """
         This is meant to be used as a @decorator
         It simply logs the begining and end of its decorated method
-        Recommended approach (Dependency injection):
-        - Make your `i_base` class inherit from LogSetUp
-        - Instantiate LogSetUp in your `i_base` (self.logger = LogSetUp)
-        - Decorate your methods with @self.logger.log_running_and_done
         """
         def wrapper(*args, **kwargs):
-            logging.info(f"({func.__name__}): running")
+            try:
+                # select filename name in a complex module name
+                func_module = func.__module__.split(".")[-1]
+            except:
+                # filename is the module
+                func_module = func.__module__
+            logging.info(f"{func_module} - ({func.__name__}): running")
             status, headers, body = func(*args, **kwargs)  # Call the decorated method
-            logging.info(f"({func.__name__}): done")
+            logging.info(f"{func_module} - ({func.__name__}): done")
             return status, headers, body
         return wrapper
