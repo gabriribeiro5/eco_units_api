@@ -1,4 +1,4 @@
-from purePython.entities.handler import I_BaseHandler
+from purePython.interfaces.handler import I_BaseHandler
 
 class PostHandler(I_BaseHandler):
     def __init__(self):
