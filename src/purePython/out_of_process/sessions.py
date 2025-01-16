@@ -9,6 +9,7 @@ class SessionManager(I_BaseHandler):
     Controls all active sessions.
     """
     def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         # Initialize session groups and timeouts
         for group_name, timeout in self.definitions.SESSION_GROUPS_AND_TIMEOUTS.items():
             setattr(self, group_name, {})  # Each group is a dictionary of session data
@@ -17,7 +18,6 @@ class SessionManager(I_BaseHandler):
         # Start a daemon thread for periodic session cleanup
         cleanup_thread = threading.Thread(target=self.session_cleanup_task, daemon=True)
         cleanup_thread.start()
-        super().__init__(*args, **kwargs)
 
     def _create_session_id(self, session_group: str) -> str:
         """
@@ -69,7 +69,7 @@ class SessionManager(I_BaseHandler):
         """
         Deletes a session ID from all session groups.
         """
-        for group_name in SESSION_GROUPS_AND_TIMEOUTS:
+        for group_name in self.definitions.SESSION_GROUPS_AND_TIMEOUTS:
             group_sessions = getattr(self, group_name, {})
             if session_id in group_sessions:
                 del group_sessions[session_id]
@@ -80,7 +80,7 @@ class SessionManager(I_BaseHandler):
         Removes expired sessions across all session groups.
         """
         now = datetime.now()
-        for group_name, timeout_minutes in SESSION_GROUPS_AND_TIMEOUTS.items():
+        for group_name, timeout_minutes in self.definitions.SESSION_GROUPS_AND_TIMEOUTS.items():
             group_sessions = getattr(self, group_name, {})
             timeout = timedelta(minutes=timeout_minutes)
             expired_sessions = [
