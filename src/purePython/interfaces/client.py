@@ -19,7 +19,7 @@ class I_BaseClient(HTTPSConnection):
     #### Those method will support future improvements. ####
     #### As the system evolves to microservices, those  ####
     #### methods will allow decoupling Business Rules   ####
-    def match_method_with_route(self):
+    def match_method_with_route(self, calling_method):
         '''
         This method will support future improvements.
         As the system evolves to microservices, the method will allow:
