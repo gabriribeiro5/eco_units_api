@@ -33,6 +33,9 @@ Use the following command to read log updates in real time:
     tail -f /var/log/eco_units_api/purePython.log
 ```
 
+[Tip]: If docker-compose is being used, iteractive shell is not necessary.
+Due to mount bindings on docker-compose.yml, you should be able to read from `./eco_units_api/logs/purePython.log` directly on your OS file system.
+
 2. **Editing files** 
 By default, the docker image does not have any editor installed.
 To apply any experimental change without having to rebuild the app,
@@ -42,10 +45,20 @@ Run the iteractive shell (option 1 or 2), and then run:
     apt install vim
 ```
 
-### Testing routes
-Here are some options on how to test the application routes:
+[Tip]: If docker-compose is being used, iteractive shell is not necessary.
+Due to mount bindings on docker-compose.yml, you should be able to update files at `./src` directly on your OS file system.
 
-1. **Testing routes and methods** 
+### Testing the application
+Here are some options on how to 
+test the application routes:
+
+1. **Unit tests**
+Run the iteractive shell (option 1 or 2), and then run:
+```bash
+    python3 -m unittest discover -s tests -p 'test_*.py'
+```
+
+2. **Testing routes and methods** 
 On **Bash** or **CMD**:
 ```bash
     curl -v -X TRACE http://localhost:8080/pureAPI

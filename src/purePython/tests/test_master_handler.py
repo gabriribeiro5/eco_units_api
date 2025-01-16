@@ -23,7 +23,7 @@ class TestMasterHandler(unittest.TestCase):
         self.handler.wfile = BytesIO()
 
     @patch("utils.logSetup.logging.info")
-    def test_do_TRACE(self, mock_logging):
+    def test_do_TRACE_should_return_request_line(self, mock_logging):
         # Mock path and routes
         self.handler.path = "/pureAPI"
         self.handler.options.only_TRACE = {"/pureAPI": {"method": "handle_trace"}}
@@ -37,7 +37,7 @@ class TestMasterHandler(unittest.TestCase):
         self.assertIn(request_line, self.handler.wfile.getvalue()) # Does the wfile variable have the expected (binary) value?
 
     @patch("utils.logSetup.logging.info")
-    def test_do_OPTIONS(self, mock_logging):
+    def test_do_OPTIONS_should_return_api_options(self, mock_logging):
         # Mock path and routes
         self.handler.path = "/pureAPI"
         self.handler.options.only_OPTIONS = {"/pureAPI": {"method": "handle_options_for_unauthenticated_client"}}
