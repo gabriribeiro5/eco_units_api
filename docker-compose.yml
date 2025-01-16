@@ -6,9 +6,11 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8081:8081"
+      - "8080:8080"
     volumes:
       - ./src:/src/eco_units_api/src  # Bind mount the 'src' directory to '/src' inside the container
       - ./logs:/var/log/eco_units_api  # Example: bind mount logs directory
     environment:
       - PYTHONUNBUFFERED=1  # Optional, for better logging
+    stdin_open: true  # Keeps the STDIN open for interaction
+    tty: true         # Allocates a pseudo-TTY

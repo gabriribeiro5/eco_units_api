@@ -20,4 +20,5 @@ EXPOSE 8080
 WORKDIR /src/eco_units_api/src/purePython
 
 # Run unit tests and then start the API
-CMD ["python3", "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py", "&&", "python3", "/src/eco_units_api/src/purePython/pureAPI.py"]
+CMD ["sh", "-c", "python3 -m unittest discover -s tests -p 'test_*.py' && python3 /src/eco_units_api/src/purePython/pureAPI.py || sh"]
+
