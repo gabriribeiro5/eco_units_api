@@ -9,7 +9,7 @@ class TestMasterHandler(unittest.TestCase):
         # Mock request, client_address, and server
         self.mock_request = MagicMock()
         self.mock_request.makefile = MagicMock(return_value=BytesIO())
-        self.mock_client_address = ('127.0.0.1', 8000)
+        self.mock_client_address = ('127.0.0.1', 8080)
         self.mock_server = MagicMock()
 
         # Create a MasterHandler instance
