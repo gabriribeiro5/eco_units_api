@@ -1,17 +1,18 @@
 import json
-from utils.definitions import ROUTES_DIR
+from utils.definitions import Definitions
 
 class OptionsManager():
     # Inicializa as rotas de forma dinâmica
     def __init__(self, *args, **kwargs) -> None:
-        self.all = self.load_options(ROUTES_DIR)
+        self.definitions = Definitions()
+        self.all = self.load_options(self.definitions.ROUTES_DIR)
+        self.only_TRACE = self.all["TRACE"]
+        self.only_OPTIONS = self.all["OPTIONS"]
         self.only_POST = self.all["POST"]
         self.only_GET = self.all["GET"]
         self.only_PUT = self.all["PUT"]
         self.only_PATCH = self.all["PATCH"]
         self.only_DELETE = self.all["DELETE"]
-        self.only_TRACE = self.all["TRACE"]
-        self.only_OPTIONS = self.all["OPTIONS"]
         super().__init__(*args, **kwargs)
         
 

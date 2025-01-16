@@ -2,15 +2,15 @@ import uuid
 from datetime import datetime, timedelta
 import threading
 import time
-from utils.definitions import SESSION_GROUPS_AND_TIMEOUTS
+from interfaces.handler import I_BaseHandler
 
-class SessionManager:
+class SessionManager(I_BaseHandler):
     """
     Controls all active sessions.
     """
     def __init__(self, *args, **kwargs):
         # Initialize session groups and timeouts
-        for group_name, timeout in SESSION_GROUPS_AND_TIMEOUTS.items():
+        for group_name, timeout in self.definitions.SESSION_GROUPS_AND_TIMEOUTS.items():
             setattr(self, group_name, {})  # Each group is a dictionary of session data
             setattr(self, f"{group_name}_timeout", timedelta(minutes=timeout))
 
