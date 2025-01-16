@@ -301,9 +301,7 @@
             "description": "Send unit's configuration to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
         }
     },
-    "PATCH": {
-        "_comment": "PATCH serves as a set of instructions for modifying a resource (a field), whereas PUT represents a complete replacement of the resource",
-        
+    "PATCH": {        
         "/pureAPI/backuser/save_new_secret": {"method": "handle_patch_backuser_save_new_secret",
             "parameters": {"token": "(encrypted string): required",
                 "secret":"(encrypted string): required",
@@ -336,12 +334,43 @@
         }
     },
     "DELETE": {
-        "/pureAPI/backuser": "handle_delete_backuser",
-        "/pureAPI/customer": "handle_delete_backuser",
-        "/pureAPI/ecounit": "handle_delete_backuser",
+        "_comment": "DELETE is used to remove one or more item from an entity",
+        "/pureAPI/backuser": {"method": "handle_delete_backuser",
+            "parameters": {},
+            "target_agents": ["backuser_admin"],
+            "status": "to do",
+            "description": "Delete backuser"
+        },
+        "/pureAPI/customer": {"method": "handle_delete_customer",
+            "parameters": {},
+            "target_agents": ["backuser", "backuser_admin"],
+            "status": "to do",
+            "description": "Delete customer"
+        },
+        "/pureAPI/ecounit": {"method": "handle_delete_ecounit",
+            "parameters": {},
+            "target_agents": ["backuser", "backuser_admin"],
+            "status": "to do",
+            "description": "Delete ecounit"
+        },
 
-        "/pureAPI/ecounit/diagnostic": "handle_delete_ecounit_diagnostic",
-        "/pureAPI/ecounit/configuration": "handle_delete_ecounit_config",
-        "/pureAPI/ecounit/environment_state": "handle_delete_ecounit_environment_state"
+        "/pureAPI/ecounit/diagnostic": {"method": "handle_delete_ecounit_diagnostic",
+            "parameters": {},
+            "target_agents": ["backuser", "backuser_admin"],
+            "status": "to do",
+            "description": "Delete ecounit diagnostic"
+        },
+        "/pureAPI/ecounit/configuration": {"method": "handle_delete_ecounit_config",
+            "parameters": {},
+            "target_agents": ["backuser", "backuser_admin"],
+            "status": "to do",
+            "description": "Delete ecounit configuration"
+        },
+        "/pureAPI/ecounit/environment_state": {"method": "handle_delete_ecounit_environment_state",
+            "parameters": {},
+            "target_agents": ["backuser", "backuser_admin"],
+            "status": "to do",
+            "description": "Delete ecounit environment_state"
+        }
     }
   }
