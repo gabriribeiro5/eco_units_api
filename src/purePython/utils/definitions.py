@@ -7,6 +7,7 @@ ROUTES_DIR = SRC_DIR / "options.json"
 
 
 ### CONFIGURATION ###
+AGENTS_LIST = ("ecounit", "customer", "backuser", "backuser_admin")
 AGENT_INPUT_TABLES = ("agent_input", "diagnostic", "configuration", "environment_state")
 ALLOWED_INPUT_TABLES = {
     "eco_unit": (AGENT_INPUT_TABLES),

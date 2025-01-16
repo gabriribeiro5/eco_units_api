@@ -6,7 +6,20 @@ sys.path.append('.')
 import logging
 import inspect
 from pathlib import Path
+import os
+from datetime import datetime
 
+class MethodFilter(logging.Filter):
+    '''
+    Allows using keyword 
+    > %(method)s
+    at logging.basicConfig(format='... %(method)s ...')
+    '''
+    def filter(self, record):
+        # Add the 'method' attribute dynamically
+        record.method = record.funcName  # Use the funcName attribute as 'method'
+        return True
+    
 class LogSetUp():
     '''
     Key features
@@ -44,10 +57,15 @@ class LogSetUp():
         logFilePathAndName = self.logDir / self.logFile
         try:
             logging.basicConfig(filename=logFilePathAndName,
-                            format='%(levelname)s[%(asctime)s] - %(module)s: %(message)s',
+                            format='%(levelname)s[%(asctime)s] - %(module)s (%(method)s): %(message)s',
                             datefmt='%Y/%m/%d %I:%M:%S %p',
                             filemode='a',
                             level=logging.DEBUG)
+                            
+            
+            # enable logfile to find value for keyword %(method)s at logging.basicConfig(format='... %(method)s ...')
+            logger = logging.getLogger()
+            logger.addFilter(MethodFilter())
         except:
             msg = "could not apply basiCofig to logging service"
             raise msg
@@ -70,28 +88,30 @@ class LogSetUp():
 
     def runTests(self, logFilePathAndName):
         try:
-            logging.debug('logging lib test for debug level is ok, running into level')
+            logging.debug('logging lib test for debug level is ok, running into info level')
             logging.info('logging lib test for info level is ok, running into warining level')
-            logging.warning('logging lib test for warning level is ok, running into warning level')
+            logging.warning('logging lib test for warning level is ok, running into error level')
             logging.error('logging lib test for error level is ok, running into critical level')
             logging.critical('logging lib test for critical level is ok, all levels have been tested')
             logging.info('------------------- All logging levels successfully tested -------------------')
-        except:
-            msg = "failed writing logs to log file"
-            return msg
+        except Exception as e:
+            msg = "failed writing logs to log file. Error: {e}"
+            raise msg
         
         try:
             # Write a success message to log file
             with open(logFilePathAndName, 'a') as l:
                 # append success line
                 l.write(f"-- Logging levels successfully tested by loSetUp.py --\n")
-                l.write(f"-- Waiting logs... --\n\n")
-        except:
-            msg = "could not write to logFile"
-            return msg
+                l.write(f"-- Waiting logs... --\n")
+        except Exception as e:
+            msg = "could not write to logFile. Error: {e}"
+            raise msg
         
     def enableLog(self, dirName:str=".", logFileName:str="logfile"):
         """
+        Create a log file if it does not exist, then test logging methods
+
         dirName: where must the lofile be saved?
         logFileName: what is the logfile name (usually the application name)?
         """
@@ -104,4 +124,27 @@ class LogSetUp():
         self.createLogDir()
         logFilePathAndName = self.logFileCreateAndConfig()
         
-        self.runTests(logFilePathAndName)
+        # Check if enableLog has been recently activated
+        modification_time = os.path.getmtime(logFilePathAndName)
+        current_datetime = datetime.now()
+        time_delta = current_datetime - datetime.fromtimestamp(modification_time)
+        
+        if time_delta.total_seconds() > 2:
+            self.runTests(logFilePathAndName)
+        
+
+def log_running_and_done(func):
+        """
+        This is meant to be used as a @decorator
+        It simply logs the begining and end of its decorated method
+        Recommended approach (Dependency injection):
+        - Make your `i_base` class inherit from LogSetUp
+        - Instantiate LogSetUp in your `i_base` (self.logger = LogSetUp)
+        - Decorate your methods with @self.logger.log_running_and_done
+        """
+        def wrapper(*args, **kwargs):
+            logging.info(f"({func.__name__}): running")
+            status, headers, body = func(*args, **kwargs)  # Call the decorated method
+            logging.info(f"({func.__name__}): done")
+            return status, headers, body
+        return wrapper
