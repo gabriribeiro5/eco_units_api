@@ -40,7 +40,7 @@ On your terminal, run
 ```
 or open the **Docker Desktop** application.
 
-1. **Build (or rebuild) the Docker Image**  
+1. **Build (or rebuild) the Docker Image**
 Open a terminal in the project root directory and execute:  
 ```bash
     docker-compose up --build
