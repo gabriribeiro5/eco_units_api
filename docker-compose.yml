@@ -8,9 +8,10 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./src:/src/eco_units_api/src  # Bind mount the 'src' directory to '/src' inside the container
-      - ./logs:/var/log/eco_units_api  # Example: bind mount logs directory
+      - ./src:/src/eco_units_api # Bind mount the 'src' directory to '/src' inside the container
+      - ./logs:/var/log/eco_units_api  # Bind mount the 'logs' directory to '/var/log' inside the container
     environment:
       - PYTHONUNBUFFERED=1  # Optional, for better logging
+    
     stdin_open: true  # Keeps the STDIN open for interaction
     tty: true         # Allocates a pseudo-TTY
