@@ -28,7 +28,7 @@ class TraceHandler(I_BaseHandler, I_BaseClient):
                                                 self.headers.items(),
                                                 data_type = "dict")
             if expected_data:
-                request_line = expected_data["request_line"]
+                response_line = expected_data["request_line"]
                 header_lines = expected_data["header_lines"]
             else:
                 raise ValueError("External call incomplete.")
@@ -36,13 +36,13 @@ class TraceHandler(I_BaseHandler, I_BaseClient):
             # Log message
             logging.info(f'''({e} Running internal Business Logic.''')
             # Construct response components
-            request_line = f'''{self.command} {self.path} {self.protocol_version}'''
+            response_line = f'''{self.command} {self.path} {self.protocol_version}\n{self.requestline}'''
             header_lines = self.headers
 
         # Generate response variables
         status = 200
         headers = header_lines
-        body = request_line + "\r\n"
+        body = response_line + "\r\n"
     
         return status, headers, body
     
