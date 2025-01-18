@@ -1,6 +1,6 @@
 # eco_units_api
 ## RESTfull API run on por <8080>
-This API collects data from IoT devices (called eco units) and provide them with behaviour updates.
+This API collects data from IoT devices (called eco units) and provide them with configuration updates.
 
 Those devices are designed to maintain control over micro-ecosystems, leveraging from sensors (to collect data) and actuators (to interact with their environment).
 
@@ -98,3 +98,4 @@ To stop the running container, press Ctrl+C or use:
 
 
 ### Remote Procedure Call (RPC) API runing on port <9090>
+(TODO)

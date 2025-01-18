@@ -13,5 +13,6 @@ services:
     environment:
       - PYTHONUNBUFFERED=1  # Optional, for better logging
     
+    # enable iteractive mode
     stdin_open: true  # Keeps the STDIN open for interaction
     tty: true         # Allocates a pseudo-TTY

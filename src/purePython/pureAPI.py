@@ -8,6 +8,8 @@ import logging
 
 class MasterHandler(Auth, Trace, Options):
     def __init__(self, request, client_address, server):
+        # set protocol_version to HTTP/1.1 to enable automatic keepalive
+        self.protocol_version = "HTTP/1.1"
         super().__init__(request, client_address, server)
 
     def test(self):
@@ -25,8 +27,10 @@ class MasterHandler(Auth, Trace, Options):
             response_data = handler(*args, **kwargs)  # Call handler and get response data
             return response_data
         else:
-            logging.error(f"handler {handler_name} not found")
-            self.send_error(404, "Not Found")
+            err_msg = f"Handler '{handler_name}' not found"
+            logging.error(err_msg)
+            self.send_error(404, "Handler Not Found")
+            raise ValueError(err_msg)
     
     def format_and_send(self, response_data):
         logging.info(f"formating and sending response")
