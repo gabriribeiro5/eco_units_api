@@ -24,7 +24,7 @@ class TraceHandler(I_BaseHandler, I_BaseClient):
         try: # Call external microsservice, if exists
             expected_data = self.external_call(self.command,
                                                 self.path,
-                                                self.protocol_version,
+                                                self.request_version,
                                                 self.headers.items(),
                                                 data_type = "dict")
             if expected_data:
@@ -36,7 +36,7 @@ class TraceHandler(I_BaseHandler, I_BaseClient):
             # Log message
             logging.info(f'''({e} Running internal Business Logic.''')
             # Construct response components
-            response_line = f'''{self.command} {self.path} {self.protocol_version}\n{self.requestline}'''
+            response_line = f'''{self.command} {self.path} {self.request_version}\n{self.requestline}'''
             header_lines = self.headers
 
         # Generate response variables
