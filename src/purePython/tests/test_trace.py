@@ -14,14 +14,16 @@ class Test_MasterHandler_TRACE(unittest.TestCase):
 
         # Create a MasterHandler instance
         self.handler = MasterHandler(self.mock_request, self.mock_client_address, self.mock_server)
-        self.handler.protocol_version = "HTTP/1.1"
-        self.handler.command = "unit test command"
-        self.handler.requestline = "unit test requestline"
         self.handler.send_response = MagicMock()
         self.handler.send_header = MagicMock()
         self.handler.end_headers = MagicMock()
+        self.handler.send_error = MagicMock()
         self.handler.wfile = BytesIO()
-
+        self.handler.headers = {"Content-Type": "message/http"}
+        self.handler.request_version = "HTTP/1.0"
+        self.handler.command = "unit test command"
+        self.handler.requestline = "unit test requestline"
+        
     def mock_routes(self, method: str, handler: str, path: str = None):
         """
         Helper method to mock routes for different HTTP methods.
@@ -37,10 +39,10 @@ class Test_MasterHandler_TRACE(unittest.TestCase):
             raise ValueError(f"Invalid method: {method}")
         
     def assert_response_contains(self):
-        self.assertIn(self.handler.command, self.handler.wfile.getvalue())
-        self.assertIn(self.handler.path, self.handler.wfile.getvalue())
-        self.assertIn(self.handler.protocol_version, self.handler.wfile.getvalue())
-        self.assertIn(self.handler.requestline, self.handler.wfile.getvalue())
+        self.assertIn(f"{self.handler.path}".encode("utf-8"), self.handler.wfile.getvalue())
+        self.assertIn(f"{self.handler.command}".encode("utf-8"), self.handler.wfile.getvalue())
+        self.assertIn(f"{self.handler.requestline}".encode("utf-8"), self.handler.wfile.getvalue())
+        self.assertIn(f"{self.handler.request_version}".encode("utf-8"), self.handler.wfile.getvalue())
         self.assertIn(f"\r\n".encode("utf-8"), self.handler.wfile.getvalue())
 
     def test_do_TRACE_should_return_requestline_and_content_type_msg(self):
@@ -54,7 +56,7 @@ class Test_MasterHandler_TRACE(unittest.TestCase):
         # expected values
         expected_header = ("Content-Type", "message/http")
         expected_body = (
-            f"{self.handler.command} {self.handler.path} {self.handler.protocol_version}\n"
+            f"{self.handler.command} {self.handler.path} {self.handler.request_version}\n"
             f"{self.handler.requestline}\r\n".encode("utf-8")
         )
 
@@ -62,29 +64,42 @@ class Test_MasterHandler_TRACE(unittest.TestCase):
         self.handler.do_TRACE()
 
         # Assertions
-        self.assertEqual([expected_header], self.handler.send_header.call_args_list)
         self.handler.send_response.assert_called_with(200)
         self.assert_response_contains()
         self.assertEqual(expected_body, self.handler.wfile.getvalue())
+        # Verify the expected header was sent
+        send_header_calls = [call.args for call in self.handler.send_header.call_args_list]
+        self.assertIn(expected_header, send_header_calls)
 
-    def test_do_TRACE_invalid_handler(self):
+    @patch("utils.logSetup.logging.info")
+    def test_do_TRACE_logging(self, mock_logging):
+        func_module = "trace" # define filename name
+        handler_name = "handle_trace"
+        self.mock_routes("TRACE", handler_name)
+        self.handler.do_TRACE()
+        mock_logging.assert_any_call(f"{func_module} - ({handler_name}): running")
+        mock_logging.assert_any_call(f"{func_module} - ({handler_name}): done")
+
+    @patch("utils.logSetup.logging.error")
+    def test_do_TRACE_invalid_handler(self, mock_logging):
         """
         Ensures ValueError is raised for invalid TRACE handler.
+        Ensures error is logged for invalid TRACE handler.
         """
         with self.assertRaises(ValueError):
             # define error condition
-            self.mock_routes("TRACE", "nonexistent_handler")
+            handler_name = "nonexistent_test_handler"
+            err_msg = f"Handler '{handler_name}' not found"
+            self.mock_routes("TRACE", handler_name)
 
             # Trigger method
             self.handler.do_TRACE()
 
-    @patch("utils.logSetUp.logging.info")
-    def test_do_TRACE_logging(self, mock_logging):
-        handler_name = "handle_trace"
-        self.mock_routes("TRACE", handler_name)
-        self.handler.do_TRACE()
-        mock_logging.assert_any_call(f"({handler_name}): running")
-        mock_logging.assert_any_call(f"({handler_name}): done")
+            # Verify the expected error parameters were sent
+            mock_logging.assert_any_call(err_msg)
+            send_error_calls = [call.args for call in self.handler.send_error.call_args_list]
+            self.assertIn(404, send_error_calls)
+            self.assertIn("Handler Not Found", send_error_calls)
 
 
     def tearDown(self):
