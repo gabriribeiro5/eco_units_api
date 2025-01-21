@@ -4,6 +4,7 @@ from io import BytesIO
 from pureAPI import MasterHandler
 
 class Test_MasterHandler_OPTIONS(unittest.TestCase):
+    ### METHODS TO SUPPORT UNIT TESTING ###
     def setUp(self):
         # Mock request, client_address, and server
         self.mock_request = MagicMock()
@@ -23,7 +24,7 @@ class Test_MasterHandler_OPTIONS(unittest.TestCase):
         self.handler.request_version = "HTTP/1.0"
         self.handler.command = "unit test command"
         self.handler.requestline = "unit test requestline"
-        
+    
     def mock_routes(self, method: str, handler: str, path: str = None):
         """
         Helper method to mock routes for different HTTP methods.
@@ -42,7 +43,8 @@ class Test_MasterHandler_OPTIONS(unittest.TestCase):
         self.assertIn(f"OPTIONS".encode("utf-8"), self.handler.wfile.getvalue())
         self.assertIn(f"\r\n".encode("utf-8"), self.handler.wfile.getvalue())
 
-    def test_do_OPTIONS_should_return_requestline_and_content_type_msg(self):
+    ### ACTUAL TESTING METHODS ###
+    def test_do_OPTIONS_should_return_requestline_and_content_type_json(self):
         """
         Tests the OPTIONS HTTP method to ensure the response body returns
         its own method as an OPTIONS
@@ -64,7 +66,7 @@ class Test_MasterHandler_OPTIONS(unittest.TestCase):
         self.assertIn(expected_header, send_header_calls)
 
     @patch("utils.logSetup.logging.info")
-    def test_do_OPTIONS_logging(self, mock_logging):
+    def test_do_OPTIONS_basic_logging(self, mock_logging):
         func_module = "options" # define filename name
         handler_name = "handle_options_for_unauthenticated_client"
         self.mock_routes("OPTIONS", handler_name)
@@ -94,6 +96,7 @@ class Test_MasterHandler_OPTIONS(unittest.TestCase):
             self.assertIn("Handler Not Found", send_error_calls)
 
 
+    ### UNIT TEST AUTOMATIC CLEANUP METHOD ###
     def tearDown(self):
         '''
         Reset shared mock data.

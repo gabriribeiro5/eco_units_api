@@ -4,6 +4,7 @@ from io import BytesIO
 from pureAPI import MasterHandler
 
 class Test_MasterHandler_TRACE(unittest.TestCase):
+    ### METHODS TO SUPPORT UNIT TESTING ###
     def setUp(self):
         # Mock request, client_address, and server
         self.mock_request = MagicMock()
@@ -45,6 +46,7 @@ class Test_MasterHandler_TRACE(unittest.TestCase):
         self.assertIn(f"{self.handler.request_version}".encode("utf-8"), self.handler.wfile.getvalue())
         self.assertIn(f"\r\n".encode("utf-8"), self.handler.wfile.getvalue())
 
+    ### ACTUAL TESTING METHODS ###
     def test_do_TRACE_should_return_requestline_and_content_type_msg(self):
         """
         Tests the TRACE HTTP method to ensure the response body contains
@@ -101,7 +103,8 @@ class Test_MasterHandler_TRACE(unittest.TestCase):
             self.assertIn(404, send_error_calls)
             self.assertIn("Handler Not Found", send_error_calls)
 
-
+    
+    ### UNIT TEST AUTOMATIC CLEANUP METHOD ###
     def tearDown(self):
         '''
         Reset shared mock data.
