@@ -1,4 +1,4 @@
-from purePython.entities.handler import I_BaseHandler
+from interfaces.handler import I_BaseHandler
 import json
 import warnings
 
