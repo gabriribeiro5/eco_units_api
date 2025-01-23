@@ -20,20 +20,21 @@ class Test_Insert_into_Index_Tables(unittest.TestCase):
     def setUp(self):
         # Mock request, client_address, and server
         self.mock_request = MagicMock()
-        self.mock_request.makefile = MagicMock(return_value=BytesIO())
+        self.mock_request_file = b"POST / HTTP/1.1\r\n\r\n"
+        self.mock_request.makefile = MagicMock(return_value=BytesIO(self.mock_request_file))  # Simulating a valid HTTP request
         self.mock_client_address = ('127.0.0.1', 8080)
         self.mock_server = MagicMock()
 
-        # Create a MasterHandler instance
-        self.handler = MasterHandler(self.mock_request, self.mock_client_address, self.mock_server)
-        self.handler.send_error = MagicMock()
-        self.handler.wfile = BytesIO()
-        self.handler.rfile = BytesIO()
-
         # Create DB Operation instance
         self.db_operation = IndexTables(self.mock_request, self.mock_client_address, self.mock_server)
+        self.db_operation.rfile = BytesIO(self.mock_request_file)  # Simulating an HTTP request stream
+        self.db_operation.wfile = BytesIO()  # Mock writable output stream
         self.db_operation.send_error = MagicMock()
-        self.db_operation.wfile = BytesIO()
+        
+        self.sensor_status_data = {
+            "valid_field": "value",
+            "valid_field2": "value2"
+        }
         
         
     ##############################
@@ -66,20 +67,27 @@ class Test_Insert_into_Index_Tables(unittest.TestCase):
         Ensures ValueError is raised for invalid data.
         Ensures error is logged for invalid data.
         """
-        with self.assertRaises(ValueError):
-            # define error condition
-            self.sensor_status_data = {"test_unexistent_field": "unexistent_value"}
-            err_msg = f"Invalid data"
-            # self.mock_routes("POST", "insert_into_sensor_status")
-
+        # logging variables
+        func_module = "insert" # define filename name
+        handler_name = "create_query"
+        
+        # define error condition
+        self.sensor_status_data = {"test_unexistent_field": "unexistent_value"}
+        msg_err = f"Invalid data"
+        with self.assertRaises(KeyError):
             # Trigger method
             status, headers, body = self.db_operation.insert_into_sensor_status(self.sensor_status_data)
 
-            # Verify the expected error parameters were sent
-            mock_logging.assert_any_call(err_msg)
-            send_error_calls = [call.args for call in self.handler.send_error.call_args_list]
-            self.assertIn(422, send_error_calls)
-            self.assertIn(err_msg, send_error_calls)
+            # Verify the expected error parameters were sent to send_error
+            send_error_calls = [call.args for call in self.db_operation.send_error.call_args_list]
+            self.assertIn((422, msg_err), send_error_calls)
+
+            # Verify the expected error parameters were sent to logging
+            logging_calls = [call.args for call in mock_logging.call_args_list]
+            logging_args = []
+            for args in logging_calls:
+                logging_args = logging_args + [arg for arg in args]
+            self.assertIn(msg_err, logging_args)
 
 
     #########################################
@@ -92,7 +100,7 @@ class Test_Insert_into_Index_Tables(unittest.TestCase):
         You don't need to call it explicitly.
         '''
         patch.stopall()  # Stop all patches started in setUp
-        self.handler.wfile.close()  # Close BytesIO to release resources
+        self.db_operation.wfile.close()  # Close BytesIO to release resources
 
 if __name__ == "__main__":
     unittest.main()

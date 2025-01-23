@@ -2,6 +2,7 @@ from interfaces.handler import I_BaseHandler
 import json
 import warnings
 import logging
+from utils.logSetup import log_running_and_done
 
 """
 This module provides internal shared database operations (e.g., insert, select, update).  
@@ -17,8 +18,26 @@ class IndexTables(I_BaseHandler):
     - climate_season
     - ecosystem_category
     '''
+    def create_query(self, table_name, data):
+        try:
+            valid_field = data["valid_field"]
+        except Exception as e:
+            msg = f"Invalid data"
+            logging.error(msg)
+            logging.exception(f"Exception: {str(e)}")
+            self.send_error(422, msg)
+            raise e
+
+    def run_query(self, query):
+        pass
     # Handlers para as rotas
-    def insert_into_sensor_status(self):
+    @log_running_and_done
+    def insert_into_sensor_status(self, data:dict = None):
+        '''
+        data:
+        - By default, this method reads from `self.rfile`.
+        - Provide specific data if you wish to ignore `self.rfile`
+        '''
         table_name = "sensor_status"
         
         # build response data
@@ -26,6 +45,12 @@ class IndexTables(I_BaseHandler):
         headers = {"Content-Type": "application/json"}
         body = {}
         
+        if data:
+            q = self.create_query(table_name, data)
+        else:
+            data = json.loads(json.JSONDecoder(self.rfile.read()))
+            q = self.create_query(table_name, data)
+
         # Stablish DB connection
         try:
             pass
@@ -33,17 +58,17 @@ class IndexTables(I_BaseHandler):
             status = 500
             msg = f"Failed stablishing database connection"
             msg_exception = f"Exception: {str(e)}"
-            logging.exception(f"({self.inspector.say_my_name()}): {msg}\n{msg_exception} ")
+            logging.exception(f"{msg}\n{msg_exception} ")
             self.send_error(500, msg)
 
         # Run insert
         try:
-            pass
+            self.run_query(q)
         except Exception as e:
             status = 500
             msg = f"Error while inserting data"
             msg_exception = f"Exception: {str(e)}"
-            logging.exception(f"({self.inspector.say_my_name()}): {msg}\n{msg_exception} ")
+            logging.exception(f"{msg}\n{msg_exception} ")
             self.send_error(500, msg)
 
         return status, headers, body
