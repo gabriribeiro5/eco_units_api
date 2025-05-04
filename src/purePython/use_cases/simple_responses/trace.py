@@ -1,6 +1,6 @@
 from interfaces.handler import I_BaseHandler
 from interfaces.client import I_BaseClient
-from utils.logSetup import log_running_and_done
+from utils.logger import log_running_and_done
 import logging
 
 class TraceHandler(I_BaseHandler, I_BaseClient):

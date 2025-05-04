@@ -2,7 +2,7 @@
 from interfaces.handler import I_BaseHandler
 from interfaces.client import I_BaseClient
 from route_options import OptionsManager
-from utils.logSetup import log_running_and_done
+from utils.logger import log_running_and_done
 import logging
 import json
 

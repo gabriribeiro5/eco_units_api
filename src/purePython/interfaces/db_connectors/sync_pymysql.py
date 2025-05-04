@@ -1,6 +1,6 @@
 import pymysql
 from database import I_BaseDB
-from utils.definitions import Definitions
+from utils.config import Definitions
 
 class I_SyncronousPyMySQL(I_BaseDB):
     def __init__(self, *args, **kwargs) -> None:

@@ -1,5 +1,5 @@
-from utils.definitions import Definitions
-from utils.logSetup import log_running_and_done
+from utils.config import Definitions
+from utils.logger import log_running_and_done
 
 class I_BaseDB():
     def __init__(self, *args, **kwargs) -> None:

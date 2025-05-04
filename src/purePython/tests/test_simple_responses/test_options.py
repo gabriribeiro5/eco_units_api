@@ -69,7 +69,7 @@ class Test_MasterHandler_OPTIONS(unittest.TestCase):
         send_header_calls = [call.args for call in self.handler.send_header.call_args_list]
         self.assertIn(expected_header, send_header_calls)
 
-    @patch("utils.logSetup.logging.info")
+    @patch("utils.logger.logging.info")
     def test_do_OPTIONS_basic_logging(self, mock_logging):
         func_module = "options" # define filename name
         handler_name = "handle_options_for_unauthenticated_client"
@@ -78,7 +78,7 @@ class Test_MasterHandler_OPTIONS(unittest.TestCase):
         mock_logging.assert_any_call(f"{func_module} - ({handler_name}): running")
         mock_logging.assert_any_call(f"{func_module} - ({handler_name}): done")
 
-    @patch("utils.logSetup.logging.error")
+    @patch("utils.logger.logging.error")
     def test_do_OPTIONS_invalid_handler(self, mock_logging):
         """
         Ensures ValueError is raised for invalid OPTIONS handler.

@@ -52,7 +52,7 @@ class Test_Insert_into_Index_Tables(unittest.TestCase):
         self.assertEqual(headers, expected_headers)
         self.assertEqual(body, {})
 
-    @patch("utils.logSetup.logging.info")
+    @patch("utils.logger.logging.info")
     def test_Inserts_into_Index_Tables_basic_logging(self, mock_logging):
         func_module = "insert" # define filename name
         handler_name = "insert_into_sensor_status"
@@ -61,7 +61,7 @@ class Test_Insert_into_Index_Tables(unittest.TestCase):
         mock_logging.assert_any_call(f"{func_module} - ({handler_name}): running")
         mock_logging.assert_any_call(f"{func_module} - ({handler_name}): done")
 
-    @patch("utils.logSetup.logging.error")
+    @patch("utils.logger.logging.error")
     def test_Inserts_into_Index_Tables_returns_422_invalid_data(self, mock_logging):
         """
         Ensures ValueError is raised for invalid data.

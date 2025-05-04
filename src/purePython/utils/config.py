@@ -24,6 +24,7 @@ class Definitions():
             "customer_sessions": 30, # group_name: minutes
             "backoffice_sessions": 30 # group_name: minutes
         }
+        self.LOGGING_ENABLED = True
 
         ### DATABASE  ### 
         self.DB_HOST = "127.0.0.1"

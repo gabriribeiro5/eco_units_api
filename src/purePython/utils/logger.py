@@ -8,17 +8,8 @@ import inspect
 from pathlib import Path
 import os
 from datetime import datetime
-
-class MethodFilter(logging.Filter):
-    '''
-    Allows using keyword 
-    > %(method)s
-    at logging.basicConfig(format='... %(method)s ...')
-    '''
-    def filter(self, record):
-        # Add the 'method' attribute dynamically
-        record.method = record.funcName  # Use the funcName attribute as 'method'
-        return True
+import functools
+from utils.config import Definitions
     
 class LogSetup():
     '''
@@ -46,31 +37,38 @@ class LogSetup():
         self.logFile:Path
 
     def createLogDir(self): # create log directory if not exists
-            try:
-                self.logDir.mkdir(parents=True, exist_ok=True)
-            except:
-                msg = "could not create log directory"
-                raise msg
+        try:
+            self.logDir.mkdir(parents=True, exist_ok=True)
+        except Exception as e:
+            msg = f"could not create log directory.\n {e}"
+            raise msg
             
     def logFileCreateAndConfig(self):
         # create log file and set basic logging config
         logFilePathAndName = self.logDir / self.logFile
+
+        # Check if enableLog has been recently activated
+        modification_time = os.path.getmtime(logFilePathAndName)
+        current_datetime = datetime.now()
+        time_delta = current_datetime - datetime.fromtimestamp(modification_time)
+        
+        # Apply configuration
         try:
             logging.basicConfig(filename=logFilePathAndName,
-                            format='%(levelname)s[%(asctime)s] - %(module)s (%(method)s): %(message)s',
+                            format='%(levelname)s[%(asctime)s] - %(module)s (%(funcName)s): %(message)s',
                             datefmt='%Y/%m/%d %I:%M:%S %p',
                             filemode='a',
                             level=logging.DEBUG)
                             
             
             # enable logfile to find value for keyword %(method)s at logging.basicConfig(format='... %(method)s ...')
-            logger = logging.getLogger()
-            logger.addFilter(MethodFilter())
+            # logger = logging.getLogger()
+            # logger.addFilter(MethodFilter())
         except:
             msg = "could not apply basiCofig to logging service"
             raise msg
         
-        # Write a headline to the log file, asigning enableLogs's client file
+        # Write a special headline to the log file, asigning enableLogs's client file
         try:
             with open(logFilePathAndName, 'a') as l:
                 # find the calling module
@@ -84,7 +82,9 @@ class LogSetup():
             msg = f"could not open and write to {logFilePathAndName}"
             raise msg
         
-        return logFilePathAndName
+        # Run tests while avoiding multiple test executions
+        if time_delta.total_seconds() > 2:
+            self.runTests(logFilePathAndName)
 
     def runTests(self, logFilePathAndName):
         try:
@@ -95,15 +95,14 @@ class LogSetup():
             logging.critical('logging lib test for critical level is ok, all levels have been tested')
             logging.info('------------------- All logging levels successfully tested -------------------')
         except Exception as e:
-            msg = "failed writing logs to log file. Error: {e}"
+            msg = "failed writing test logs to log file. Error: {e}"
             raise msg
         
         try:
             # Write a success message to log file
             with open(logFilePathAndName, 'a') as l:
                 # append success line
-                l.write(f"-- Logging levels successfully tested by loSetUp.py --\n")
-                l.write(f"-- Waiting logs... --\n")
+                l.write(f"-- Waiting application logs...\n")
         except Exception as e:
             msg = "could not write to logFile. Error: {e}"
             raise msg
@@ -122,22 +121,18 @@ class LogSetup():
         self.logFile = Path(f"{logFileName}.log")
         
         self.createLogDir()
-        logFilePathAndName = self.logFileCreateAndConfig()
+        self.logFileCreateAndConfig()
         
-        # Check if enableLog has been recently activated
-        modification_time = os.path.getmtime(logFilePathAndName)
-        current_datetime = datetime.now()
-        time_delta = current_datetime - datetime.fromtimestamp(modification_time)
-        
-        if time_delta.total_seconds() > 2:
-            self.runTests(logFilePathAndName)
-        
-def log_running_and_done(func):
-        """
-        This is meant to be used as a @decorator
-        It simply logs the begining and end of its decorated method
-        """
-        def wrapper(*args, **kwargs):
+
+config = Definitions()
+def async_log_running_and_done(func):
+    """
+    This is meant to be used as a @decorator for asyncronous methods
+    It simply logs the begining and end of its decorated method
+    """
+    @functools.wraps(func)
+    async def wrapper(*args, **kwargs):
+        if config.LOGGING_ENABLED:
             try:
                 # select filename name in a complex module name
                 func_module = func.__module__.split(".")[-1]
@@ -145,7 +140,41 @@ def log_running_and_done(func):
                 # filename is the module
                 func_module = func.__module__
             logging.info(f"{func_module} - ({func.__name__}): running")
-            status, headers, body = func(*args, **kwargs)  # Call the decorated method
+            kwargs = await func(*args, **kwargs)  # Call the decorated method
             logging.info(f"{func_module} - ({func.__name__}): done")
-            return status, headers, body
-        return wrapper
+            return kwargs
+        else:
+            try:
+                # select filename name in a complex module name
+                func_module = func.__module__.split(".")[-1]
+            except:
+                # filename is the module
+                func_module = func.__module__
+            print(f"{func_module} - ({func.__name__}): running")
+            kwargs = await func(*args, **kwargs)  # Call the decorated method
+            print(f"{func_module} - ({func.__name__}): done")
+            return kwargs
+    return wrapper
+
+def log_running_and_done(func):
+    """
+    This is meant to be used as a @decorator
+    It simply logs the begining and end of its decorated method
+    """
+    def wrapper(*args, **kwargs):
+        try:
+            # select filename name in a complex module name
+            func_module = func.__module__.split(".")[-1]
+        except:
+            # filename is the module
+            func_module = func.__module__
+
+        if config.LOGGING_ENABLED:
+            logging.info(f"{func_module} - ({func.__name__}): running")
+            kwargs = func(*args, **kwargs)  # Call the decorated method
+            logging.info(f"{func_module} - ({func.__name__}): done")
+            return kwargs
+        else:
+            kwargs = func(*args, **kwargs)  # Call the decorated method
+            return kwargs
+    return wrapper

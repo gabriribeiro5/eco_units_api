@@ -1,5 +1,5 @@
 import json
-from utils.definitions import Definitions
+from utils.config import Definitions
 
 class OptionsManager():
     # Inicializa as rotas de forma dinâmica

@@ -2,8 +2,8 @@ from http.server import HTTPServer
 from out_of_process.auth import AuthManager as Auth
 from use_cases.simple_responses.trace import TraceHandler as Trace
 from use_cases.simple_responses.options import OptionsHandler as Options
-from utils.definitions import Definitions
-from utils.logSetup import LogSetup
+from utils.config import Definitions
+from utils.logger import LogSetup
 import logging
 
 class MasterHandler(Auth, Trace, Options):
