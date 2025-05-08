@@ -15,7 +15,7 @@ Modules are organized as follows:
 - **Entities/Interfaces**: Core business rules and models.
     - agent: might be an eco unit, a customer or a backoffice user. They are all agents.
     - agentInput: any database update regarding unit's configuration, self diagnostics or environment state.
-    - handler: the base interface for http implementation.\
+    - handler: the base interface for http implementation.
 
 - **Use Cases**: Application-specific business logic (the actions the application performs).
 

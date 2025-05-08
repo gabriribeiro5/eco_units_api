@@ -27,8 +27,14 @@ On a new terminal, run the following:
 Understand and manipulate the application using one (or a combination) of the following options:
 
 1. **Reading logs**
-All logs will be written to `/var/log/eco_units_api`.
-Use the following command to read log updates in real time:
+Inside the container, all logs will be written to `/var/log/eco_units_api`.
+This directory is bound to `\logs`, outside the container.
+
+Outside the container,
+You can read real time log updates just looking into the files in `\logs`.
+
+If you are inside the container,
+use the following command to read log updates in real time:
 ```bash
     tail -f /var/log/eco_units_api/purePython.log
 ```
