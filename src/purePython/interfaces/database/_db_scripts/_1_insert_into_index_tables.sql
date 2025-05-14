@@ -60,9 +60,7 @@ select * from ecosystem_category;
 INSERT INTO ecosystem_category
 (`ecosystem_category_id`,
 `category_name`,
-`category_description`,
-`min_temperature_expected`,
-`max_temperature_expected`)
+`category_description`)
 VALUES
 (1,
 'VEGETABLE GARDEN',

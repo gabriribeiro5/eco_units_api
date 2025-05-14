@@ -145,4 +145,3 @@ WHERE `agent_id` = (SELECT e.agent_id
 					FROM eco_unit AS b
                     ORDER BY eco_unit_id DESC
                     LIMIT 1);
-

@@ -58,7 +58,7 @@ COMMENT = '		';
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`ecosystem_category` (
   `ecosystem_category_id` INT NOT NULL AUTO_INCREMENT,
-  `category_name` VARCHAR(100) NULL COMMENT '1 = vegetable garden,\n2 = habitat,\n3 = rainforest,\n4 = swamp,\n5 = prairie',
+  `category_name` VARCHAR(100) NULL, -- '1 = vegetable garden,\n2 = habitat,\n3 = rainforest,\n4 = swamp,\n5 = prairie',
   `category_description` VARCHAR(200) NULL,
   `min_temperature_expected` INT NULL,
   `max_temperature_expected` INT NULL,
@@ -74,8 +74,8 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`eco_unit` (
   `agent_id` INT NOT NULL,
   `eco_unit_name` VARCHAR(100) NULL,
   `customer_id` INT NULL,
-  `ecosystem_category_id` INT NOT NULL COMMENT '1 = vegetable garden,\n2 = habitat,\n3 = rainforest,\n4 = savanna,\n5 = desert,\n6 = prairie',
-  `require_update` TINYINT NOT NULL COMMENT 'BOOLEAN. If product config must be updated. 1=YES.',
+  `ecosystem_category_id` INT NOT NULL, -- '1 = vegetable garden,\n2 = habitat,\n3 = rainforest,\n4 = savanna,\n5 = desert,\n6 = prairie',
+  `require_update` TINYINT NOT NULL, -- 'BOOLEAN. If product config must be updated. 1=YES.',
   `location` GEOMETRY NULL,
   `deactivated` INT NULL,
   PRIMARY KEY (`eco_unit_id`),
@@ -130,7 +130,7 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`agent_input` (
   `agent_id` INT NOT NULL,
   `eco_unit_id` INT NOT NULL,
   `date_time` DATETIME NULL,
-  `failed_communication` INT NULL COMMENT '1 = yes',
+  `failed_communication` INT NULL, -- '1 = yes',
   PRIMARY KEY (`agent_input_id`),
   INDEX `fk_agent_input_idx` (`agent_id` ASC) VISIBLE,
   INDEX `fk_agent_input__eco_unit_idx` (`eco_unit_id` ASC) VISIBLE,
@@ -189,8 +189,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`config_status` (
   `config_status_id` INT NOT NULL,
-  `status_name` VARCHAR(45) NOT NULL COMMENT '1 = confirmed; 2 = sent; 3 = wating; 4 = expired',
-  `status_description` VARCHAR(100) NULL COMMENT 'confirmed = configuration data declared by eco_unit only;\nsent = configuration update data sent to eco_unit;\nwating = configuration update data wating to be sent;\nexpired = configuration update data that has not been (and will not be) sent to eco_unit',
+  `status_name` VARCHAR(45) NOT NULL,
+  `status_description` VARCHAR(100) NULL,
   PRIMARY KEY (`config_status_id`))
 ENGINE = InnoDB;
 
@@ -212,7 +212,7 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`configuration` (
   `configuration_id` INT NOT NULL AUTO_INCREMENT,
   `eco_unit_id` INT NOT NULL,
   `agent_input_id` INT NOT NULL,
-  `config_status_id` INT NOT NULL COMMENT '1 = confirmed; 2 = sent; 3 = wating; 4 = expired',
+  `config_status_id` INT NOT NULL,
   `run_physical_diagnostics` TINYINT NULL,
   `soil_moisture_max` INT NULL,
   `soil_moisture_min` INT NULL,
@@ -253,8 +253,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`sensor_status` (
   `sensor_status_id` SMALLINT NOT NULL,
-  `sensor_status_name` VARCHAR(45) NOT NULL COMMENT '1 = running; 2 = malfunction; 3 = not installed',
-  `sensor_status_description` VARCHAR(200) NULL COMMENT 'running = working fine;\nmalfunction = something is wrong;\nnot installed = diagnostics do not apply',
+  `sensor_status_name` VARCHAR(45) NOT NULL,
+  `sensor_status_description` VARCHAR(200) NULL,
   PRIMARY KEY (`sensor_status_id`))
 ENGINE = InnoDB;
 
@@ -293,7 +293,6 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`diagnostic` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
