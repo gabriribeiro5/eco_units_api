@@ -6,9 +6,8 @@ class Definitions():
         self.SRC_DIR = Path(__file__).resolve().parent.parent
         self.LOG_DIR = "/var/log/eco_units_api"
         self.LOG_FILE_NAME = "purePython"
-        self.OPTIONS_DIR = self.SRC_DIR / "options.json"
-        self._DB_SCRIPTS_DIR = self.SRC_DIR / "interfaces/db_connectors/_db_scripts"
-
+        self.ROUTE_OPTIONS = self.SRC_DIR / "route_options.json"
+        self._DB_SCRIPTS_DIR = self.SRC_DIR / "interfaces/database/_db_scripts"
 
         ### APPLICATION CONFIGURATION ###
         self.AGENTS_LIST = ("ecounit", "customer", "backuser", "backuser_admin")
@@ -25,9 +24,13 @@ class Definitions():
             "backoffice_sessions": 30 # group_name: minutes
         }
         self.LOGGING_ENABLED = True
+        self.ASYNC_MODE = False
+        self.DEBUG_MODE = False
+        self.SERVER_PORT = 8080
 
         ### DATABASE  ### 
-        self.DB_HOST = "127.0.0.1"
-        self.DB_USER = "root"
+        self.DB_HOST = "mysql" # "127.0.0.1"
+        self.DB_USER = "eco_api"
         self.DB_SECRET = "s3cr37@dblab73"
         self.DB_NAME = "ecosystem_db"
+        self.DB_PORT = 3306

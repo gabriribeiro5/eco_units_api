@@ -1,4 +1,3 @@
-
 from interfaces.handler import I_BaseHandler
 from interfaces.client import I_BaseClient
 from route_options import OptionsManager
@@ -62,12 +61,14 @@ class OptionsHandler(I_BaseHandler, I_BaseClient, OptionsManager):
 
         # Construct response components based on agent_type
         agent_options = self.collect_agent_options(agent_type)
+        logging.debug(f"agent options: {agent_options}")
         response = json.dumps(agent_options) # Convert dict to JSON string
     
         # Expected response variables
         status = 200
         headers = {"Content-Type": "application/json"}
         body = response + "\r\n"
+        logging.debug(f"json response: {response}")
     
         return status, headers, body
 
@@ -76,4 +77,4 @@ def test():
     handler.development_test()
 
 if __name__ == "__main__":
-    test()
+    test() # Ugly but efficient

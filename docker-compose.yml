@@ -1,12 +1,14 @@
 services:
-  api:
+  api1: &eco_units_api
+    hostname: app1
     image: eco_units_api_image:latest
-    container_name: eco_units_api_container
+    container_name: eco_units_api_container_1
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+      - "5678:5678" # For debugger
     volumes:
       - ./src:/src/eco_units_api # Bind mount the 'src' directory to '/src' inside the container
       - ./logs:/var/log/eco_units_api  # Bind mount the 'logs' directory to '/var/log' inside the container
@@ -16,3 +18,54 @@ services:
     # enable iteractive mode
     stdin_open: true  # Keeps the STDIN open for interaction
     tty: true         # Allocates a pseudo-TTY
+
+#   # The name of the network in witch the service will be available
+  #   networks:
+  #     - db-tier
+  #   depends_on:
+  #     mysql:
+  #       condition: service_healthy
+      
+  
+  # api2:
+  #   <<: *eco_units_api
+  #   hostname: app2
+  #   container_name: eco_units_api_container_2
+
+  mysql:
+    image: mysql:8.0.41-debian
+    container_name: db_container_1
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'ecosystem_db'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'eco_api'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: 's3cr37@dblab73'
+      # MYSQL_ROOT_PASSWORD: 's3cr37@dblab73'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      # <Port exposed> : <MySQL Port running inside container>
+      - '33062:3306'
+    expose:
+      # Opens port 3306 on the container
+      - '3306'
+    # Where our data will be persisted
+    volumes:
+      - db_eco_units:/var/lib/mysql # Bind volume mount to '/var/lib' inside the container
+      # - E:/ProgramData/Docker/db_pysql_bench:/var/lib/mysql # Bind mount the host's data directory to '/var/lib' inside the container
+    # The name of the network in witch the service will be available
+    # networks:
+    #   - db-tier
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+    #   interval: 10s
+    #   retries: 5
+
+# Names our volume
+volumes:
+  db_eco_units:
+
+# networks:
+#   # The presence of these objects is sufficient to define them
+#   db-tier: {}

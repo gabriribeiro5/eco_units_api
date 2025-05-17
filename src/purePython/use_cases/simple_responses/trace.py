@@ -34,15 +34,15 @@ class TraceHandler(I_BaseHandler, I_BaseClient):
                 raise ValueError("External call incomplete.")
         except ValueError as e: # Apply business rules
             # Log message
-            logging.info(f'''({e} Running internal Business Logic.''')
+            logging.info(f'''{e} Running internal Business Logic.''')
             # Construct response components
-            response_line = f'''{self.command} {self.path} {self.request_version}\n{self.requestline}'''
+            response_line = f'''{self.requestline}'''
             header_lines = self.headers
 
         # Generate response variables
         status = 200
         headers = header_lines
-        body = response_line + "\r\n"
+        body = f'''~{self.requestline}\r\n'''
     
         return status, headers, body
     

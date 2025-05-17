@@ -1,1 +1,5 @@
 PyMySql==1.1.1
+cryptography==44.0.2
+debugpy==1.8.14
+# aiomysql==0.2.0
+# aiohttp==3.11.18

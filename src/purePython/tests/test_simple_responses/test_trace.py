@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 from io import BytesIO
-from pureAPI import MasterHandler
+from sync_controller import MasterHandler
 
 class Test_MasterHandler_TRACE(unittest.TestCase):
     ### METHODS TO SUPPORT UNIT TESTING ###
@@ -11,7 +11,7 @@ class Test_MasterHandler_TRACE(unittest.TestCase):
         self.mock_request.makefile = MagicMock(return_value=BytesIO())
         self.mock_client_address = ('127.0.0.1', 8080)
         self.mock_server = MagicMock()
-        self.mock_path_root = "/pureAPI"
+        self.mock_path_root = "/root_path_test"
 
         # Create a MasterHandler instance
         self.handler = MasterHandler(self.mock_request, self.mock_client_address, self.mock_server)
@@ -23,7 +23,7 @@ class Test_MasterHandler_TRACE(unittest.TestCase):
         self.handler.headers = {"Content-Type": "message/http"}
         self.handler.request_version = "HTTP/1.0"
         self.handler.command = "unit test command"
-        self.handler.requestline = "unit test requestline"
+        self.handler.requestline = "unit test requestline\r\n"
         
     def mock_routes(self, method: str, handler: str, path: str = None):
         """
@@ -40,10 +40,7 @@ class Test_MasterHandler_TRACE(unittest.TestCase):
             raise ValueError(f"Invalid method: {method}")
         
     def assert_response_contains(self):
-        self.assertIn(f"{self.handler.path}".encode("utf-8"), self.handler.wfile.getvalue())
-        self.assertIn(f"{self.handler.command}".encode("utf-8"), self.handler.wfile.getvalue())
         self.assertIn(f"{self.handler.requestline}".encode("utf-8"), self.handler.wfile.getvalue())
-        self.assertIn(f"{self.handler.request_version}".encode("utf-8"), self.handler.wfile.getvalue())
         self.assertIn(f"\r\n".encode("utf-8"), self.handler.wfile.getvalue())
 
     ### ACTUAL TESTING METHODS ###
@@ -57,10 +54,7 @@ class Test_MasterHandler_TRACE(unittest.TestCase):
 
         # expected values
         expected_header = ("Content-Type", "message/http")
-        expected_body = (
-            f"{self.handler.command} {self.handler.path} {self.handler.request_version}\n"
-            f"{self.handler.requestline}\r\n".encode("utf-8")
-        )
+        expected_body = (f"~{self.handler.requestline}\r\n".encode("utf-8"))
 
         # Trigger method
         self.handler.do_TRACE()

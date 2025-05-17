@@ -76,7 +76,7 @@ class IndexTables(I_BaseHandler):
 class AgentTables(I_BaseHandler):
 
     # Handlers para as rotas
-    def handle_delete_some_data(self):
+    def handle_insert_some_data(self):
         self.send_response(200)
         self.send_header("Content-type", "application/json")
         self.end_headers()

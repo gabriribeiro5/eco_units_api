@@ -5,7 +5,7 @@ class OptionsManager():
     # Inicializa as rotas de forma dinâmica
     def __init__(self, *args, **kwargs) -> None:
         self.definitions = Definitions()
-        self.all = self.load_options(self.definitions.OPTIONS_DIR)
+        self.all = self.load_options(self.definitions.ROUTE_OPTIONS)
         self.only_TRACE = self.all["TRACE"]
         self.only_OPTIONS = self.all["OPTIONS"]
         self.only_POST = self.all["POST"]

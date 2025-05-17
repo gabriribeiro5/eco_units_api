@@ -32,10 +32,10 @@ Organized by categories, priority and dependencies:
 - [x] **Fix container exit issue**  
   - [x] Test `CMD` behavior in the `Dockerfile`.  
   - [x] Validate `docker-compose` file configurations (network, volumes, etc.).  
-- [ ] **Implement proper bind mounts** for synchronization.
-- [ ] **Implement basic unit tests**
-  - [ ] `MasterHandler` tests
-  - [ ] `handler_trace_*` tests
+- [x] **Implement proper bind mounts** for synchronization.
+- [x] **Implement basic unit tests**
+  - [x] `MasterHandler` tests
+  - [x] `handler_trace_*` tests
   - [ ] `handler_options_*` tests
   - [ ] `handler_post_*` tests
 - [ ] **Add POST handlers**:
@@ -60,70 +60,37 @@ Organized by categories, priority and dependencies:
 
 ---
 
-### Week 2: Logging and Testing  
-- [ ] **Enhance logging infrastructure**:  
-  - [x] Replace plain string exceptions with proper exception classes.  
-  - [ ] Allow custom logging levels in `enableLog`.  
-  - [x] Validate log file paths and directories.  
-  - [x] Add confirmation messages for successful logging setup.  
-- [x] **Test logger in asynbc environments**.  
-- [ ] **Test logger in multi-threaded/multi-process environments**.  
-- [ ] **Refactor error handling across all endpoints and use cases**.  
-- [x] **Debug import errors in unit tests**.  
-- [ ] **Add unit tests for existing handlers and endpoints**.  
+### Week 2: Logging and Testing
+- [ ] **Enhance logging infrastructure**:
+  - [x] Replace plain string exceptions with proper exception classes.
+  - [ ] Allow custom logging levels in `enableLog`.
+  - [x] Validate log file paths and directories.
+  - [x] Add confirmation messages for successful logging setup.
+- [x] **Test logger in asynbc environments**.
+- [ ] **Test logger in multi-threaded/multi-process environments**.
+- [ ] **Refactor error handling across all endpoints and use cases**.
+- [x] **Debug import errors in unit tests**.
+- [ ] **Add unit tests for existing handlers and endpoints**.
 
 ---
 
-### Week 3: Enhancements and Dynamic Configuration  
-- [ ] **Enable dynamic port configuration** in `docker-compose` and API.  
-- [ ] **Implement centralized logging**:  
-  - [x] Add runtime logs for endpoint requests and responses.  
-  - [ ] Integrate logs into a centralized system for future scalability.  
-- [ ] **Ensure all API handlers integrate with repository interfaces**.  
-- [ ] **Add tests for edge cases** in the `TraceHandler` and unified request handler.  
+### Week 3: Enhancements and Dynamic Configuration
+- [ ] **Enable dynamic port configuration** in `docker-compose` and API.
+- [ ] **Implement centralized logging**:
+  - [x] Add runtime logs for endpoint requests and responses.
+  - [ ] Integrate logs into a centralized system for future scalability.
+- [ ] **Ensure all API handlers integrate with repository interfaces**.
+- [ ] **Add tests for edge cases** in the `TraceHandler` and unified request handler.
 
 ---
 
-### Week 4: Testing and Final Adjustments  
-- [ ] **Validate CRUD handler functionality** with integration tests.  
-- [ ] **Review test coverage** and increase it where necessary.  
-- [ ] **Perform stress and performance testing** on the unified handler.  
-- [ ] **Perform a full API code review**:  
-  - [ ] Refactor code for readability and maintainability.  
-  - [ ] Document all endpoints, request/response structures, and logging mechanisms.  
-
----
-
-## **Database Tasks**
-
-### **High Priority**
-- [ ] Add timestamps and logs:
-  - [ ] Include `created_at` and `updated_at` in necessary tables.
-  - [ ] Modify `agent_input.date_time` to serve as `created_at`.
-- [ ] Implement table listener
-  - [ ] Create trigger and table: `agent_change_log`
-- [ ] Add repository interfaces for **Entities**:
-  - [ ] Align repository methods with API use cases.
-
-### **Medium Priority**
-- [ ] Integrate database logic into API endpoints.
-
----
-
-## **Eco Unit Tasks**
-
-### **High Priority**
-- [ ] Update Eco Unit code:
-  - [ ] Collect self-diagnostics.
-  - [ ] Manage local storage for collected data.
-  - [ ] Implement Wi-Fi scanning and connectivity.
-  - [ ] Develop a web client for server communication.
-  - [ ] Update constants and variables from server configurations.
-- [ ] Improve rainforest simulation:
-  - [ ] Add methods for enhanced logic and user interaction.
-  - [ ] Integrate communication features.
-
----
+### Week 4: Testing and Final Adjustments
+- [ ] **Validate CRUD handler functionality** with integration tests.
+- [ ] **Review test coverage** and increase it where necessary.
+- [ ] **Perform stress and performance testing** on the unified handler.
+- [ ] **Perform a full API code review**:
+  - [ ] Refactor code for readability and maintainability.
+  - [ ] Document all endpoints, request/response structures, and logging mechanisms.
 
 ## **Technical Enhancements**
 
