@@ -1,5 +1,4 @@
 from utils.config import Definitions
-from utils.logger import log_running_and_done
 import logging
 
 class I_SyncDBConnector():

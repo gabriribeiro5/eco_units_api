@@ -10,7 +10,12 @@ Organized by categories, priority and dependencies:
 - [x] db container on compose
 - [x] db sync connector (pymysql)
 - [x] sync db setup
-- [ ] async simple_responses (aiohttp)
+- [ ] feat(async_mode): aiohttp + aiomysql
+  - [x] Create directory for controllers (sync/async)
+  - [x] Main uses config.ASYNC_MODE to choose between sync/async controllers
+  - [x] Make logger create new file every_execution
+  - [ ] Implement aiomysql connectors and db setup
+  - [ ] Implement aiohttp server
 - [ ] reverse proxy (NGINX)
 - [ ] Create Server templates at python_spells
   - [ ] HTTPServer + PyMySQL

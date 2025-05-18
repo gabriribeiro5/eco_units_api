@@ -33,8 +33,8 @@ If you haven't installed Docker yet, follow the official installation guides:
 💡 Make sure to start Docker after installation and verify it's working by running:
 
 ```bash
-docker --version
-docker compose version
+    docker --version
+    docker compose version
 ```
 
 #### 🤖 Commitizen (CLI tool)

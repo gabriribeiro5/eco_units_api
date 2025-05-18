@@ -7,7 +7,7 @@ import logging
 import inspect
 from pathlib import Path
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import functools
 from utils.config import Definitions
     
@@ -48,9 +48,19 @@ class LogSetup():
         logFilePathAndName = self.logDir / self.logFile
 
         # Check if enableLog has been recently activated
-        modification_time = os.path.getmtime(logFilePathAndName)
-        current_datetime = datetime.now()
-        time_delta = current_datetime - datetime.fromtimestamp(modification_time)
+        try:
+            modification_time = os.path.getmtime(logFilePathAndName)
+            current_datetime = datetime.now()
+            time_delta = current_datetime - datetime.fromtimestamp(modification_time)
+        except Exception as e:
+            time_delta = timedelta(seconds=5) # total_seconds > 2
+        if time_delta.total_seconds() > 2:
+            run_tests = True
+        else:
+            run_tests = False
+
+        # Create file if doesn't exist
+        f = open(logFilePathAndName, "a")
         
         # Apply configuration
         try:
@@ -83,7 +93,7 @@ class LogSetup():
             raise msg
         
         # Run tests while avoiding multiple test executions
-        if time_delta.total_seconds() > 2:
+        if run_tests:
             self.runTests(logFilePathAndName)
 
     def runTests(self, logFilePathAndName):

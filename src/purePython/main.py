@@ -1,13 +1,15 @@
 from utils.config import Definitions
 from utils.logger import LogSetup
-from sync_controller import WakeUp
+from controllers.sync_controller import WakeUp
+from controllers.async_controller import AsyncWakeUp
 import logging
 import debugpy
+import asyncio
 
-def run():
+async def run():
     logger = LogSetup()
     config = Definitions()
-    controller = WakeUp()
+    controller = WakeUp() if config.ASYNC_MODE else AsyncWakeUp()
     
     logger.enableLog(config.LOG_DIR, config.LOG_FILE_NAME)
     
@@ -20,4 +22,4 @@ def run():
     controller.startup_routine()
 
 if __name__ == "__main__":
-    run()
+    asyncio.run(run()) 

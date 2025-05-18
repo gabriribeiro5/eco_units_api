@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 from io import BytesIO
-from sync_controller import MasterHandler
+from controllers.sync_controller import MasterHandler
 
 class Test_DB_setup(unittest.TestCase):
     #######################################

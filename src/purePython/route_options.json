@@ -1,7 +1,7 @@
 {
     "TRACE": {
         "_comment": "TRACE is used for diagnostics. It simply returns a diagnostic trace that logs data from the request-response cycle",
-        "/sync_api": {"method": "handle_trace",
+        "api": {"method": "handle_trace",
             "used_headers": {"Content-Type": "text/plain"},
             "parameters": {},
             "target_agents": ["backuser_admin"],
@@ -11,14 +11,14 @@
     },
     "OPTIONS": {
         "_comment": "OPTIONS is used to describe the communication options for the target resource. It helps the client understand what methods and headers are allowed",
-        "/sync_api": {"method": "handle_options_for_unauthenticated_client",
+        "api": {"method": "handle_options_for_unauthenticated_client",
             "used_headers": {"Content-Type": "application/json"},
             "parameters": {"agent_type": "(list) ecounit, customer, backuser or backuser_admin"},
             "target_agents": ["customer", "backuser", "backuser_admin"],
             "status": "require improvements",
             "description": "Returns the API implemented options and their details.\n Tailored details for each egent might be implemented in the future"
         },
-        "/sync_api/backuser": {"method": "handle_options_for_backuser",
+        "api/backuser": {"method": "handle_options_for_backuser",
             "used_headers": {"Content-Type": "application/json"},
             "parameters": {"agent_type": "(str) ecounit, customer, backuser or backuser_admin"},
             "target_agents": ["customer", "backuser", "backuser_admin"],
@@ -27,7 +27,7 @@
         }
     },
     "POST": {
-        "/sync_api/ecounit": {"method": "handle_post_ecounit",
+        "api/ecounit": {"method": "handle_post_ecounit",
             "used_headers": {"Content-Type": "application/json",
                 "Accept-Post":"application/json"
             },
@@ -39,7 +39,7 @@
             "description": "Create an eco unit then return its id and temporary token. If ecounit_id is provided, return new temporary token"
         },
 
-        "/sync_api/ecounit/signature_request": {"method": "handle_post_ecounit_signature_request",
+        "api/ecounit/signature_request": {"method": "handle_post_ecounit_signature_request",
             "used_headers": {"Content-Type": "application/json",
                 "Accept-Post":"application/json"
             },
@@ -51,28 +51,28 @@
             "description": "If ecounit is disabled and token is valid, return unit's encrypted signature"
         },
         
-        "/sync_api/backuser": {"method": "handle_post_backuser",
+        "api/backuser": {"method": "handle_post_backuser",
             "parameters": {},
             "target_agents": ["backuser", "backuser_admin"],
             "status": "to do",
             "description": "create a backoffice user"
         },
 
-        "/sync_api/backuser/enabler_token_request": {"method": "handle_post_backuser_enabler_token_request",
+        "api/backuser/enabler_token_request": {"method": "handle_post_backuser_enabler_token_request",
             "parameters": {"user_email": "(str): required"},
             "target_agents": ["backuser"],
             "status": "to do",
             "description": "If email is in backuser table, send validation link (token attached) to this address with explicit expire date and hidden token"
         },
 
-        "/sync_api/backuser/validate_token": {"method": "handle_post_backuser_validate_token",
+        "api/backuser/validate_token": {"method": "handle_post_backuser_validate_token",
             "parameters": {"token": "(encrypted string): required"},
             "target_agents": ["backuser"],
             "status": "to do",
             "description": "If token is valid, redirect to link save_secret"
         },
 
-        "/sync_api/backuser/save_secret": {"method": "handle_post_backuser_save_secret",
+        "api/backuser/save_secret": {"method": "handle_post_backuser_save_secret",
             "parameters": {"token": "(encrypted string): required",
                 "secret":"(encrypted string): required",
                 "confirmed_secret":"(encrypted string): optional"
@@ -82,35 +82,35 @@
             "description": "If token is still valid and secrets match, save secret. Log warning if the optional secret was not provided, save secret anyway."
         },
 
-        "/sync_api/backuser/request_secret_reset": {"method": "handle_post_backuser_request_secret_reset",
+        "api/backuser/request_secret_reset": {"method": "handle_post_backuser_request_secret_reset",
             "parameters": {"email": "(encrypted string): required"},
             "target_agents": ["backuser"],
             "status": "to do",
             "description": "If email is in customer table, send validation link (token attached) to this address with explicit expire date and hidden token"
         },
 
-        "/sync_api/customer": {"method": "handle_post_ecounit",
+        "api/customer": {"method": "handle_post_ecounit",
             "parameters": {},
             "target_agents": ["backuser"],
             "status": "to do",
             "description": "create a customer"
         },
 
-        "/sync_api/customer/enabler_token_request": {"method": "handle_post_customer_enabler_token_request",
+        "api/customer/enabler_token_request": {"method": "handle_post_customer_enabler_token_request",
             "parameters": {"user_email": "(str): required"},
             "target_agents": ["customer"],
             "status": "to do",
             "description": "If email is in customer table, send validation link (token attached) to this address with explicit expire date and hidden token"
         },
 
-        "/sync_api/customer/validate_token": {"method": "handle_post_customer_validate_token",
+        "api/customer/validate_token": {"method": "handle_post_customer_validate_token",
             "parameters": {"token": "(encrypted string): required"},
             "target_agents": ["customer"],
             "status": "to do",
             "description": "If token is valid, redirect to link save_secret"
         },
 
-        "/sync_api/customer/save_secret": {"method": "handle_post_customer_save_secret",
+        "api/customer/save_secret": {"method": "handle_post_customer_save_secret",
             "parameters": {"token": "(encrypted string): required",
                 "secret":"(encrypted string): required",
                 "confirmed_secret":"(encrypted string): optional"
@@ -120,35 +120,35 @@
             "description": "If token is still valid and secrets match, save secret. Log warning if the optional secret was not provided, save secret anyway."
         },
 
-        "/sync_api/customer/request_secret_reset": {"method": "handle_post_customer_request_secret_reset",
+        "api/customer/request_secret_reset": {"method": "handle_post_customer_request_secret_reset",
             "parameters": {"email": "(encrypted string): required"},
             "target_agents": ["customer"],
             "status": "to do",
             "description": "If email is in customer table, send validation link (token attached) to this address with explicit expire date and hidden token"
         },
 
-        "/sync_api/ecounit/diagnostic": {"method": "handle_post_unit_diagnostic",
+        "api/ecounit/diagnostic": {"method": "handle_post_unit_diagnostic",
             "parameters": {},
             "target_agents": ["ecounit"],
             "status": "to do",
             "description": "Save unit's diagnostics. Returns transaction identifier (agent_input)"
         },
         
-        "/sync_api/ecounit/configuration": {"method": "handle_post_unit_config",
+        "api/ecounit/configuration": {"method": "handle_post_unit_config",
             "parameters": {},
             "target_agents": ["ecounit"],
             "status": "to do",
             "description": "Save unit's configuration. Returns transaction identifier (agent_input)"
         },
 
-        "/sync_api/ecounit/environment_state": {"method": "handle_post_unit_environment_state",
+        "api/ecounit/environment_state": {"method": "handle_post_unit_environment_state",
             "parameters": {},
             "target_agents": ["ecounit"],
             "status": "to do",
             "description": "Save unit's environment state. Returns transaction identifier (agent_input)"
         },
 
-        "/sync_api/backuser/unit_diagnostics": {"method": "handle_post_unit_diagnostics_from_backuser",
+        "api/backuser/unit_diagnostics": {"method": "handle_post_unit_diagnostics_from_backuser",
             "parameters": {"unit_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None",
                 "customer_id": "(list): optional, default None",
@@ -159,7 +159,7 @@
             "description": "Send unit's diagnostics to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
         },
 
-        "/sync_api/backuser/unit_configurations": {"method": "handle_post_unit_configurations_from_backuser",
+        "api/backuser/unit_configurations": {"method": "handle_post_unit_configurations_from_backuser",
             "parameters": {"unit_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None",
                 "customer_id": "(list): optional, default None",
@@ -170,7 +170,7 @@
             "description": "Send unit's configuration to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
         },
 
-        "/sync_api/customer/unit_diagnostics": {"method": "handle_post_unit_diagnostics_from_customer",
+        "api/customer/unit_diagnostics": {"method": "handle_post_unit_diagnostics_from_customer",
             "parameters": {"customer_id": "(list): required",
                 "unit_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None"
@@ -180,7 +180,7 @@
             "description": "Send unit's diagnostics to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
         },
 
-        "/sync_api/customer/unit_configurations": {"method": "handle_post_unit_configurations_from_customer",
+        "api/customer/unit_configurations": {"method": "handle_post_unit_configurations_from_customer",
             "parameters": {"customer_id": "(list): required",
                 "unit_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None"
@@ -191,7 +191,7 @@
         }
     },
     "GET": {
-        "/sync_api/backuser/login": {"method": "handle_get_backuser_login",
+        "api/backuser/login": {"method": "handle_get_backuser_login",
             "parameters": {"user_email": "(str): required",
                 "password": "(encrypted string): required"
             },
@@ -200,7 +200,7 @@
             "description": "Returns session token"
         },
         
-        "/sync_api/customer/login": {"method": "handle_get_customer_login",
+        "api/customer/login": {"method": "handle_get_customer_login",
             "parameters": {"user_email": "(str): required",
                 "password": "(encrypted string): required"
             },
@@ -209,7 +209,7 @@
             "description": "Returns session token"
         },
 
-        "/sync_api/ecounit/login": {"method": "handle_get_ecounit_login",
+        "api/ecounit/login": {"method": "handle_get_ecounit_login",
             "parameters": {"device_ip": "(str): required",
                 "secret_token": "(encrypted string): required"
             },
@@ -218,21 +218,21 @@
             "description": "Returns session token"
         },
 
-        "/sync_api/ecounit/configuration/update": {"method": "handle_get_ecounit_config_update",
+        "api/ecounit/configuration/update": {"method": "handle_get_ecounit_config_update",
             "parameters": {"ecounit_id": "(uuid): required"},
             "target_agents": ["ecounit"],
             "status": "to do",
             "description": "Returns the latest configuration for a given eco unit"
         },
 
-        "/sync_api/ecounit/configuration/rollback": {"method": "handle_get_ecounit_config_rollback",
+        "api/ecounit/configuration/rollback": {"method": "handle_get_ecounit_config_rollback",
             "parameters": {"ecounit_id": "(uuid): required"},
             "target_agents": ["ecounit"],
             "status": "to do",
             "description": "Returns the previous configuration for a given eco unit"
         },
 
-        "/sync_api/backuser/unit_configurations": {"method": "handle_get_ecounit_configuration_for_backuser",
+        "api/backuser/unit_configurations": {"method": "handle_get_ecounit_configuration_for_backuser",
             "parameters": {"ecounit_id": "(uuid list): optional",
                 "unit_location": "(str list): optional",
                 "evironment_category": "(str list): optional"
@@ -242,7 +242,7 @@
             "description": "Returns a set of ecounit configurations matching the given parameters"
         },
 
-        "/sync_api/backuser/unit_diagnostics": {"method": "handle_get_ecounit_diagnostics_for_backuser",
+        "api/backuser/unit_diagnostics": {"method": "handle_get_ecounit_diagnostics_for_backuser",
             "parameters": {"ecounit_id": "(uuid list): optional",
                 "unit_location": "(str list): optional",
                 "evironment_category": "(str list): optional"
@@ -252,7 +252,7 @@
             "description": "Returns a set of ecounit diagnostics matching the given parameters"
         },
 
-        "/sync_api/backuser/unit_environment_states": {"method": "handle_get_ecounit_environment_states_for_backuser",
+        "api/backuser/unit_environment_states": {"method": "handle_get_ecounit_environment_states_for_backuser",
             "parameters": {"ecounit_id": "(uuid list): optional",
                 "unit_location": "(str list): optional",
                 "evironment_category": "(str list): optional"
@@ -263,14 +263,14 @@
         }
     },
     "PUT": {
-        "/sync_api/backuser/unit_diagnostic/{diagnostic_id}": {"method": "handle_put_unit_diagnostics_from_backuser",
+        "api/backuser/unit_diagnostic/{diagnostic_id}": {"method": "handle_put_unit_diagnostics_from_backuser",
             "parameters": {},
             "target_agents": ["backuser"],
             "status": "to do",
             "description": "Send unit's diagnostics to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
         },
 
-        "/sync_api/backuser/unit_configurations": {"method": "handle_post_unit_configurations_from_backuser",
+        "api/backuser/unit_configurations": {"method": "handle_post_unit_configurations_from_backuser",
             "parameters": {"unit_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None",
                 "customer_id": "(list): optional, default None",
@@ -281,7 +281,7 @@
             "description": "Send unit's configuration to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
         },
 
-        "/sync_api/customer/unit_diagnostics": {"method": "handle_post_unit_diagnostics_from_customer",
+        "api/customer/unit_diagnostics": {"method": "handle_post_unit_diagnostics_from_customer",
             "parameters": {"customer_id": "(list): required",
                 "unit_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None"
@@ -291,7 +291,7 @@
             "description": "Send unit's diagnostics to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
         },
 
-        "/sync_api/customer/unit_configurations": {"method": "handle_post_unit_configurations_from_customer",
+        "api/customer/unit_configurations": {"method": "handle_post_unit_configurations_from_customer",
             "parameters": {"customer_id": "(list): required",
                 "unit_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None"
@@ -302,7 +302,7 @@
         }
     },
     "PATCH": {        
-        "/sync_api/backuser/save_new_secret": {"method": "handle_patch_backuser_save_new_secret",
+        "api/backuser/save_new_secret": {"method": "handle_patch_backuser_save_new_secret",
             "parameters": {"token": "(encrypted string): required",
                 "secret":"(encrypted string): required",
                 "confirmed_secret":"(encrypted string): required"
@@ -312,21 +312,21 @@
             "description": "If token is still valid and secrets match, save secret. All parameters are required."
         },
         
-        "/sync_api/ecounit/disable": {"method": "handle_patch_ecounit_disable",
+        "api/ecounit/disable": {"method": "handle_patch_ecounit_disable",
             "parameters": {"ecounit_id": "(uuid): required"},
             "target_agents": ["backuser"],
             "status": "to do",
             "description": "Change agent status. Returns confirmation message."
         },
         
-        "/sync_api/backuser/disable": {"method": "handle_patch_backuser_disable",
+        "api/backuser/disable": {"method": "handle_patch_backuser_disable",
             "parameters": {"backuser_id": "(uuid): required"},
             "target_agents": ["backuser_admin"],
             "status": "to do",
             "description": "Change agent status. Returns confirmation message."
         },
         
-        "/sync_api/customer/disable": {"method": "handle_patch_customer_disable",
+        "api/customer/disable": {"method": "handle_patch_customer_disable",
             "parameters": {"customer_id": "(uuid): required"},
             "target_agents": ["backuser"],
             "status": "to do",
@@ -335,38 +335,38 @@
     },
     "DELETE": {
         "_comment": "DELETE is used to remove one or more item from an entity",
-        "/sync_api/backuser": {"method": "handle_delete_backuser",
+        "api/backuser": {"method": "handle_delete_backuser",
             "parameters": {},
             "target_agents": ["backuser_admin"],
             "status": "to do",
             "description": "Delete backuser"
         },
-        "/sync_api/customer": {"method": "handle_delete_customer",
+        "api/customer": {"method": "handle_delete_customer",
             "parameters": {},
             "target_agents": ["backuser", "backuser_admin"],
             "status": "to do",
             "description": "Delete customer"
         },
-        "/sync_api/ecounit": {"method": "handle_delete_ecounit",
+        "api/ecounit": {"method": "handle_delete_ecounit",
             "parameters": {},
             "target_agents": ["backuser", "backuser_admin"],
             "status": "to do",
             "description": "Delete ecounit"
         },
 
-        "/sync_api/ecounit/diagnostic": {"method": "handle_delete_ecounit_diagnostic",
+        "api/ecounit/diagnostic": {"method": "handle_delete_ecounit_diagnostic",
             "parameters": {},
             "target_agents": ["backuser", "backuser_admin"],
             "status": "to do",
             "description": "Delete ecounit diagnostic"
         },
-        "/sync_api/ecounit/configuration": {"method": "handle_delete_ecounit_config",
+        "api/ecounit/configuration": {"method": "handle_delete_ecounit_config",
             "parameters": {},
             "target_agents": ["backuser", "backuser_admin"],
             "status": "to do",
             "description": "Delete ecounit configuration"
         },
-        "/sync_api/ecounit/environment_state": {"method": "handle_delete_ecounit_environment_state",
+        "api/ecounit/environment_state": {"method": "handle_delete_ecounit_environment_state",
             "parameters": {},
             "target_agents": ["backuser", "backuser_admin"],
             "status": "to do",

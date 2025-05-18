@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 from io import BytesIO
-from sync_controller import MasterHandler
+from controllers.sync_controller import MasterHandler
 from use_cases.shared._db_operations.insert import IndexTables, AgentTables, AgentInputTables
 
 class Test_Insert_into_Index_Tables(unittest.TestCase):

@@ -24,4 +24,3 @@ WORKDIR /src/eco_units_api/purePython
 
 # Run unit tests and then start the API
 CMD ["sh", "-c", "python3 -m unittest discover -s tests -p 'test_*.py' && python3 /src/eco_units_api/purePython/main.py || sh"]
-
