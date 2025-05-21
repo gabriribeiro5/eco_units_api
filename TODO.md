@@ -13,24 +13,22 @@ Organized by categories, priority and dependencies:
 - [x] feat(async_mode): aiohttp + aiomysql
   - [x] Create directory for controllers (sync/async)
   - [x] Main uses config.ASYNC_MODE to choose between sync/async controllers
-  - [x] Make logger create new file every_execution
+  - [x] Make logger create new file every execution
   - [x] Implement aiomysql connectors and db setup
   - [x] Implement aiohttp server
   - [x] Supress aiomysql query logging
 - [x] Upgrade schema's default char set from `utf8mb3` to `uf8mb4`
-- [ ] move `config.py` out of the `utils` directory
-- [ ] reverse proxy (NGINX)
+- [ ] Directory structure simplification
+  - [ ] move `config.py` out of the `utils` directory
+  - [ ] remove `purePython` dir and leave its files on `src`
 - [ ] Create Server templates at python_spells
   - [ ] HTTPServer + PyMySQL
   - [ ] aiohttp + aiomysql
   - [ ] uvicorn + starlete (and pydantic probably)
   - [ ] fastapi
-- [ ] db async connector (aiomysql)
-- [ ] async db_setup
-- [ ] logging creates new file on startup
-- [ ] logging creates new file every day
-- [ ] sync unit tests
+- [ ] reverse proxy (NGINX)
 - [ ] async unit tests
+- [ ] logging creates new file every day
 
 ### AI LIST:
 ### Week 1: Foundation and Deployment  
