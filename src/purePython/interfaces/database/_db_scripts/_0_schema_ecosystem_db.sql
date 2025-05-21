@@ -7,11 +7,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema ecosystem_db
 -- -----------------------------------------------------
-
--- -----------------------------------------------------
--- Schema ecosystem_db
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `ecosystem_db` DEFAULT CHARACTER SET utf8 ;
+CREATE SCHEMA IF NOT EXISTS `ecosystem_db` DEFAULT CHARACTER SET utf8mb4 ;
 USE `ecosystem_db` ;
 
 -- -----------------------------------------------------

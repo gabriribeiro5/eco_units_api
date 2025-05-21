@@ -21,7 +21,9 @@ VALUES
 'Ops... Physical component not working'),
 (3,
 'NOT INSTALLED',
-'The referenced eco_unit does not have this physical component');
+'The referenced eco_unit does not have this physical component')
+ON DUPLICATE KEY UPDATE sensor_status_name = sensor_status_name,
+ sensor_status_description = sensor_status_description;
 
 select * from config_status;
 INSERT INTO `config_status`
@@ -40,7 +42,9 @@ VALUES
 "configuration update data wating to be sent"),
 (4,
 "EXPIRED",
-"configuration update data that has not been (and will not be) sent to eco_unit");
+"configuration update data that has not been (and will not be) sent to eco_unit")
+ON DUPLICATE KEY UPDATE status_name = status_name,
+ status_description = status_description;
 
 select * from climate_season;
 INSERT INTO `climate_season`
@@ -54,7 +58,8 @@ VALUES
 (3,
 "WINTER"),
 (4,
-"SRPING");
+"SRPING")
+ON DUPLICATE KEY UPDATE season_name = VALUES(season_name);
 
 select * from ecosystem_category;
 INSERT INTO ecosystem_category
@@ -77,4 +82,6 @@ VALUES
 'Why would you want it'),
 (5,
 'PRAIRIE',
-'Haja mato');
+'Haja mato')
+ON DUPLICATE KEY UPDATE category_name = category_name,
+ category_description = category_description;
