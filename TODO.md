@@ -10,12 +10,15 @@ Organized by categories, priority and dependencies:
 - [x] db container on compose
 - [x] db sync connector (pymysql)
 - [x] sync db setup
-- [ ] feat(async_mode): aiohttp + aiomysql
+- [x] feat(async_mode): aiohttp + aiomysql
   - [x] Create directory for controllers (sync/async)
   - [x] Main uses config.ASYNC_MODE to choose between sync/async controllers
   - [x] Make logger create new file every_execution
-  - [ ] Implement aiomysql connectors and db setup
-  - [ ] Implement aiohttp server
+  - [x] Implement aiomysql connectors and db setup
+  - [x] Implement aiohttp server
+  - [x] Supress aiomysql query logging
+- [x] Upgrade schema's default char set from `utf8mb3` to `uf8mb4`
+- [ ] move `config.py` out of the `utils` directory
 - [ ] reverse proxy (NGINX)
 - [ ] Create Server templates at python_spells
   - [ ] HTTPServer + PyMySQL
