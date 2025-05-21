@@ -2,20 +2,22 @@ from utils.config import Definitions
 import logging
 
 class I_AsyncDBConnector():
-    async def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:
+        self.config = Definitions()
+        self.DB_HOST = self.config.DB_HOST
+        self.DB_USER = self.config.DB_USER
+        self.DB_SECRET = self.config.DB_SECRET
+        self.DB_NAME = self.config.DB_NAME
+        self.NUM_BATCHES = self.config.NUM_BATCHES
         super().__init__(*args, **kwargs)
-        self.definitions = Definitions()
-        self.DB_HOST = self.definitions.DB_HOST,
-        self.DB_USER = self.definitions.DB_USER,
-        self.DB_SECRET = self.definitions.DB_SECRET,
-        self.DB_NAME = self.definitions.DB_NAME,
-        
+
+    async def initialize_async_db_connector(self):
         logging.info("loading db scripts")
         self.script_schema_ecosystem_db = await self._load_sql(self.config._DB_SCRIPTS_DIR / "_0_schema_ecosystem_db.sql")
         self.script_insert_into_index_tables = await self._load_sql(self.config._DB_SCRIPTS_DIR / "_1_insert_into_index_tables.sql")
         self.script_insert_into_agent_tables = await self._load_sql(self.config._DB_SCRIPTS_DIR / "_2_insert_into_agent_tables.sql")
         self.script_insert_into_agent_input_tables = await self._load_sql(self.config._DB_SCRIPTS_DIR / "_3_insert_into_agent_input_tables.sql")
-
+    
     async def _load_sql(self, filename):
         '''
         Open and read the file as a single buffer

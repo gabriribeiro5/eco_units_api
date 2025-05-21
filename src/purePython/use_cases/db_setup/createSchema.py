@@ -1,15 +1,15 @@
 from interfaces.handler import I_BaseHandler
-from connectors.async_aiomysql import AsyncronousAIOMySQL
-from utils.logger import async_log_running_and_done
+from connectors.sync_pymysql import SyncronousPyMySQL
+from utils.logger import log_running_and_done
 
 class SchemaSetupHandler(I_BaseHandler):
     def __init__(self):
-        self.async_db_conn = AsyncronousAIOMySQL()
+        self.db_conn = SyncronousPyMySQL()
 
-    @async_log_running_and_done
-    async def schema_setup(self):
-        self.async_db_conn.create_schema()
-        self.async_db_conn.insert_into_index_tables()
+    @log_running_and_done
+    def schema_setup(self):
+        self.db_conn.create_schema()
+        self.db_conn.insert_into_index_tables()
 
         # Expected response variables
         status = 200

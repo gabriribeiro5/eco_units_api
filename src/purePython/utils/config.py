@@ -25,9 +25,10 @@ class Definitions():
             "backoffice_sessions": 30 # group_name: minutes
         }
         self.LOGGING_ENABLED = True
-        self.ASYNC_MODE = False
+        self.ASYNC_MODE = True
         self.DEBUG_MODE = False
         self.SERVER_PORT = 8080
+        self.DEBUG_PORT = 5678
 
         ### DATABASE  ### 
         self.DB_HOST = "mysql" # "127.0.0.1"
@@ -35,3 +36,4 @@ class Definitions():
         self.DB_SECRET = "s3cr37@dblab73"
         self.DB_NAME = "ecosystem_db"
         self.DB_PORT = 3306
+        self.NUM_BATCHES = 10

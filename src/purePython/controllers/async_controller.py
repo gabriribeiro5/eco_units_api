@@ -1,26 +1,26 @@
-from http.server import HTTPServer
+from aiohttp import web
 from utils.config import Definitions
 from out_of_process.auth import AuthManager as Auth
-from use_cases.db_setup.createSchema import SchemaSetupHandler
+from use_cases.db_setup.asyncCreateSchema import SchemaSetupHandler
 from use_cases.simple_responses.trace import TraceHandler as Trace
 from use_cases.simple_responses.options import OptionsHandler as Options
 import logging
 
-class MasterHandler(Auth, Trace, Options):
-    def __init__(self, request, client_address, server):
+class AsyncMasterHandler(Auth, Trace, Options):
+    async def __init__(self, request, client_address, server):
         # set protocol_version to HTTP/1.1 to enable automatic keepalive
         self.protocol_version = "HTTP/1.1"
         super().__init__(request, client_address, server)
 
-    def test(self):
+    async def test(self):
         pass
     
-    def require_authentication(self):
+    async def require_authentication(self):
         if not self.is_authenticated(self):
             self.send_error(401, "Unauthorized")
             return
     
-    def run_handler(self, handler_name, *args, **kwargs):
+    async def run_handler(self, handler_name, *args, **kwargs):
         logging.info(f"calling handler: {handler_name}")
         if handler_name and hasattr(self, handler_name):
             handler = getattr(self, handler_name)
@@ -33,7 +33,7 @@ class MasterHandler(Auth, Trace, Options):
             raise ValueError(err_msg)
     
     # Presenter
-    def format_and_send(self, response_data):
+    async def format_and_send(self, response_data):
         logging.info(f"formating and sending response")
         status, headers, body = response_data
         self.send_response(status)
@@ -142,20 +142,23 @@ class MasterHandler(Auth, Trace, Options):
 
 
 class AsyncWakeUp():
-    async def startup_routine(self):
-        await self._database_setup()
-        await self._server_startup()
-
-    async def _database_setup(self):
-        db = SchemaSetupHandler()
-        db.schema_setup()
-
-    async def _server_startup(self):
+    def startup_routine(self):
         config = Definitions()
-        server_address = ("", config.SERVER_PORT)
-        httpd = HTTPServer(server_address, MasterHandler)
+        app = web.Application()
+        app.add_routes([web.get('/', self.hello)])
+        app.on_startup.append(self.database_setup)
+        # Suppress aiomysql query logs
+        logging.getLogger('aiomysql').setLevel(logging.WARNING)
         logging.info(f"Starting server on port {config.SERVER_PORT}...")
-        httpd.serve_forever()
+        web.run_app(app, port=config.SERVER_PORT)
+
+    async def database_setup(self, app):
+        db = SchemaSetupHandler()
+        await db.initialize()
+        await db.schema_setup()
+
+    async def hello(request):
+        return web.Response(text="Hello, world")
 
 if __name__ == "__main__":
     print("You are calling the Controller. Call main.py instead.")
