@@ -21,15 +21,15 @@ Organized by categories, priority and dependencies:
 - [x] Directory structure simplification
   - [x] move `config.py` out of the `utils` directory
   - [x] remove `purePython` dir and leave its files on `src`
-- [ ] Create Server templates at python_spells
-  - [ ] HTTPServer + PyMySQL
-  - [ ] aiohttp + aiomysql
-  - [ ] uvicorn + starlete (and pydantic probably)
-  - [ ] fastapi
 - [ ] reverse proxy (NGINX)
 - [ ] async unit tests
 - [ ] async simple_responses
 - [ ] logging creates new file every day
+- [ ] Create Server templates at python_spells
+  - [x] HTTPServer + PyMySQL
+  - [x] aiohttp + aiomysql
+  - [ ] uvicorn + starlete (and pydantic probably)
+  - [ ] fastapi
 
 ### AI LIST:
 ### Week 1: Foundation and Deployment  
