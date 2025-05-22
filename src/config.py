@@ -4,7 +4,7 @@ import time
 class Definitions():
     def __init__(self):
         ### DIRECTORIES ###
-        self.SRC_DIR = Path(__file__).resolve().parent.parent
+        self.SRC_DIR = Path(__file__).resolve().parent
         self.LOG_DIR = "/var/log/eco_units_api"
         self.LOG_FILE_NAME = f"{time.strftime("%Y%m%d_%H%M%S")}"
         self.ROUTE_OPTIONS = self.SRC_DIR / "route_options.json"

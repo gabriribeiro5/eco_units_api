@@ -9,7 +9,7 @@ from pathlib import Path
 import os
 from datetime import datetime, timedelta
 import functools
-from utils.config import Definitions
+from config import Definitions
     
 class LogSetup():
     '''

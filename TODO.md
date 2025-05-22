@@ -18,9 +18,9 @@ Organized by categories, priority and dependencies:
   - [x] Implement aiohttp server
   - [x] Supress aiomysql query logging
 - [x] Upgrade schema's default char set from `utf8mb3` to `uf8mb4`
-- [ ] Directory structure simplification
-  - [ ] move `config.py` out of the `utils` directory
-  - [ ] remove `purePython` dir and leave its files on `src`
+- [x] Directory structure simplification
+  - [x] move `config.py` out of the `utils` directory
+  - [x] remove `purePython` dir and leave its files on `src`
 - [ ] Create Server templates at python_spells
   - [ ] HTTPServer + PyMySQL
   - [ ] aiohttp + aiomysql
@@ -28,6 +28,7 @@ Organized by categories, priority and dependencies:
   - [ ] fastapi
 - [ ] reverse proxy (NGINX)
 - [ ] async unit tests
+- [ ] async simple_responses
 - [ ] logging creates new file every day
 
 ### AI LIST:

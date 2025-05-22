@@ -1,6 +1,6 @@
 import pymysql # type: ignore
 from interfaces.database.sync_connector import I_SyncDBConnector
-from utils.config import Definitions
+from config import Definitions
 from utils.logger import log_running_and_done
 import logging
 

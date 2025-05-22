@@ -1,4 +1,4 @@
-from utils.config import Definitions
+from config import Definitions
 from utils.logger import LogSetup
 from controllers.sync_controller import WakeUp
 from controllers.async_controller import AsyncWakeUp
