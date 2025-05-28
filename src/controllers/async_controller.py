@@ -157,7 +157,7 @@ class AsyncWakeUp():
         await db.initialize()
         await db.schema_setup()
 
-    async def hello(request):
+    async def hello(self, request):
         return web.Response(text="Hello, world")
 
 if __name__ == "__main__":

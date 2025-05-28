@@ -21,11 +21,15 @@ Organized by categories, priority and dependencies:
 - [x] Directory structure simplification
   - [x] move `config.py` out of the `utils` directory
   - [x] remove `purePython` dir and leave its files on `src`
-- [ ] reverse proxy (NGINX)
+- [ ] feat(NGINX): reverse proxy (incomplete)
+  - [x] Create docker-compose service
+  - [x] Create nginx.conf
+  - [ ] Update documentation
+  - [ ] API gets the container_name to set logfile name
 - [ ] async unit tests
 - [ ] async simple_responses
 - [ ] logging creates new file every day
-- [ ] Create Server templates at python_spells
+- [ ] Create server templates at python_spells
   - [x] HTTPServer + PyMySQL
   - [x] aiohttp + aiomysql
   - [ ] uvicorn + starlete (and pydantic probably)

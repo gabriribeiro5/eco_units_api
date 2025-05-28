@@ -122,21 +122,21 @@ Run the iteractive shell (option 1 or 2), and then run:
 2. **Testing routes and methods** 
 On **Bash** or **CMD**:
 ```bash
-    curl -v -X TRACE http://localhost:8080/sync_api
+    curl -v -X TRACE http://localhost:9999/api
 ```
 
 On **PowerShell**, use native method:
 ```bash
-    Invoke-WebRequest -Uri http://localhost:8080/sync_api -Method TRACE -Verbose
+    Invoke-WebRequest -Uri http://localhost:9999/api -Method TRACE -Verbose
 ```
 or run the actual curl file:
 ```bash
-    & "C:\path\to\curl.exe" -v -X TRACE http://localhost:8080/sync_api
+    & "C:\path\to\curl.exe" -v -X TRACE http://localhost:9999/api
 ```
 On **Wsl**:
 ```bash
     sudo apt update && sudo apt install curl
-    curl -v -X TRACE http://localhost:8080/sync_api
+    curl -v -X TRACE http://localhost:9999/api
 ```
 
 ### ✅ Commit Message Guidelines
