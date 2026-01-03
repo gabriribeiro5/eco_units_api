@@ -1,4 +1,4 @@
-Eco Units Project  
+Cyclobots Project  
 Reciprocal License (Source Sharing Required)
 Copyright © 2025 Gabriel Ribeiro Emegildio
 
@@ -7,12 +7,12 @@ This software (including all associated source code, binaries, documentation, an
 This license applies to the following components:
 
 1. API Server (Python) — including but not limited to backend source code, logic, and data models.
-2. Eco Unit Client Software (Arduino/C++) — including embedded firmware, libraries, and device logic.
+2. Cyclobot Client Software (Arduino/C++) — including embedded firmware, libraries, and device logic.
 
 ---
 
 Permissions:
-✔ You may use this software in Eco Unit devices you own.
+✔ You may use this software in Cyclobot devices you own.
 ✔ You may modify the source code for private use.
 ✔ You may deploy modified versions only on your own hardware.
 

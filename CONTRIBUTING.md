@@ -62,29 +62,29 @@ Execute interactive commands using Docker Desktop
 2. **Iteractively run a single container**
 On a new terminal, run the following:
 ```bash
-    docker run -p 8080:8080 -iteractive eco_units_api_image:latest
+    docker run -p 8080:8080 -iteractive cyclobots_api_image:latest
 ```
 
 3. **Accessing Docker container after running it**
 On a new terminal, run the following:
 ```bash
-    docker exec -it eco_units_api_container /bin/sh
+    docker exec -it cyclobots_api_container /bin/sh
 ```
 
 ### 🛠️ Reading, Updating and Debugging
 Understand and manipulate the application using one (or a combination) of the following options:
 
 1. **Reading logs**
-Inside the container, all logs will be written to `/var/log/eco_units_api`.
+Inside the container, all logs will be written to `/var/log/cyclobots_api`.
 This directory is bound to `\logs`, outside the container.
 
 [Tip]: If docker-compose is being used, iteractive shell is not necessary.
-Due to mount bindings on docker-compose.yml, you should be able to read from `./eco_units_api/logs/purePython.log` directly on your OS file system.
+Due to mount bindings on docker-compose.yml, you should be able to read from `./cyclobots_api/logs/purePython.log` directly on your OS file system.
 
 If you are inside the container (iteractive shell),
 use the following command to read log updates in real time:
 ```bash
-    tail -f /var/log/eco_units_api/purePython.log
+    tail -f /var/log/cyclobots_api/purePython.log
 ```
 
 2. **Editing files** 

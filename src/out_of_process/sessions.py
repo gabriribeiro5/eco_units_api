@@ -56,8 +56,8 @@ class SessionManager(I_BaseHandler):
         Maps client labels to corresponding session groups.
         """
         match client_label:  # Requires Python 3.10 or newer
-            case "eco_unit":
-                return "eco_unit_sessions"
+            case "cyclobot":
+                return "cyclobot_sessions"
             case "customer":
                 return "customer_sessions"
             case "backoffice":

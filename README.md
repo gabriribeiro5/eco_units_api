@@ -1,19 +1,25 @@
-# eco_units_api
+# cyclobots_api
 ## RESTfull API run on por <8080>
-This API collects data from IoT devices (called eco units) and provide them with configuration updates.
+This API collects data from IoT devices (called cyclobots) and provide them with configuration updates.
 
 Those devices are designed to maintain control over micro-ecosystems, leveraging from sensors (to collect data) and actuators (to interact with their environment).
 
-Foreseeable versions of this API will support human inputs, so they can interact with the database as Customer or Backoffice Agents.
+Foreseeable versions of this API will support human inputs (web or mobile apps), so they can interact with the database as Customer or Backoffice Agents.
 
-Still, the first and main purpose of this API is to provide eco units with proper support for data management and eventual behavior changes.
+Still, the first and main purpose of this API is to provide cyclobots with proper support for data management and eventual behavior changes.
+
+For a glance of what has already been done and what is to come, check out this project's backlog in the TODO.md file in the same directory of this README.md file.
+
+There, you'll see that the development proccess follows a learning roadmap that goes around topics such as "web servers", "database communication", "container orchestration", "synchronous & asynchronous models", "server gatway interfaces" and finally the project shuold evolve to use FastAPI Framework.
+
+This long roadmap aims to provide me with a solid background to work with RESTfull APIs. Specially in python.
 
 ## Design
 This API leverages from Clean Architecture principles to build a microservice.
 Modules are organized as follows:
 
 - **Entities/Interfaces**: Core business rules and models.
-    - agent: might be an eco unit, a customer or a backoffice user. They are all agents.
+    - agent: might be an cyclobot, a customer or a backoffice user. They are all agents.
     - agentInput: any database update regarding unit's configuration, self diagnostics or environment state.
     - handler: the base interface for http implementation.
 
@@ -48,10 +54,10 @@ Open a terminal in the project root directory and execute:
 The API will now be accessible at http://localhost:8080.
 
 2. **Read logs**
-All logs will be written to the /src/eco_units_api/logs.
+All logs will be written to the /src/cyclobots/logs.
 Use the following command to read log updates in real time:
 ```bash
-    tail -f /src/eco_units_api/logs/purePython.log
+    tail -f /src/cyclobots_api/logs/purePython.log
 ```
 
 3. **Stop and Restart for Changes**
@@ -79,13 +85,13 @@ Or run the Docker Desktop application.
 1. **Build the Docker Image**  
 Open a terminal in the project root directory and execute:  
 ```bash
-    docker build -t eco_units_api_image:latest .
+    docker build -t cyclobots_api_image:latest .
 ```
 
 2. **Run the Docker Container**
 Start a container from the built image with:
 ```bash
-    docker run -p 8080:8080 eco_units_api_image:latest
+    docker run -p 8080:8080 cyclobots_api_image:latest
 ```
 The API will now be accessible at http://localhost:8080.
 

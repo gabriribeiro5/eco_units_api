@@ -13,21 +13,21 @@
         "_comment": "OPTIONS is used to describe the communication options for the target resource. It helps the client understand what methods and headers are allowed",
         "api": {"method": "handle_options_for_unauthenticated_client",
             "used_headers": {"Content-Type": "application/json"},
-            "parameters": {"agent_type": "(list) ecounit, customer, backuser or backuser_admin"},
+            "parameters": {"agent_type": "(list) cyclobot, customer, backuser or backuser_admin"},
             "target_agents": ["customer", "backuser", "backuser_admin"],
             "status": "require improvements",
             "description": "Returns the API implemented options and their details.\n Tailored details for each egent might be implemented in the future"
         },
         "api/backuser": {"method": "handle_options_for_backuser",
             "used_headers": {"Content-Type": "application/json"},
-            "parameters": {"agent_type": "(str) ecounit, customer, backuser or backuser_admin"},
+            "parameters": {"agent_type": "(str) cyclobot, customer, backuser or backuser_admin"},
             "target_agents": ["customer", "backuser", "backuser_admin"],
             "status": "require improvements",
             "description": "Returns the API implemented options and their details.\n Tailored details for each egent might be implemented in the future"
         }
     },
     "POST": {
-        "api/ecounit": {"method": "handle_post_ecounit",
+        "api/cyclobot": {"method": "handle_post_cyclobot",
             "used_headers": {"Content-Type": "application/json",
                 "Accept-Post":"application/json"
             },
@@ -36,19 +36,19 @@
             },
             "target_agents": ["backuser"],
             "status": "to do",
-            "description": "Create an eco unit then return its id and temporary token. If ecounit_id is provided, return new temporary token"
+            "description": "Create a cyclobot then return its id and temporary token. If cyclobot_id is provided, return new temporary token"
         },
 
-        "api/ecounit/signature_request": {"method": "handle_post_ecounit_signature_request",
+        "api/cyclobot/signature_request": {"method": "handle_post_cyclobot_signature_request",
             "used_headers": {"Content-Type": "application/json",
                 "Accept-Post":"application/json"
             },
-            "parameters": {"ecounit_id": "(encrypted uuid): required",
-                "temporary_token": "(encrypted uuid): required"
+            "parameters": {"cyclobot_id": "(encrypted uuid): required",
+                "cyclobot_token": "(encrypted uuid): required"
             },
-            "target_agents": ["ecounit"],
+            "target_agents": ["cyclobot"],
             "status": "to do",
-            "description": "If ecounit is disabled and token is valid, return unit's encrypted signature"
+            "description": "If cyclobot is disabled and token is valid, return encrypted user data"
         },
         
         "api/backuser": {"method": "handle_post_backuser",
@@ -89,7 +89,7 @@
             "description": "If email is in customer table, send validation link (token attached) to this address with explicit expire date and hidden token"
         },
 
-        "api/customer": {"method": "handle_post_ecounit",
+        "api/customer": {"method": "handle_post_cyclobot",
             "parameters": {},
             "target_agents": ["backuser"],
             "status": "to do",
@@ -127,23 +127,23 @@
             "description": "If email is in customer table, send validation link (token attached) to this address with explicit expire date and hidden token"
         },
 
-        "api/ecounit/diagnostic": {"method": "handle_post_unit_diagnostic",
+        "api/cyclobot/diagnostic": {"method": "handle_post_unit_diagnostic",
             "parameters": {},
-            "target_agents": ["ecounit"],
+            "target_agents": ["cyclobot"],
             "status": "to do",
             "description": "Save unit's diagnostics. Returns transaction identifier (agent_input)"
         },
         
-        "api/ecounit/configuration": {"method": "handle_post_unit_config",
+        "api/cyclobot/configuration": {"method": "handle_post_unit_config",
             "parameters": {},
-            "target_agents": ["ecounit"],
+            "target_agents": ["cyclobot"],
             "status": "to do",
             "description": "Save unit's configuration. Returns transaction identifier (agent_input)"
         },
 
-        "api/ecounit/environment_state": {"method": "handle_post_unit_environment_state",
+        "api/cyclobot/environment_state": {"method": "handle_post_unit_environment_state",
             "parameters": {},
-            "target_agents": ["ecounit"],
+            "target_agents": ["cyclobot"],
             "status": "to do",
             "description": "Save unit's environment state. Returns transaction identifier (agent_input)"
         },
@@ -209,57 +209,57 @@
             "description": "Returns session token"
         },
 
-        "api/ecounit/login": {"method": "handle_get_ecounit_login",
+        "api/cyclobot/login": {"method": "handle_get_cyclobot_login",
             "parameters": {"device_ip": "(str): required",
                 "secret_token": "(encrypted string): required"
             },
-            "target_agents": ["ecounit"],
+            "target_agents": ["cyclobot"],
             "status": "to do",
             "description": "Returns session token"
         },
 
-        "api/ecounit/configuration/update": {"method": "handle_get_ecounit_config_update",
-            "parameters": {"ecounit_id": "(uuid): required"},
-            "target_agents": ["ecounit"],
+        "api/cyclobot/configuration/update": {"method": "handle_get_cyclobot_config_update",
+            "parameters": {"cyclobot_id": "(uuid): required"},
+            "target_agents": ["cyclobot"],
             "status": "to do",
-            "description": "Returns the latest configuration for a given eco unit"
+            "description": "Returns the latest configuration for a given cyclobot"
         },
 
-        "api/ecounit/configuration/rollback": {"method": "handle_get_ecounit_config_rollback",
-            "parameters": {"ecounit_id": "(uuid): required"},
-            "target_agents": ["ecounit"],
+        "api/cyclobot/configuration/rollback": {"method": "handle_get_cyclobot_config_rollback",
+            "parameters": {"cyclobot_id": "(uuid): required"},
+            "target_agents": ["cyclobot"],
             "status": "to do",
-            "description": "Returns the previous configuration for a given eco unit"
+            "description": "Returns the previous configuration for a given cyclobot"
         },
 
-        "api/backuser/unit_configurations": {"method": "handle_get_ecounit_configuration_for_backuser",
-            "parameters": {"ecounit_id": "(uuid list): optional",
+        "api/backuser/unit_configurations": {"method": "handle_get_cyclobot_configuration_for_backuser",
+            "parameters": {"cyclobot_id": "(uuid list): optional",
                 "unit_location": "(str list): optional",
                 "evironment_category": "(str list): optional"
             },
             "target_agents": ["backuser"],
             "status": "to do",
-            "description": "Returns a set of ecounit configurations matching the given parameters"
+            "description": "Returns a set of cyclobot configurations matching the given parameters"
         },
 
-        "api/backuser/unit_diagnostics": {"method": "handle_get_ecounit_diagnostics_for_backuser",
-            "parameters": {"ecounit_id": "(uuid list): optional",
+        "api/backuser/unit_diagnostics": {"method": "handle_get_cyclobot_diagnostics_for_backuser",
+            "parameters": {"cyclobot_id": "(uuid list): optional",
                 "unit_location": "(str list): optional",
                 "evironment_category": "(str list): optional"
             },
             "target_agents": ["backuser"],
             "status": "to do",
-            "description": "Returns a set of ecounit diagnostics matching the given parameters"
+            "description": "Returns a set of cyclobot diagnostics matching the given parameters"
         },
 
-        "api/backuser/unit_environment_states": {"method": "handle_get_ecounit_environment_states_for_backuser",
-            "parameters": {"ecounit_id": "(uuid list): optional",
+        "api/backuser/unit_environment_states": {"method": "handle_get_cyclobot_environment_states_for_backuser",
+            "parameters": {"cyclobot_id": "(uuid list): optional",
                 "unit_location": "(str list): optional",
                 "evironment_category": "(str list): optional"
             },
             "target_agents": ["backuser"],
             "status": "to do",
-            "description": "Returns a set of ecounit environment states matching the given parameters"
+            "description": "Returns a set of cyclobot environment states matching the given parameters"
         }
     },
     "PUT": {
@@ -312,8 +312,8 @@
             "description": "If token is still valid and secrets match, save secret. All parameters are required."
         },
         
-        "api/ecounit/disable": {"method": "handle_patch_ecounit_disable",
-            "parameters": {"ecounit_id": "(uuid): required"},
+        "api/cyclobot/disable": {"method": "handle_patch_cyclobot_disable",
+            "parameters": {"cyclobot_id": "(uuid): required"},
             "target_agents": ["backuser"],
             "status": "to do",
             "description": "Change agent status. Returns confirmation message."
@@ -347,30 +347,30 @@
             "status": "to do",
             "description": "Delete customer"
         },
-        "api/ecounit": {"method": "handle_delete_ecounit",
+        "api/cyclobot": {"method": "handle_delete_cyclobot",
             "parameters": {},
             "target_agents": ["backuser", "backuser_admin"],
             "status": "to do",
-            "description": "Delete ecounit"
+            "description": "Delete cyclobot"
         },
 
-        "api/ecounit/diagnostic": {"method": "handle_delete_ecounit_diagnostic",
+        "api/cyclobot/diagnostic": {"method": "handle_delete_cyclobot_diagnostic",
             "parameters": {},
             "target_agents": ["backuser", "backuser_admin"],
             "status": "to do",
-            "description": "Delete ecounit diagnostic"
+            "description": "Delete cyclobot diagnostic"
         },
-        "api/ecounit/configuration": {"method": "handle_delete_ecounit_config",
+        "api/cyclobot/configuration": {"method": "handle_delete_cyclobot_config",
             "parameters": {},
             "target_agents": ["backuser", "backuser_admin"],
             "status": "to do",
-            "description": "Delete ecounit configuration"
+            "description": "Delete cyclobot configuration"
         },
-        "api/ecounit/environment_state": {"method": "handle_delete_ecounit_environment_state",
+        "api/cyclobot/environment_state": {"method": "handle_delete_cyclobot_environment_state",
             "parameters": {},
             "target_agents": ["backuser", "backuser_admin"],
             "status": "to do",
-            "description": "Delete ecounit environment_state"
+            "description": "Delete cyclobot environment_state"
         }
     }
   }

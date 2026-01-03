@@ -15,12 +15,12 @@ USE `ecosystem_db` ;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`agent` (
   `agent_id` INT NOT NULL AUTO_INCREMENT,
-  `eco_unit_id` INT NULL,
+  `cyclobot_id` INT NULL,
   `back_user_id` INT NULL,
   `customer_id` INT NULL,
   `creation_date_time` DATETIME NOT NULL,
   PRIMARY KEY (`agent_id`),
-  UNIQUE INDEX `eco_unit_id_UNIQUE` (`eco_unit_id` ASC) VISIBLE,
+  UNIQUE INDEX `cyclobot_id_UNIQUE` (`cyclobot_id` ASC) VISIBLE,
   UNIQUE INDEX `back_user_id_UNIQUE` (`back_user_id` ASC) VISIBLE,
   UNIQUE INDEX `customer_id_UNIQUE` (`customer_id` ASC) VISIBLE)
 ENGINE = InnoDB;
@@ -63,32 +63,32 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `ecosystem_db`.`eco_unit`
+-- Table `ecosystem_db`.`cyclobot`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `ecosystem_db`.`eco_unit` (
-  `eco_unit_id` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `ecosystem_db`.`cyclobot` (
+  `cyclobot_id` INT NOT NULL AUTO_INCREMENT,
   `agent_id` INT NOT NULL,
-  `eco_unit_name` VARCHAR(100) NULL,
+  `cyclobot_name` VARCHAR(100) NULL,
   `customer_id` INT NULL,
   `ecosystem_category_id` INT NOT NULL, -- '1 = vegetable garden,\n2 = habitat,\n3 = rainforest,\n4 = savanna,\n5 = desert,\n6 = prairie',
   `require_update` TINYINT NOT NULL, -- 'BOOLEAN. If product config must be updated. 1=YES.',
   `location` GEOMETRY NULL,
   `deactivated` INT NULL,
-  PRIMARY KEY (`eco_unit_id`),
-  INDEX `fk_eco_unit_customer_idx` (`customer_id` ASC) VISIBLE,
-  INDEX `fk_eco_unit_agent_idx` (`agent_id` ASC) VISIBLE,
-  INDEX `fk_eco_unit_ecosystem_category_idx` (`ecosystem_category_id` ASC) VISIBLE,
-  CONSTRAINT `fk_eco_unit_customer`
+  PRIMARY KEY (`cyclobot_id`),
+  INDEX `fk_cyclobot_customer_idx` (`customer_id` ASC) VISIBLE,
+  INDEX `fk_cyclobot_agent_idx` (`agent_id` ASC) VISIBLE,
+  INDEX `fk_cyclobot_ecosystem_category_idx` (`ecosystem_category_id` ASC) VISIBLE,
+  CONSTRAINT `fk_cyclobot_customer`
     FOREIGN KEY (`customer_id`)
     REFERENCES `ecosystem_db`.`customer` (`customer_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_eco_unit_agent`
+  CONSTRAINT `fk_cyclobot_agent`
     FOREIGN KEY (`agent_id`)
     REFERENCES `ecosystem_db`.`agent` (`agent_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_eco_unit_ecosystem_category`
+  CONSTRAINT `fk_cyclobot_ecosystem_category`
     FOREIGN KEY (`ecosystem_category_id`)
     REFERENCES `ecosystem_db`.`ecosystem_category` (`ecosystem_category_id`)
     ON DELETE RESTRICT
@@ -124,12 +124,12 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`agent_input` (
   `agent_input_id` INT NOT NULL AUTO_INCREMENT,
   `agent_id` INT NOT NULL,
-  `eco_unit_id` INT NOT NULL,
+  `cyclobot_id` INT NOT NULL,
   `date_time` DATETIME NULL,
   `failed_communication` INT NULL, -- '1 = yes',
   PRIMARY KEY (`agent_input_id`),
   INDEX `fk_agent_input_idx` (`agent_id` ASC) VISIBLE,
-  INDEX `fk_agent_input__eco_unit_idx` (`eco_unit_id` ASC) VISIBLE,
+  INDEX `fk_agent_input__cyclobot_idx` (`cyclobot_id` ASC) VISIBLE,
   CONSTRAINT `fk_agent_input_back_user`
     FOREIGN KEY (`agent_id`)
     REFERENCES `ecosystem_db`.`back_user` (`agent_id`)
@@ -140,14 +140,14 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`agent_input` (
     REFERENCES `ecosystem_db`.`customer` (`agent_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_agent_input__eco_unit_by_agent_id`
+  CONSTRAINT `fk_agent_input__cyclobot_by_agent_id`
     FOREIGN KEY (`agent_id`)
-    REFERENCES `ecosystem_db`.`eco_unit` (`agent_id`)
+    REFERENCES `ecosystem_db`.`cyclobot` (`agent_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_agent_input__eco_unit_by_unit_id`
-    FOREIGN KEY (`eco_unit_id`)
-    REFERENCES `ecosystem_db`.`eco_unit` (`eco_unit_id`)
+  CONSTRAINT `fk_agent_input__cyclobot_by_unit_id`
+    FOREIGN KEY (`cyclobot_id`)
+    REFERENCES `ecosystem_db`.`cyclobot` (`cyclobot_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -158,7 +158,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`environment_state` (
   `environment_state_id` INT NOT NULL AUTO_INCREMENT,
-  `eco_unit_id` INT NOT NULL,
+  `cyclobot_id` INT NOT NULL,
   `agent_input_id` INT NOT NULL,
   `scan_date_time` DATETIME NULL,
   `soil_moisture` INT NULL,
@@ -166,15 +166,15 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`environment_state` (
   `rain_occurrences_per_day` INT NULL,
   PRIMARY KEY (`environment_state_id`),
   INDEX `fk_environment_state_agent_input_idx` (`agent_input_id` ASC) VISIBLE,
-  INDEX `fk_environment_state_agent_input_by_unit_id_idx` (`eco_unit_id` ASC) VISIBLE,
+  INDEX `fk_environment_state_agent_input_by_unit_id_idx` (`cyclobot_id` ASC) VISIBLE,
   CONSTRAINT `fk_environment_state_agent_input_by_input_id`
     FOREIGN KEY (`agent_input_id`)
     REFERENCES `ecosystem_db`.`agent_input` (`agent_input_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk_environment_state_agent_input_by_unit_id`
-    FOREIGN KEY (`eco_unit_id`)
-    REFERENCES `ecosystem_db`.`agent_input` (`eco_unit_id`)
+    FOREIGN KEY (`cyclobot_id`)
+    REFERENCES `ecosystem_db`.`agent_input` (`cyclobot_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -206,7 +206,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`configuration` (
   `configuration_id` INT NOT NULL AUTO_INCREMENT,
-  `eco_unit_id` INT NOT NULL,
+  `cyclobot_id` INT NOT NULL,
   `agent_input_id` INT NOT NULL,
   `config_status_id` INT NOT NULL,
   `run_physical_diagnostics` TINYINT NULL,
@@ -217,13 +217,13 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`configuration` (
   `watering_lenght_decrease_rate` INT NULL,
   `expected_climate_season` INT NULL,
   PRIMARY KEY (`configuration_id`),
-  INDEX `fk_configuration_agent_input_by_unit_id_idx` (`eco_unit_id` ASC) VISIBLE,
+  INDEX `fk_configuration_agent_input_by_unit_id_idx` (`cyclobot_id` ASC) VISIBLE,
   INDEX `fk_configuratin_agent_input_by_input_id_idx` (`agent_input_id` ASC) VISIBLE,
   INDEX `fk_configuratin_config_status_idx` (`config_status_id` ASC) VISIBLE,
   INDEX `fk_configuratin_climate_season_idx` (`expected_climate_season` ASC) VISIBLE,
   CONSTRAINT `fk_configuration_agent_input_by_unit_id`
-    FOREIGN KEY (`eco_unit_id`)
-    REFERENCES `ecosystem_db`.`agent_input` (`eco_unit_id`)
+    FOREIGN KEY (`cyclobot_id`)
+    REFERENCES `ecosystem_db`.`agent_input` (`cyclobot_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk_configuratin_agent_input_by_input_id`
@@ -260,10 +260,10 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`diagnostic` (
   `diagnostic_id` INT NOT NULL AUTO_INCREMENT,
-  `eco_unit_id` INT NOT NULL,
+  `cyclobot_id` INT NOT NULL,
   `agent_input_id` INT NOT NULL,
   `diagnostic_date_time` DATETIME NULL,
-  `eco_unit_message` VARCHAR(200) NULL,
+  `cyclobot_message` VARCHAR(200) NULL,
   `wifi_connected` SMALLINT NOT NULL,
   `watering_system` SMALLINT NOT NULL,
   `river_system` SMALLINT NOT NULL,
@@ -271,7 +271,7 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`diagnostic` (
   `lighting_system` SMALLINT NOT NULL,
   PRIMARY KEY (`diagnostic_id`),
   INDEX `fk_diagnostic_agent_input_by_input_id_idx` (`agent_input_id` ASC) VISIBLE,
-  INDEX `fk_diagnostic_agent_input_by_unit_id_idx` (`eco_unit_id` ASC) VISIBLE,
+  INDEX `fk_diagnostic_agent_input_by_unit_id_idx` (`cyclobot_id` ASC) VISIBLE,
   INDEX `fk_diagnostic_sensor_status_idx` (`wifi_connected` ASC) VISIBLE,
   CONSTRAINT `fk_diagnostic_agent_input_by_input_id`
     FOREIGN KEY (`agent_input_id`)
@@ -279,8 +279,8 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`diagnostic` (
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk_diagnostic_agent_input_by_unit_id`
-    FOREIGN KEY (`eco_unit_id`)
-    REFERENCES `ecosystem_db`.`agent_input` (`eco_unit_id`)
+    FOREIGN KEY (`cyclobot_id`)
+    REFERENCES `ecosystem_db`.`agent_input` (`cyclobot_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk_diagnostic_sensor_status_wifi_connected`

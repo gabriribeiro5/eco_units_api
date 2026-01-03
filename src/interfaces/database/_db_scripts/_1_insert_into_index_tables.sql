@@ -21,7 +21,7 @@ VALUES
 'Ops... Physical component not working'),
 (3,
 'NOT INSTALLED',
-'The referenced eco_unit does not have this physical component')
+'The referenced cyclobot does not have this physical component')
 ON DUPLICATE KEY UPDATE sensor_status_name = sensor_status_name,
  sensor_status_description = sensor_status_description;
 
@@ -33,16 +33,16 @@ INSERT INTO `config_status`
 VALUES
 (1,
 "CONFIRMED",
-"configuration data declared by eco_unit only"),
+"configuration data declared by cyclobot only"),
 (2,
 "SENT",
-"configuration update data sent to eco_unit"),
+"configuration update data sent to cyclobot"),
 (3,
 "WAITING",
 "configuration update data wating to be sent"),
 (4,
 "EXPIRED",
-"configuration update data that has not been (and will not be) sent to eco_unit")
+"configuration update data that has not been (and will not be) sent to cyclobot")
 ON DUPLICATE KEY UPDATE status_name = status_name,
  status_description = status_description;
 
