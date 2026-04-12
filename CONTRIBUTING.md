@@ -51,21 +51,26 @@ For now, choose one of the following instructions (at your taste) to install Com
 ### ▶️ Runing the application iteractivelly
 In order to access the container iteractive shell, you may choose between one of the following options:
 
-1. **Use Docker-Compose to build (or rebuild) the image**
+1. **Use Docker-Compose to build the images**
 Open the **Docker Desktop** application.
 Then open a terminal in the project root directory and execute:
 ```bash
     docker-compose up --build
 ```
+
+2. **To rebuild the images, run**:
+```bash
+    docker-compose down; docker-compose up --build
+```
 Execute interactive commands using Docker Desktop
 
-2. **Iteractively run a single container**
+3. **Iteractively run a single container**
 On a new terminal, run the following:
 ```bash
     docker run -p 8080:8080 -iteractive cyclobots_api_image:latest
 ```
 
-3. **Accessing Docker container after running it**
+4. **Accessing Docker container after running it**
 On a new terminal, run the following:
 ```bash
     docker exec -it cyclobots_api_container /bin/sh
@@ -107,7 +112,14 @@ Just use `logging.debug()` to expose application details directly in the same lo
 It’s the simplest and fastest way to capture specific information about the application's state at any point in time.
 
 🚨 **DO NOT** use `logging.info()` for debugging.
-Using it for temporary debug messages increases the risk of exposing sensitive or unnecessary information in production logs.
+Using it for temporary debug messages increases the risk of exposing sensitive or unnecessary information in external logs.
+
+4. **Connecting to DB**
+Once connected to the database container, run:
+```bash
+    mysql -u cyclobots_api -p -h localhost -P 8080
+```
+(mysql -u [username] -p -h [hostname] -P [port])
 
 ### 🧪 Testing the application
 Here are some options on how to 
@@ -143,9 +155,11 @@ On **Wsl**:
 
 All commits in this project **must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification**. This ensures consistent, readable commit history and enables automated tooling like changelogs and semantic versioning.
 
-#### 🚫 Don't Use `git commit`
+#### 🚫 Avoid using `git commit`
 
 Instead, use **Commitizen** to create structured and meaningful commit messages.
+Once you are very confident with commit message structure and it's options,
+you may use TODO file to both log your actions and create your commit messages.
 
 #### 🔧 Installing Commitizen
 If you haven't installed it yet, please check the section "Installing Developer Tools" at the beginning of this file.

@@ -22,8 +22,9 @@ VALUES
 (3,
 'NOT INSTALLED',
 'The referenced cyclobot does not have this physical component')
-ON DUPLICATE KEY UPDATE sensor_status_name = sensor_status_name,
- sensor_status_description = sensor_status_description;
+AS `new`
+ON DUPLICATE KEY UPDATE sensor_status_name = `new`.sensor_status_name,
+ sensor_status_description = `new`.sensor_status_description;
 
 select * from config_status;
 INSERT INTO `config_status`
@@ -43,8 +44,9 @@ VALUES
 (4,
 "EXPIRED",
 "configuration update data that has not been (and will not be) sent to cyclobot")
-ON DUPLICATE KEY UPDATE status_name = status_name,
- status_description = status_description;
+AS `new`
+ON DUPLICATE KEY UPDATE status_name = `new`.status_name,
+ status_description = `new`.status_description;
 
 select * from climate_season;
 INSERT INTO `climate_season`
@@ -59,7 +61,8 @@ VALUES
 "WINTER"),
 (4,
 "SRPING")
-ON DUPLICATE KEY UPDATE season_name = VALUES(season_name);
+AS `new`
+ON DUPLICATE KEY UPDATE season_name = `new`.season_name;
 
 select * from ecosystem_category;
 INSERT INTO ecosystem_category
@@ -83,5 +86,6 @@ VALUES
 (5,
 'PRAIRIE',
 'Haja mato')
-ON DUPLICATE KEY UPDATE category_name = category_name,
- category_description = category_description;
+AS `new`
+ON DUPLICATE KEY UPDATE category_name = `new`.category_name,
+ category_description = `new`.category_description;

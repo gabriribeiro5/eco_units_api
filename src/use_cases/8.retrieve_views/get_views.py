@@ -21,7 +21,7 @@ class View(I_BaseHandler):
         # response = {"data": self.data_store}
         # self.wfile.write(json.dumps(response).encode())
     
-    def environment_state(self):
+    def ecosystem_state(self):
         pass
         # self.send_response(200)
         # self.send_header("Content-type", "application/json")

@@ -150,8 +150,8 @@ VALUES
 CURRENT_TIMESTAMP,
 0);
 
-INSERT INTO environment_state
-(`environment_state_id`,
+INSERT INTO ecosystem_state
+(`ecosystem_state_id`,
 `cyclobot_id`,
 `agent_input_id`,
 `scan_date_time`,

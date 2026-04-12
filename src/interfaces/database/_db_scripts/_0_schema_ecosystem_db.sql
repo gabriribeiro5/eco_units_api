@@ -154,25 +154,25 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `ecosystem_db`.`environment_state`
+-- Table `ecosystem_db`.`ecosystem_state`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `ecosystem_db`.`environment_state` (
-  `environment_state_id` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `ecosystem_db`.`ecosystem_state` (
+  `ecosystem_state_id` INT NOT NULL AUTO_INCREMENT,
   `cyclobot_id` INT NOT NULL,
   `agent_input_id` INT NOT NULL,
   `scan_date_time` DATETIME NULL,
   `soil_moisture` INT NULL,
   `temperature` INT NULL,
   `rain_occurrences_per_day` INT NULL,
-  PRIMARY KEY (`environment_state_id`),
-  INDEX `fk_environment_state_agent_input_idx` (`agent_input_id` ASC) VISIBLE,
-  INDEX `fk_environment_state_agent_input_by_unit_id_idx` (`cyclobot_id` ASC) VISIBLE,
-  CONSTRAINT `fk_environment_state_agent_input_by_input_id`
+  PRIMARY KEY (`ecosystem_state_id`),
+  INDEX `fk_ecosystem_state_agent_input_idx` (`agent_input_id` ASC) VISIBLE,
+  INDEX `fk_ecosystem_state_agent_input_by_unit_id_idx` (`cyclobot_id` ASC) VISIBLE,
+  CONSTRAINT `fk_ecosystem_state_agent_input_by_input_id`
     FOREIGN KEY (`agent_input_id`)
     REFERENCES `ecosystem_db`.`agent_input` (`agent_input_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_environment_state_agent_input_by_unit_id`
+  CONSTRAINT `fk_ecosystem_state_agent_input_by_unit_id`
     FOREIGN KEY (`cyclobot_id`)
     REFERENCES `ecosystem_db`.`agent_input` (`cyclobot_id`)
     ON DELETE RESTRICT

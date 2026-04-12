@@ -36,16 +36,25 @@ class MasterHandler(Auth, Trace, Options):
     def format_and_send(self, response_data):
         logging.info(f"formating and sending response")
         status, headers, body = response_data
+        
+        # Ensure Content-Length is set
+        if body:
+            body_bytes = body.encode("utf-8")
+            headers["Content-Length"] = str(len(body_bytes))
+        else:
+            headers["Content-Length"] = "0"
+            body_bytes = b""
+        
         self.send_response(status)
         for header, value in headers.items():
             self.send_header(header, value)
         self.end_headers()
-        if body:
-            self.wfile.write(body.encode("utf-8"))
+        if body_bytes:
+            self.wfile.write(body_bytes)
     
     def do_TRACE(self):
         logging.info(f"method activated by {self.client_address}")
-        handler_name = self.options.only_TRACE.get(self.path).get("method")
+        handler_name = self.options.only_TRACE.get(self.path, {}).get("method")
         if isinstance(handler_name, str):  # Ensure it is a string
             response_data = self.run_handler(handler_name)
             self.format_and_send(response_data)
@@ -55,7 +64,7 @@ class MasterHandler(Auth, Trace, Options):
 
     def do_OPTIONS(self):
         logging.info(f"method activated by {self.client_address}")
-        handler_name = self.options.only_OPTIONS.get(self.path).get("method")
+        handler_name = self.options.only_OPTIONS.get(self.path, {}).get("method")
         if isinstance(handler_name, str):  # Ensure it is a string
             response_data = self.run_handler(handler_name)
             self.format_and_send(response_data)
@@ -71,7 +80,7 @@ class MasterHandler(Auth, Trace, Options):
             VALUES ('Jane Doe', 'jane.doe@example.com', NOW(), NOW());
         '''
         logging.info(f"method activated by {self.client_address}")
-        handler_name = self.options.only_POST.get(self.path).get("method")
+        handler_name = self.options.only_POST.get(self.path, {}).get("method")
         if isinstance(handler_name, str):  # Ensure it is a string
             response_data = self.run_handler(handler_name)
             self.format_and_send(response_data)
@@ -82,7 +91,7 @@ class MasterHandler(Auth, Trace, Options):
     # @require_authentication
     def do_GET(self):
         logging.info(f"method activated by {self.client_address}")
-        handler_name = self.options.only_GET.get(self.path).get("method")
+        handler_name = self.options.only_GET.get(self.path, {}).get("method")
         if isinstance(handler_name, str):  # Ensure it is a string
             response_data = self.run_handler(handler_name)
             self.format_and_send(response_data)
@@ -103,7 +112,7 @@ class MasterHandler(Auth, Trace, Options):
 
         '''
         logging.info(f"method activated by {self.client_address}")
-        handler_name = self.options.only_POST.get(self.path).get("method")
+        handler_name = self.options.only_PUT.get(self.path, {}).get("method")
         if isinstance(handler_name, str):  # Ensure it is a string
             response_data = self.run_handler(handler_name)
             self.format_and_send(response_data)
@@ -121,7 +130,7 @@ class MasterHandler(Auth, Trace, Options):
             WHERE user_id = 42;
         '''
         logging.info(f"method activated by {self.client_address}")
-        handler_name = self.options.only_POST.get(self.path).get("method")
+        handler_name = self.options.only_PATCH.get(self.path, {}).get("method")
         if isinstance(handler_name, str):  # Ensure it is a string
             response_data = self.run_handler(handler_name)
             self.format_and_send(response_data)
@@ -132,7 +141,7 @@ class MasterHandler(Auth, Trace, Options):
     # @require_authentication
     def do_DELETE(self):
         logging.info(f"method activated by {self.client_address}")
-        handler_name = self.options.only_POST.get(self.path).get("method")
+        handler_name = self.options.only_DELETE.get(self.path, {}).get("method")
         if isinstance(handler_name, str):  # Ensure it is a string
             response_data = self.run_handler(handler_name)
             self.format_and_send(response_data)

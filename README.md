@@ -19,7 +19,7 @@ This API leverages from Clean Architecture principles to build a microservice.
 Modules are organized as follows:
 
 - **Entities/Interfaces**: Core business rules and models.
-    - agent: might be an cyclobot, a customer or a backoffice user. They are all agents.
+    - agent: might be a cyclobot, a customer or a backoffice user. They are all agents.
     - agentInput: any database update regarding unit's configuration, self diagnostics or environment state.
     - handler: the base interface for http implementation.
 

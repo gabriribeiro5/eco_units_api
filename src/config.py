@@ -12,7 +12,7 @@ class Definitions():
 
         ### APPLICATION CONFIGURATION ###
         self.AGENTS_LIST = ("ecounit", "customer", "backuser", "backuser_admin")
-        self.AGENT_INPUT_TABLES = ("agent_input", "diagnostic", "configuration", "environment_state")
+        self.AGENT_INPUT_TABLES = ("agent_input", "diagnostic", "configuration", "ecosystem_state")
         self.ALLOWED_INPUT_TABLES = {
             "cyclobot": (self.AGENT_INPUT_TABLES),
             "customer": (self.AGENT_INPUT_TABLES),
@@ -25,14 +25,14 @@ class Definitions():
             "backoffice_sessions": 30 # group_name: minutes
         }
         self.LOGGING_ENABLED = True
-        self.ASYNC_MODE = True
+        self.ASYNC_MODE = False
         self.DEBUG_MODE = False
         self.SERVER_PORT = 8080
         self.DEBUG_PORT = 5678
 
         ### DATABASE  ### 
         self.DB_HOST = "mysql" # "127.0.0.1"
-        self.DB_USER = "eco_api"
+        self.DB_USER = "cyclobots_api"
         self.DB_SECRET = "s3cr37@dblab73"
         self.DB_NAME = "ecosystem_db"
         self.DB_PORT = 3306

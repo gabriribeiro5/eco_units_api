@@ -28,7 +28,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./src:/src/cyclobots_api # Bind mount the 'src' directory to '/src' inside the container
-      - ./logs:/var/log/cyclobots_api  # Bind mount the 'logs' directory to '/var/log' inside the container
+      - ./logs/api1:/var/log/cyclobots_api  # Bind mount the 'logs' directory to '/var/log' inside the container
     environment:
       - PYTHONUNBUFFERED=1  # Optional, for better logging
     
@@ -36,18 +36,26 @@ services:
     stdin_open: true  # Keeps the STDIN open for interaction
     tty: true         # Allocates a pseudo-TTY
 
+    expose:
+      - "8080"  # Expose port 8080 to other services in the same network "local:container"
+
 #   # The name of the network in witch the service will be available
   #   networks:
   #     - db-tier
-  #   depends_on:
-  #     mysql:
-  #       condition: service_healthy
+    depends_on:
+      mysql:
+        condition: service_healthy
       
   
   api2:
     <<: *cyclobots_api
     hostname: app2
     container_name: cyclobots_api_container_2
+    volumes: # same as api1, but with different log directory
+      - ./src:/src/cyclobots_api
+      - ./logs/api2:/var/log/cyclobots_api
+    expose:
+      - "8080"  # same as api1, but with different external port
 
   mysql:
     image: mysql:8.0.41-debian
@@ -74,10 +82,13 @@ services:
     # The name of the network in witch the service will be available
     # networks:
     #   - db-tier
-    # healthcheck:
-    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-    #   interval: 10s
-    #   retries: 5
+    
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 # Names our volume
 volumes:
