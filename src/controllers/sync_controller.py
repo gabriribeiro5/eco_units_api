@@ -24,7 +24,12 @@ class MasterHandler(Auth, Trace, Options):
         logging.info(f"calling handler: {handler_name}")
         if handler_name and hasattr(self, handler_name):
             handler = getattr(self, handler_name)
-            response_data = handler(*args, **kwargs)  # Call handler and get response data
+            try:
+                response_data = handler(*args, **kwargs)  # Call handler and get response data
+            except Exception as e:
+                logging.error(f"Error executing handler '{handler_name}': {e}")
+                self.send_error(500, "Internal Server Error")
+                raise e
             return response_data
         else:
             err_msg = f"Handler '{handler_name}' not found"

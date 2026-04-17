@@ -11,7 +11,7 @@ class Definitions():
         self._DB_SCRIPTS_DIR = self.SRC_DIR / "interfaces/database/_db_scripts"
 
         ### APPLICATION CONFIGURATION ###
-        self.AGENTS_LIST = ("ecounit", "customer", "backuser", "backuser_admin")
+        self.AGENTS_LIST = ("cyclobot", "customer", "backuser", "backuser_admin")
         self.AGENT_INPUT_TABLES = ("agent_input", "diagnostic", "configuration", "ecosystem_state")
         self.ALLOWED_INPUT_TABLES = {
             "cyclobot": (self.AGENT_INPUT_TABLES),

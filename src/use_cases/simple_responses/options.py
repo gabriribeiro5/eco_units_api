@@ -1,7 +1,9 @@
+from out_of_process.auth import AuthManager as auth
 from interfaces.handler import I_BaseHandler
 from interfaces.client import I_BaseClient
 from route_options import OptionsManager
 from utils.logger import log_running_and_done
+from urllib.parse import parse_qs
 import logging
 import json
 
@@ -51,24 +53,95 @@ class OptionsHandler(I_BaseHandler, I_BaseClient, OptionsManager):
         
         return agent_options
     
+    @auth.is_authenticated
     @log_running_and_done
     def handle_options_for_unauthenticated_client(self):
         '''
-        agent_type might be "ecounit", "customer", "backuser" or "backuser_admin"
+        agent_type might be "cyclobot", "customer", "backuser" or "backuser_admin"
         '''
-        # Find out agent_type
-        agent_type = "all"
+        # Find out agent_type from request body, default to "all" if not provided or invalid
+        content_length = int(self.headers.get("Content-Length", 0))
+        request_body = self.rfile.read(content_length).decode('utf-8') if content_length else ""
 
+        try:
+            request_body = request_body.strip()  # Remove leading/trailing whitespace            
+            # Try parsing as JSON first, then fall back to form data
+            if request_body:
+                try:
+                    request_data = json.loads(request_body)
+                except json.JSONDecodeError:
+                    # Parse as URL-encoded form data
+                    parsed = parse_qs(request_body)
+                    request_data = {k: v[0] if v else "" for k, v in parsed.items()}
+            else:
+                request_data = {}
+            
+            agent_type = request_data.get("agent_type", "all").lower()
+        except Exception as e:
+            logging.exception(f"Failed to decode request body: {request_body}\nException: {str(e)}")
+            agent_type = "all"
+
+        logging.debug(f"Received OPTIONS request with agent_type: {agent_type}")
+     
         # Construct response components based on agent_type
         agent_options = self.collect_agent_options(agent_type)
-        logging.debug(f"agent options: {agent_options}")
         response = json.dumps(agent_options) # Convert dict to JSON string
     
         # Expected response variables
         status = 200
         headers = {"Content-Type": "application/json"}
         body = response + "\r\n"
-        logging.debug(f"json response: {response}")
+    
+        return status, headers, body
+    
+    @auth.is_authenticated
+    @log_running_and_done
+    def handle_options_for_customer(self):
+        '''
+        return all routes for "customer"
+        '''
+        # Construct response components based on agent_type
+        agent_options = self.collect_agent_options("customer")
+        response = json.dumps(agent_options) # Convert dict to JSON string
+    
+        # Expected response variables
+        status = 200
+        headers = {"Content-Type": "application/json"}
+        body = response + "\r\n"
+    
+        return status, headers, body
+    
+    @auth.is_authenticated
+    @log_running_and_done
+    def handle_options_for_backuser(self):
+        '''
+        return all routes for "backuser"
+        '''
+        # Construct response components based on agent_type
+        agent_options = self.collect_agent_options("backuser")
+        response = json.dumps(agent_options) # Convert dict to JSON string
+    
+        # Expected response variables
+        status = 200
+        headers = {"Content-Type": "application/json"}
+        body = response + "\r\n"
+    
+        return status, headers, body
+    
+    @auth.is_authenticated
+    @log_running_and_done
+    def handle_options_for_backuser_admin(self):
+        '''
+        return all routes for "backuser_admin"
+        '''
+        # Construct response components based on agent_type
+        agent_options = self.collect_agent_options("backuser_admin")
+        response = json.dumps(agent_options) # Convert dict to JSON string
+    
+        # Expected response variables
+        status = 200
+        headers = {"Content-Type": "application/json"}
+        body = response + "\r\n"
     
         return status, headers, body
 

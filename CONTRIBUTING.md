@@ -33,8 +33,8 @@ If you haven't installed Docker yet, follow the official installation guides:
 💡 Make sure to start Docker after installation and verify it's working by running:
 
 ```bash
-    docker --version
-    docker compose version
+docker --version
+docker compose version
 ```
 
 #### 🤖 Commitizen (CLI tool)
@@ -55,25 +55,25 @@ In order to access the container iteractive shell, you may choose between one of
 Open the **Docker Desktop** application.
 Then open a terminal in the project root directory and execute:
 ```bash
-    docker-compose up --build
+docker-compose up --build
 ```
 
 2. **To rebuild the images, run**:
 ```bash
-    docker-compose down; docker-compose up --build
+docker-compose down; docker-compose up --build
 ```
 Execute interactive commands using Docker Desktop
 
 3. **Iteractively run a single container**
 On a new terminal, run the following:
 ```bash
-    docker run -p 8080:8080 -iteractive cyclobots_api_image:latest
+docker run -p 8080:8080 -iteractive cyclobots_api_image:latest
 ```
 
 4. **Accessing Docker container after running it**
 On a new terminal, run the following:
 ```bash
-    docker exec -it cyclobots_api_container /bin/sh
+docker exec -it cyclobots_api_container /bin/sh
 ```
 
 ### 🛠️ Reading, Updating and Debugging
@@ -89,7 +89,7 @@ Due to mount bindings on docker-compose.yml, you should be able to read from `./
 If you are inside the container (iteractive shell),
 use the following command to read log updates in real time:
 ```bash
-    tail -f /var/log/cyclobots_api/purePython.log
+tail -f /var/log/cyclobots_api/purePython.log
 ```
 
 2. **Editing files** 
@@ -100,8 +100,8 @@ By default, the docker image does not have any editor installed.
 To apply any experimental change without having to rebuild the app,
 Run the iteractive shell (option 1 or 2), and then run:
 ```bash
-    apt update
-    apt install vim
+apt update
+apt install vim
 ```
 
 3. **Debugging with logging**
@@ -117,7 +117,7 @@ Using it for temporary debug messages increases the risk of exposing sensitive o
 4. **Connecting to DB**
 Once connected to the database container, run:
 ```bash
-    mysql -u cyclobots_api -p -h localhost -P 8080
+mysql -u cyclobots_api -p -h localhost -P 8080
 ```
 (mysql -u [username] -p -h [hostname] -P [port])
 
@@ -128,27 +128,28 @@ test the application routes:
 1. **Unit tests**
 Run the iteractive shell (option 1 or 2), and then run:
 ```bash
-    python3 -m unittest discover -s tests -p 'test_*.py'
+python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
 2. **Testing routes and methods** 
 On **Bash** or **CMD**:
 ```bash
-    curl -v -X TRACE http://localhost:9999/api
+curl -v -X OPTIONS http://localhost:9999/api
 ```
 
 On **PowerShell**, use native method:
 ```bash
-    Invoke-WebRequest -Uri http://localhost:9999/api -Method TRACE -Verbose
+$body_dict = @{agent_type = 'cyclobot'};
+Invoke-WebRequest -Uri http://localhost:9999/api -Body $body_dict -Method OPTIONS -Verbose -UseBasicParsing
 ```
 or run the actual curl file:
 ```bash
-    & "C:\path\to\curl.exe" -v -X TRACE http://localhost:9999/api
+& "C:\path\to\curl.exe" -v -X OPTIONS http://localhost:9999/api
 ```
 On **Wsl**:
 ```bash
-    sudo apt update && sudo apt install curl
-    curl -v -X TRACE http://localhost:9999/api
+sudo apt update && sudo apt install curl
+curl -v -X OPTIONS http://localhost:9999/api
 ```
 
 ### ✅ Commit Message Guidelines
@@ -168,7 +169,7 @@ If you haven't installed it yet, please check the section "Installing Developer 
 Once your Commitizen is installed and you have added your changes to be commited, run the following command to commit your changes:
 
 ```bash
-    cz commit
+cz commit
 ```
 
 * Use the arrow keys to select the type of change you’re committing.

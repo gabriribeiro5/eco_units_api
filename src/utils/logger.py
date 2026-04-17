@@ -44,7 +44,7 @@ class LogSetup():
             raise msg
             
     def logFileCreateAndConfig(self):
-        # create log file and set basic logging config
+        # Create log file and set basic logging config
         logFilePathAndName = self.logDir / self.logFile
 
         # Check if enableLog has been recently activated

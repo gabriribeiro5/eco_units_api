@@ -15,14 +15,28 @@
             "used_headers": {"Content-Type": "application/json"},
             "parameters": {"agent_type": "(list) cyclobot, customer, backuser or backuser_admin"},
             "target_agents": ["customer", "backuser", "backuser_admin"],
-            "status": "require improvements",
+            "status": "implemented - to be deprecated (avoid vulnerability)",
+            "description": "Returns the API implemented options and their details.\n Tailored details for each egent might be implemented in the future"
+        },
+        "/api/customer": {"method": "handle_options_for_customer",
+            "used_headers": {"Content-Type": "application/json"},
+            "parameters": {"agent_type": "(str) cyclobot, customer, backuser or backuser_admin"},
+            "target_agents": ["customer"],
+            "status": "TODO: add authentication decorator",
             "description": "Returns the API implemented options and their details.\n Tailored details for each egent might be implemented in the future"
         },
         "/api/backuser": {"method": "handle_options_for_backuser",
             "used_headers": {"Content-Type": "application/json"},
             "parameters": {"agent_type": "(str) cyclobot, customer, backuser or backuser_admin"},
-            "target_agents": ["customer", "backuser", "backuser_admin"],
-            "status": "require improvements",
+            "target_agents": ["backuser"],
+            "status": "TODO: add authentication decorator",
+            "description": "Returns the API implemented options and their details.\n Tailored details for each egent might be implemented in the future"
+        },
+        "/api/backuser/admin": {"method": "handle_options_for_backuser_admin",
+            "used_headers": {"Content-Type": "application/json"},
+            "parameters": {"agent_type": "(str) cyclobot, customer, backuser or backuser_admin"},
+            "target_agents": ["backuser_admin"],
+            "status": "TODO: add authentication decorator",
             "description": "Returns the API implemented options and their details.\n Tailored details for each egent might be implemented in the future"
         }
     },
