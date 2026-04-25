@@ -175,11 +175,14 @@ def log_running_and_done(func):
         try:
             # select filename name in a complex module name
             func_module = func.__module__.split(".")[-1]
+            print(func_module)
         except:
             # filename is the module
             func_module = func.__module__
+            print(func_module)
 
         if config.LOGGING_ENABLED:
+            print(f"{func_module} - ({func.__name__}): running")
             logging.info(f"{func_module} - ({func.__name__}): running")
             kwargs = func(*args, **kwargs)  # Call the decorated method
             logging.info(f"{func_module} - ({func.__name__}): done")

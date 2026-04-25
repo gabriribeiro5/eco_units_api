@@ -52,6 +52,9 @@ class Test_MasterHandler_TRACE(unittest.TestCase):
         # Mock route
         self.mock_routes("TRACE", "handle_trace")
 
+        # Mock authentication to always pass
+        self.handler.is_authenticated = MagicMock(return_value=True)
+
         # expected values
         expected_header = ("Content-Type", "message/http")
         expected_body = (f"~{self.handler.requestline}\r\n".encode("utf-8"))
@@ -72,6 +75,9 @@ class Test_MasterHandler_TRACE(unittest.TestCase):
         func_module = "trace" # define filename name
         handler_name = "handle_trace"
         self.mock_routes("TRACE", handler_name)
+        # Mock authentication to always pass
+        self.handler.is_authenticated = MagicMock(return_value=True)
+        # Trigger method
         self.handler.do_TRACE()
         mock_logging.assert_any_call(f"{func_module} - ({handler_name}): running")
         mock_logging.assert_any_call(f"{func_module} - ({handler_name}): done")

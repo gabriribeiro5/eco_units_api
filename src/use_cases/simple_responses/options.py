@@ -1,13 +1,24 @@
-from out_of_process.auth import AuthManager as auth
-from interfaces.handler import I_BaseHandler
-from interfaces.client import I_BaseClient
+from use_cases.shared.auth.auth import AuthHandler as Auth
 from route_options import OptionsManager
 from utils.logger import log_running_and_done
 from urllib.parse import parse_qs
 import logging
 import json
+import functools
 
-class OptionsHandler(I_BaseHandler, I_BaseClient, OptionsManager):
+def require_authentication(func):
+    """
+    Decorator function that checks authentication before allowing the request.
+    """
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        if not self.is_authenticated():
+            self.send_error(401, "Unauthorized")
+            return (401, {"Content-Type": "application/json"}, '{"error": "Unauthorized"}\r\n')
+        return func(self, *args, **kwargs)
+    return wrapper
+
+class OptionsHandler(Auth, OptionsManager):
     """/
     Handles the OPTIONS HTTP method.
     OPTIONS is used to describe the communication options for the target resource.
@@ -53,7 +64,7 @@ class OptionsHandler(I_BaseHandler, I_BaseClient, OptionsManager):
         
         return agent_options
     
-    @auth.is_authenticated
+    @require_authentication
     @log_running_and_done
     def handle_options_for_unauthenticated_client(self):
         '''
@@ -94,7 +105,7 @@ class OptionsHandler(I_BaseHandler, I_BaseClient, OptionsManager):
     
         return status, headers, body
     
-    @auth.is_authenticated
+    @require_authentication
     @log_running_and_done
     def handle_options_for_customer(self):
         '''
@@ -111,7 +122,7 @@ class OptionsHandler(I_BaseHandler, I_BaseClient, OptionsManager):
     
         return status, headers, body
     
-    @auth.is_authenticated
+    @require_authentication
     @log_running_and_done
     def handle_options_for_backuser(self):
         '''
@@ -128,7 +139,8 @@ class OptionsHandler(I_BaseHandler, I_BaseClient, OptionsManager):
     
         return status, headers, body
     
-    @auth.is_authenticated
+    
+    @require_authentication
     @log_running_and_done
     def handle_options_for_backuser_admin(self):
         '''

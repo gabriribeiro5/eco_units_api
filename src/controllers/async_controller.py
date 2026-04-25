@@ -1,6 +1,5 @@
 from aiohttp import web
 from config import Definitions
-from out_of_process.auth import AuthManager as Auth
 from use_cases.db_setup.asyncCreateSchema import SchemaSetupHandler
 from use_cases.simple_responses.trace import TraceHandler as Trace
 from use_cases.simple_responses.options import OptionsHandler as Options
@@ -8,7 +7,7 @@ import logging
 import asyncio
 
 
-class AsyncMasterHandler(Auth, Trace, Options):
+class AsyncMasterHandler(Trace, Options):
     """aiohttp-based handler for HTTP requests."""
     
     def __init__(self):

@@ -1,12 +1,11 @@
 from http.server import HTTPServer
 from config import Definitions
-from out_of_process.auth import AuthManager as Auth
 from use_cases.db_setup.createSchema import SchemaSetupHandler
 from use_cases.simple_responses.trace import TraceHandler as Trace
 from use_cases.simple_responses.options import OptionsHandler as Options
 import logging
 
-class MasterHandler(Auth, Trace, Options):
+class MasterHandler(Trace, Options):
     def __init__(self, request, client_address, server):
         # set protocol_version to HTTP/1.1 to enable automatic keepalive
         self.protocol_version = "HTTP/1.1"
@@ -15,10 +14,10 @@ class MasterHandler(Auth, Trace, Options):
     def test(self):
         pass
     
-    def require_authentication(self):
-        if not self.is_authenticated(self):
-            self.send_error(401, "Unauthorized")
-            return
+    # def require_authentication(self):
+    #     if not self.is_authenticated():
+    #         self.send_error(401, "Unauthorized")
+    #         return
     
     def run_handler(self, handler_name, *args, **kwargs):
         logging.info(f"calling handler: {handler_name}")
@@ -77,7 +76,6 @@ class MasterHandler(Auth, Trace, Options):
             logging.error(f"Invalid handler name: {handler_name}")
             self.send_error(500, "Internal Server Error")
 
-    # @require_authentication
     def do_POST(self):
         '''
         Query exemple:
@@ -93,7 +91,6 @@ class MasterHandler(Auth, Trace, Options):
             logging.error(f"Invalid handler name: {handler_name}")
             self.send_error(500, "Internal Server Error")
 
-    # @require_authentication
     def do_GET(self):
         logging.info(f"method activated by {self.client_address}")
         handler_name = self.options.only_GET.get(self.path, {}).get("method")
@@ -104,7 +101,6 @@ class MasterHandler(Auth, Trace, Options):
             logging.error(f"Invalid handler name: {handler_name}")
             self.send_error(500, "Internal Server Error")
 
-    # @require_authentication
     def do_PUT(self):
         '''
         Query exemple:
@@ -125,7 +121,6 @@ class MasterHandler(Auth, Trace, Options):
             logging.error(f"Invalid handler name: {handler_name}")
             self.send_error(500, "Internal Server Error")
 
-    # @require_authentication
     def do_PATCH(self):
         '''
         Query exemple:
@@ -143,7 +138,6 @@ class MasterHandler(Auth, Trace, Options):
             logging.error(f"Invalid handler name: {handler_name}")
             self.send_error(500, "Internal Server Error")
 
-    # @require_authentication
     def do_DELETE(self):
         logging.info(f"method activated by {self.client_address}")
         handler_name = self.options.only_DELETE.get(self.path, {}).get("method")

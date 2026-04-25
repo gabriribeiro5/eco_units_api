@@ -56,6 +56,9 @@ class Test_DB_setup(unittest.TestCase):
         # Mock route
         self.mock_routes("OPTIONS", "handle_options_for_unauthenticated_client")
 
+        # Mock authentication to always pass
+        self.handler.is_authenticated = MagicMock(return_value=True)
+
         # expected values
         expected_header = ("Content-Type", "application/json")
 
@@ -74,6 +77,8 @@ class Test_DB_setup(unittest.TestCase):
         func_module = "options" # define filename name
         handler_name = "handle_options_for_unauthenticated_client"
         self.mock_routes("OPTIONS", handler_name)
+        # Mock authentication to always pass
+        self.handler.is_authenticated = MagicMock(return_value=True)
         self.handler.do_OPTIONS()
         mock_logging.assert_any_call(f"{func_module} - ({handler_name}): running")
         mock_logging.assert_any_call(f"{func_module} - ({handler_name}): done")
