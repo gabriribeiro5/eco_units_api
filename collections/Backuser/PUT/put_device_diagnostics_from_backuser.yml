@@ -1,0 +1,14 @@
+info:
+  name: put_device_diagnostics_from_backuser
+  type: http
+  seq: 3
+
+http:
+  method: PUT
+  url: "{{base_url}}/api/backuser/device_diagnostic/{{diagnostic_id}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -122,8 +122,7 @@ mysql -u cyclobots_api -p -h localhost -P 8080
 (mysql -u [username] -p -h [hostname] -P [port])
 
 ### 🧪 Testing the application
-Here are some options on how to 
-test the application routes:
+Here are some options on how to test the application routes:
 
 1. **Unit tests**
 Run the iteractive shell (option 1 or 2), and then run:
@@ -132,21 +131,34 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
 2. **Testing routes and methods** 
-On **Bash** or **CMD**:
+Usin **Bruno API Client**:
+Bruno is a local-first, git-native and open source API Client.
+No login required, no cloud dependency, unlimited (and free) requests.
+
+Learn about the tool: https://www.usebruno.com
+
+After installing VSCode extention,
+use it to select the 'collections' directory,
+then and have fun.
+
+----
+Using **Bash** or **CMD**:
 ```bash
 curl -v -X OPTIONS http://localhost:9999/api
 ```
 
-On **PowerShell**, use native method:
+----
+Using **PowerShell**, use native method:
 ```bash
-$body_dict = @{agent_type = 'cyclobot'};
-Invoke-WebRequest -Uri http://localhost:9999/api -Body $body_dict -Method OPTIONS -Verbose -UseBasicParsing
+Invoke-WebRequest -Uri http://localhost:9999/api -Method OPTIONS -Verbose -UseBasicParsing
 ```
 or run the actual curl file:
 ```bash
 & "C:\path\to\curl.exe" -v -X OPTIONS http://localhost:9999/api
 ```
-On **Wsl**:
+
+----
+Using **Wsl**:
 ```bash
 sudo apt update && sudo apt install curl
 curl -v -X OPTIONS http://localhost:9999/api

@@ -1,0 +1,14 @@
+info:
+  name: backuser_login
+  type: http
+  seq: 3
+
+http:
+  method: OPTIONS
+  url: "{{base_url}}/api"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

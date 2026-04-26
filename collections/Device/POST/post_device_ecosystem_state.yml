@@ -1,0 +1,15 @@
+info:
+  name: post_device_ecosystem_state
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{base_url}}/api/device/ecosystem_state"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,14 @@
+info:
+  name: put_device_cpmfogurations_from_customer copy
+  type: http
+  seq: 2
+
+http:
+  method: PUT
+  url: "{{base_url}}/api/customer/device_configurations"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

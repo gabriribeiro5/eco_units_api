@@ -1,0 +1,6 @@
+name: local
+variables:
+  - name: base_url
+    value: http://localhost:9999
+  - name: diagnostic_id
+    value: my_diagnostic_id

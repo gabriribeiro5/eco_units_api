@@ -1,0 +1,15 @@
+info:
+  name: post_backuser
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: "{{base_url}}/api/backuser"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,14 @@
+info:
+  name: delete_device
+  type: http
+  seq: 2
+
+http:
+  method: delete
+  url: "{{base_url}}/api/device"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

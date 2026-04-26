@@ -1,0 +1,14 @@
+info:
+  name: delete_device_config
+  type: http
+  seq: 4
+
+http:
+  method: delete
+  url: "{{base_url}}/api/device/configuration"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

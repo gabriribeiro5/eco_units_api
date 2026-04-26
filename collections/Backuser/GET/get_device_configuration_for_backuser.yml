@@ -1,0 +1,14 @@
+info:
+  name: get_device_configuration_for_backuser
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{base_url}}/api/backuser/device_configurations"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

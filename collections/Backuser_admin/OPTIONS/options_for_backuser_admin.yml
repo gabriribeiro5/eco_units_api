@@ -1,0 +1,15 @@
+info:
+  name: options_for_backuser_admin
+  type: http
+  seq: 4
+
+http:
+  method: options
+  url: "{{base_url}}/api/backuser/admin"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

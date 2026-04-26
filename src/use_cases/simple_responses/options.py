@@ -64,7 +64,6 @@ class OptionsHandler(Auth, OptionsManager):
         
         return agent_options
     
-    @require_authentication
     @log_running_and_done
     def handle_options_for_unauthenticated_client(self):
         '''

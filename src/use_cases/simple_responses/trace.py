@@ -1,6 +1,5 @@
 from use_cases.shared.auth.auth import AuthHandler
-from interfaces.handler import I_BaseHandler
-from interfaces.client import I_BaseClient
+from gateways.sync_client import Client
 from utils.logger import log_running_and_done
 import logging
 import functools
@@ -25,7 +24,6 @@ class TraceHandler(AuthHandler):
     Reflects the request back to the client as per the HTTP/1.1 specification.
     """
     def __init__(self, *args, **kwargs) -> None:
-        # self.client = I_BaseClient()  # Initialize client interface
         super().__init__(*args, **kwargs)
         
     def development_test(self):

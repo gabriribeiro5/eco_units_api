@@ -1,0 +1,14 @@
+info:
+  name: put_device_configurations_from_backuser
+  type: http
+  seq: 2
+
+http:
+  method: PUT
+  url: "{{base_url}}/api/backuser/device_configurations"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

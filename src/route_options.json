@@ -45,7 +45,7 @@
             "used_headers": {"Content-Type": "application/json",
                 "Accept-Post":"application/json"
             },
-            "parameters": {"unit_ip":"(uuid): optional", 
+            "parameters": {"device_ip":"(uuid): optional", 
                 "customer_id":"(uuid): optional"
             },
             "target_agents": ["backuser"],
@@ -91,7 +91,7 @@
             "description": "If email is in customer table, send validation link (token attached) to this address with explicit expire date and hidden token"
         },
 
-        "/api/customer": {"method": "handle_post_device",
+        "/api/customer": {"method": "handle_post_customer",
             "parameters": {},
             "target_agents": ["backuser"],
             "status": "to do",
@@ -129,71 +129,71 @@
             "description": "If email is in customer table, send validation link (token attached) to this address with explicit expire date and hidden token"
         },
 
-        "/api/device/diagnostic": {"method": "handle_post_unit_diagnostic",
+        "/api/device/diagnostic": {"method": "handle_post_device_diagnostic",
             "parameters": {},
             "target_agents": ["device"],
             "status": "to do",
-            "description": "Save unit's diagnostics. Returns transaction identifier (agent_input)"
+            "description": "Save device's diagnostics. Returns transaction identifier (agent_input)"
         },
         
-        "/api/device/configuration": {"method": "handle_post_unit_config",
+        "/api/device/configuration": {"method": "handle_post_device_config",
             "parameters": {},
             "target_agents": ["device"],
             "status": "to do",
-            "description": "Save unit's configuration. Returns transaction identifier (agent_input)"
+            "description": "Save device's configuration. Returns transaction identifier (agent_input)"
         },
 
-        "/api/device/ecosystem_state": {"method": "handle_post_unit_ecosystem_state",
+        "/api/device/ecosystem_state": {"method": "handle_post_device_ecosystem_state",
             "parameters": {},
             "target_agents": ["device"],
             "status": "to do",
-            "description": "Save unit's environment state. Returns transaction identifier (agent_input)"
+            "description": "Save device's environment state. Returns transaction identifier (agent_input)"
         },
 
-        "/api/backuser/unit_diagnostics": {"method": "handle_post_unit_diagnostics_from_backuser",
-            "parameters": {"unit_ids": "(list): optional, default None",
+        "/api/backuser/device_diagnostics": {"method": "handle_post_device_diagnostics_from_backuser",
+            "parameters": {"device_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None",
                 "customer_id": "(list): optional, default None",
-                "unit_location": "(list): optional, default None"
+                "device_location": "(list): optional, default None"
             },
             "target_agents": ["backuser"],
             "status": "to do",
-            "description": "Send unit's diagnostics to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's diagnostics to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
         },
 
-        "/api/backuser/unit_configurations": {"method": "handle_post_unit_configurations_from_backuser",
-            "parameters": {"unit_ids": "(list): optional, default None",
+        "/api/backuser/device_configurations": {"method": "handle_post_device_configurations_from_backuser",
+            "parameters": {"device_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None",
                 "customer_id": "(list): optional, default None",
-                "unit_location": "(list): optional, default None"
+                "device_location": "(list): optional, default None"
             },
             "target_agents": ["backuser"],
             "status": "to do",
-            "description": "Send unit's configuration to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's configuration to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
         },
 
-        "/api/customer/unit_diagnostics": {"method": "handle_post_unit_diagnostics_from_customer",
+        "/api/customer/device_diagnostics": {"method": "handle_post_device_diagnostics_from_customer",
             "parameters": {"customer_id": "(list): required",
-                "unit_ids": "(list): optional, default None",
+                "device_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None"
             },
             "target_agents": ["customer"],
             "status": "to do",
-            "description": "Send unit's diagnostics to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's diagnostics to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
         },
 
-        "/api/customer/unit_configurations": {"method": "handle_post_unit_configurations_from_customer",
+        "/api/customer/device_configurations": {"method": "handle_post_device_configurations_from_customer",
             "parameters": {"customer_id": "(list): required",
-                "unit_ids": "(list): optional, default None",
+                "device_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None"
             },
             "target_agents": ["customer"],
             "status": "to do",
-            "description": "Send unit's configuration to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's configuration to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
         }
     },
     "GET": {
-        "/api/backuser/login": {"method": "handle_backuser_login",
+        "/api/backuser/login": {"method": "handle_get_backuser_login",
             "parameters": {"user_email": "(str): required",
                 "password": "(encrypted string): required"
             },
@@ -202,7 +202,7 @@
             "description": "Returns session token"
         },
         
-        "/api/customer/login": {"method": "handle_customer_login",
+        "/api/customer/login": {"method": "handle_get_customer_login",
             "parameters": {"user_email": "(str): required",
                 "password": "(encrypted string): required"
             },
@@ -211,7 +211,7 @@
             "description": "Returns session token"
         },
 
-        "/api/device/signature-request": {"method": "handle_device_first_auth",
+        "/api/device/signature-request": {"method": "handle_get_device_first_auth",
             "used_headers": {"Content-Type": "application/json",
                 "Accept-Post":"application/json"
             },
@@ -245,9 +245,9 @@
             "description": "Returns the previous configuration for a given device"
         },
 
-        "/api/backuser/unit_configurations": {"method": "handle_get_device_configuration_for_backuser",
+        "/api/backuser/device_configurations": {"method": "handle_get_device_configuration_for_backuser",
             "parameters": {"device_id": "(uuid list): optional",
-                "unit_location": "(str list): optional",
+                "device_location": "(str list): optional",
                 "evironment_category": "(str list): optional"
             },
             "target_agents": ["backuser"],
@@ -255,9 +255,9 @@
             "description": "Returns a set of device configurations matching the given parameters"
         },
 
-        "/api/backuser/unit_diagnostics": {"method": "handle_get_device_diagnostics_for_backuser",
+        "/api/backuser/device_diagnostics": {"method": "handle_get_device_diagnostics_for_backuser",
             "parameters": {"device_id": "(uuid list): optional",
-                "unit_location": "(str list): optional",
+                "device_location": "(str list): optional",
                 "evironment_category": "(str list): optional"
             },
             "target_agents": ["backuser"],
@@ -265,9 +265,9 @@
             "description": "Returns a set of device diagnostics matching the given parameters"
         },
 
-        "/api/backuser/unit_ecosystem_states": {"method": "handle_get_device_ecosystem_states_for_backuser",
+        "/api/backuser/device_ecosystem_states": {"method": "handle_get_device_ecosystem_states_for_backuser",
             "parameters": {"device_id": "(uuid list): optional",
-                "unit_location": "(str list): optional",
+                "device_location": "(str list): optional",
                 "evironment_category": "(str list): optional"
             },
             "target_agents": ["backuser"],
@@ -276,42 +276,42 @@
         }
     },
     "PUT": {
-        "/api/backuser/unit_diagnostic/{diagnostic_id}": {"method": "handle_put_unit_diagnostics_from_backuser",
+        "/api/backuser/device_diagnostic/{diagnostic_id}": {"method": "handle_put_device_diagnostics_from_backuser",
             "parameters": {},
             "target_agents": ["backuser"],
             "status": "to do",
-            "description": "Send unit's diagnostics to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's diagnostics to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
         },
 
-        "/api/backuser/unit_configurations": {"method": "handle_post_unit_configurations_from_backuser",
-            "parameters": {"unit_ids": "(list): optional, default None",
+        "/api/backuser/device_configurations": {"method": "handle_put_device_configurations_from_backuser",
+            "parameters": {"device_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None",
                 "customer_id": "(list): optional, default None",
-                "unit_location": "(list): optional, default None"
+                "device_location": "(list): optional, default None"
             },
             "target_agents": ["backuser"],
             "status": "to do",
-            "description": "Send unit's configuration to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's configuration to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
         },
 
-        "/api/customer/unit_diagnostics": {"method": "handle_post_unit_diagnostics_from_customer",
+        "/api/customer/device_diagnostics": {"method": "handle_put_device_diagnostics_from_customer",
             "parameters": {"customer_id": "(list): required",
-                "unit_ids": "(list): optional, default None",
+                "device_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None"
             },
             "target_agents": ["customer"],
             "status": "to do",
-            "description": "Send unit's diagnostics to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's diagnostics to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
         },
 
-        "/api/customer/unit_configurations": {"method": "handle_post_unit_configurations_from_customer",
+        "/api/customer/device_configurations": {"method": "handle_put_device_configurations_from_customer",
             "parameters": {"customer_id": "(list): required",
-                "unit_ids": "(list): optional, default None",
+                "device_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None"
             },
             "target_agents": ["customer"],
             "status": "to do",
-            "description": "Send unit's configuration to db_operations.inserts.handle_post_unit_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's configuration to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
         }
     },
     "PATCH": {        

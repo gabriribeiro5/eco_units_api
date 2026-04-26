@@ -1,0 +1,14 @@
+info:
+  name: handle_trace
+  type: http
+
+http:
+  method: TRACE
+  url: "{{base_url}}/api"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,4 @@
+name: develop copy
+variables:
+  - name: base_url
+    value: http://localhost:9999

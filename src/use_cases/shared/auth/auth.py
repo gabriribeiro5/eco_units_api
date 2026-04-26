@@ -130,6 +130,7 @@ class AuthHandler(Sessions):
             auth_header = self.headers.get("Authorization")
             if auth_header and auth_header.startswith("Bearer "):
                 token = auth_header.split(" ")[1]
+                self.update_session_tokens()
                 if token in self.SESSION_TOKENS.values():
                     return True
                 logging.warning(f"Unauthorized access attempt with token: {token}")
