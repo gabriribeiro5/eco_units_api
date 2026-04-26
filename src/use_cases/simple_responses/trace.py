@@ -1,5 +1,4 @@
 from use_cases.shared.auth.auth import AuthHandler
-from gateways.sync_client import Client
 from utils.logger import log_running_and_done
 import logging
 import functools
