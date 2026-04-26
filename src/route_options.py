@@ -1,7 +1,7 @@
 import json
 from config import Definitions
 
-class OptionsManager():
+class RoutesManager():
     # Inicializa as rotas de forma dinâmica
     def __init__(self, *args, **kwargs) -> None:
         self.definitions = Definitions()
@@ -27,4 +27,4 @@ class OptionsManager():
             return {}
 
 if __name__ == "__main__":
-    rm = OptionsManager()
+    rm = RoutesManager()

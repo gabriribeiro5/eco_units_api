@@ -1,5 +1,5 @@
 from use_cases.shared.auth.auth import AuthHandler as Auth
-from route_options import OptionsManager
+from route_options import RoutesManager
 from utils.logger import log_running_and_done
 from urllib.parse import parse_qs
 import logging
@@ -18,14 +18,14 @@ def require_authentication(func):
         return func(self, *args, **kwargs)
     return wrapper
 
-class OptionsHandler(Auth, OptionsManager):
+class OptionsHandler(Auth, RoutesManager):
     """/
     Handles the OPTIONS HTTP method.
     OPTIONS is used to describe the communication options for the target resource.
         It helps the client understand what methods and headers are allowed
     """
     def __init__(self, *args, **kwargs) -> None:
-        self.options = OptionsManager()
+        self.options = RoutesManager()
         super().__init__(*args, **kwargs)
         
     def development_test(self):
