@@ -5,7 +5,16 @@ info:
 
 http:
   method: POST
-  url: "{{base_url}}/api/backuser"
+  url: "{{base_url}}/api/backuser/admin"
+  body:
+    type: json
+    data: |-
+      {
+        "agent_name": "admin",
+        "agent_email": "admin@email.com",
+        "agent_secret": "s3cr37@dblab73",
+        "confirmation_secret": "s3cr37@dblab73"
+      }
   auth: inherit
 
 settings:

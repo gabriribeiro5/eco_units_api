@@ -1,5 +1,5 @@
 from interfaces.handler import I_BaseHandler
-from connectors.async_aiomysql import AsyncronousAIOMySQL
+from gateways.async_aiomysql import AsyncronousAIOMySQL
 from utils.logger import async_log_running_and_done
 
 class SchemaSetupHandler(I_BaseHandler):

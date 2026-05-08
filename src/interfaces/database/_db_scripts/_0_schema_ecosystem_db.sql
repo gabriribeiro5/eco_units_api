@@ -13,15 +13,17 @@ USE `ecosystem_db` ;
 -- -----------------------------------------------------
 -- Table `ecosystem_db`.`agent`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `ecosystem_db`.`agent` ;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`agent` (
   `agent_id` INT NOT NULL AUTO_INCREMENT,
-  `cyclobot_id` INT NULL,
-  `back_user_id` INT NULL,
+  `device_id` INT NULL,
+  `backuser_id` INT NULL,
   `customer_id` INT NULL,
   `creation_date_time` DATETIME NOT NULL,
+  `enabled` TINYINT NOT NULL,
   PRIMARY KEY (`agent_id`),
-  UNIQUE INDEX `cyclobot_id_UNIQUE` (`cyclobot_id` ASC) VISIBLE,
-  UNIQUE INDEX `back_user_id_UNIQUE` (`back_user_id` ASC) VISIBLE,
+  UNIQUE INDEX `device_id_UNIQUE` (`device_id` ASC) VISIBLE,
+  UNIQUE INDEX `backuser_id_UNIQUE` (`backuser_id` ASC) VISIBLE,
   UNIQUE INDEX `customer_id_UNIQUE` (`customer_id` ASC) VISIBLE)
 ENGINE = InnoDB;
 
@@ -29,6 +31,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `ecosystem_db`.`customer`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `ecosystem_db`.`customer` ;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`customer` (
   `customer_id` INT NOT NULL AUTO_INCREMENT,
   `agent_id` INT NOT NULL,
@@ -52,6 +55,7 @@ COMMENT = '		';
 -- -----------------------------------------------------
 -- Table `ecosystem_db`.`ecosystem_category`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `ecosystem_db`.`ecosystem_category` ;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`ecosystem_category` (
   `ecosystem_category_id` INT NOT NULL AUTO_INCREMENT,
   `category_name` VARCHAR(100) NULL, -- '1 = vegetable garden,\n2 = habitat,\n3 = rainforest,\n4 = swamp,\n5 = prairie',
@@ -63,32 +67,33 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `ecosystem_db`.`cyclobot`
+-- Table `ecosystem_db`.`device`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `ecosystem_db`.`cyclobot` (
-  `cyclobot_id` INT NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `ecosystem_db`.`device` ;
+CREATE TABLE IF NOT EXISTS `ecosystem_db`.`device` (
+  `device_id` INT NOT NULL AUTO_INCREMENT,
   `agent_id` INT NOT NULL,
-  `cyclobot_name` VARCHAR(100) NULL,
+  `device_name` VARCHAR(100) NULL,
   `customer_id` INT NULL,
   `ecosystem_category_id` INT NOT NULL, -- '1 = vegetable garden,\n2 = habitat,\n3 = rainforest,\n4 = savanna,\n5 = desert,\n6 = prairie',
   `require_update` TINYINT NOT NULL, -- 'BOOLEAN. If product config must be updated. 1=YES.',
   `location` GEOMETRY NULL,
   `deactivated` INT NULL,
-  PRIMARY KEY (`cyclobot_id`),
-  INDEX `fk_cyclobot_customer_idx` (`customer_id` ASC) VISIBLE,
-  INDEX `fk_cyclobot_agent_idx` (`agent_id` ASC) VISIBLE,
-  INDEX `fk_cyclobot_ecosystem_category_idx` (`ecosystem_category_id` ASC) VISIBLE,
-  CONSTRAINT `fk_cyclobot_customer`
+  PRIMARY KEY (`device_id`),
+  INDEX `fk_device_customer_idx` (`customer_id` ASC) VISIBLE,
+  INDEX `fk_device_agent_idx` (`agent_id` ASC) VISIBLE,
+  INDEX `fk_device_ecosystem_category_idx` (`ecosystem_category_id` ASC) VISIBLE,
+  CONSTRAINT `fk_device_customer`
     FOREIGN KEY (`customer_id`)
     REFERENCES `ecosystem_db`.`customer` (`customer_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_cyclobot_agent`
+  CONSTRAINT `fk_device_agent`
     FOREIGN KEY (`agent_id`)
     REFERENCES `ecosystem_db`.`agent` (`agent_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_cyclobot_ecosystem_category`
+  CONSTRAINT `fk_device_ecosystem_category`
     FOREIGN KEY (`ecosystem_category_id`)
     REFERENCES `ecosystem_db`.`ecosystem_category` (`ecosystem_category_id`)
     ON DELETE RESTRICT
@@ -96,21 +101,42 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`cyclobot` (
 ENGINE = InnoDB
 COMMENT = '					';
 
+-- -----------------------------------------------------
+-- Table `ecosystem_db`.`backuser_admin`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `ecosystem_db`.`backuser_admin` ;
+CREATE TABLE IF NOT EXISTS `ecosystem_db`.`backuser_admin` (
+  `backuser_admin_id` INT NOT NULL AUTO_INCREMENT,
+  `agent_id` INT NOT NULL,
+  `backuser_admin_name` VARCHAR(100) NULL,
+  `backuser_admin_surname` VARCHAR(100) NULL,
+  `backuser_admin_email` VARCHAR(100) NULL,
+  PRIMARY KEY (`backuser_admin_id`),
+  INDEX `email_idx` (`backuser_admin_email` ASC) INVISIBLE,
+  INDEX `name_surname_idx` (`backuser_admin_name` ASC, `backuser_admin_surname` ASC) VISIBLE,
+  INDEX `fk_backuser_admin_agent_id_idx` (`agent_id` ASC) INVISIBLE,
+  CONSTRAINT `fk_backuser_admin_agent_id`
+    FOREIGN KEY (`agent_id`)
+    REFERENCES `ecosystem_db`.`agent` (`agent_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `ecosystem_db`.`back_user`
+-- Table `ecosystem_db`.`backuser`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `ecosystem_db`.`back_user` (
-  `back_user_id` INT NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `ecosystem_db`.`backuser` ;
+CREATE TABLE IF NOT EXISTS `ecosystem_db`.`backuser` (
+  `backuser_id` INT NOT NULL AUTO_INCREMENT,
   `agent_id` INT NOT NULL,
-  `back_user_name` VARCHAR(100) NULL,
-  `back_user_surname` VARCHAR(100) NULL,
-  `back_user_email` VARCHAR(100) NULL,
-  PRIMARY KEY (`back_user_id`),
-  INDEX `email_idx` (`back_user_email` ASC) INVISIBLE,
-  INDEX `name_surname_idx` (`back_user_name` ASC, `back_user_surname` ASC) VISIBLE,
-  INDEX `fk_back_user_agent_id_idx` (`agent_id` ASC) INVISIBLE,
-  CONSTRAINT `fk_back_user_agent_id`
+  `backuser_name` VARCHAR(100) NULL,
+  `backuser_surname` VARCHAR(100) NULL,
+  `backuser_email` VARCHAR(100) NULL,
+  PRIMARY KEY (`backuser_id`),
+  INDEX `email_idx` (`backuser_email` ASC) INVISIBLE,
+  INDEX `name_surname_idx` (`backuser_name` ASC, `backuser_surname` ASC) VISIBLE,
+  INDEX `fk_backuser_agent_id_idx` (`agent_id` ASC) INVISIBLE,
+  CONSTRAINT `fk_backuser_agent_id`
     FOREIGN KEY (`agent_id`)
     REFERENCES `ecosystem_db`.`agent` (`agent_id`)
     ON DELETE NO ACTION
@@ -121,18 +147,19 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `ecosystem_db`.`agent_input`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `ecosystem_db`.`agent_input` ;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`agent_input` (
   `agent_input_id` INT NOT NULL AUTO_INCREMENT,
   `agent_id` INT NOT NULL,
-  `cyclobot_id` INT NOT NULL,
+  `device_id` INT NOT NULL,
   `date_time` DATETIME NULL,
   `failed_communication` INT NULL, -- '1 = yes',
   PRIMARY KEY (`agent_input_id`),
   INDEX `fk_agent_input_idx` (`agent_id` ASC) VISIBLE,
-  INDEX `fk_agent_input__cyclobot_idx` (`cyclobot_id` ASC) VISIBLE,
-  CONSTRAINT `fk_agent_input_back_user`
+  INDEX `fk_agent_input__device_idx` (`device_id` ASC) VISIBLE,
+  CONSTRAINT `fk_agent_input_backuser`
     FOREIGN KEY (`agent_id`)
-    REFERENCES `ecosystem_db`.`back_user` (`agent_id`)
+    REFERENCES `ecosystem_db`.`backuser` (`agent_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk_agent_input_customer`
@@ -140,14 +167,14 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`agent_input` (
     REFERENCES `ecosystem_db`.`customer` (`agent_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_agent_input__cyclobot_by_agent_id`
+  CONSTRAINT `fk_agent_input__device_by_agent_id`
     FOREIGN KEY (`agent_id`)
-    REFERENCES `ecosystem_db`.`cyclobot` (`agent_id`)
+    REFERENCES `ecosystem_db`.`device` (`agent_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_agent_input__cyclobot_by_unit_id`
-    FOREIGN KEY (`cyclobot_id`)
-    REFERENCES `ecosystem_db`.`cyclobot` (`cyclobot_id`)
+  CONSTRAINT `fk_agent_input__device_by_unit_id`
+    FOREIGN KEY (`device_id`)
+    REFERENCES `ecosystem_db`.`device` (`device_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -156,9 +183,10 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `ecosystem_db`.`ecosystem_state`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `ecosystem_db`.`ecosystem_state` ;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`ecosystem_state` (
   `ecosystem_state_id` INT NOT NULL AUTO_INCREMENT,
-  `cyclobot_id` INT NOT NULL,
+  `device_id` INT NOT NULL,
   `agent_input_id` INT NOT NULL,
   `scan_date_time` DATETIME NULL,
   `soil_moisture` INT NULL,
@@ -166,15 +194,15 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`ecosystem_state` (
   `rain_occurrences_per_day` INT NULL,
   PRIMARY KEY (`ecosystem_state_id`),
   INDEX `fk_ecosystem_state_agent_input_idx` (`agent_input_id` ASC) VISIBLE,
-  INDEX `fk_ecosystem_state_agent_input_by_unit_id_idx` (`cyclobot_id` ASC) VISIBLE,
+  INDEX `fk_ecosystem_state_agent_input_by_unit_id_idx` (`device_id` ASC) VISIBLE,
   CONSTRAINT `fk_ecosystem_state_agent_input_by_input_id`
     FOREIGN KEY (`agent_input_id`)
     REFERENCES `ecosystem_db`.`agent_input` (`agent_input_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk_ecosystem_state_agent_input_by_unit_id`
-    FOREIGN KEY (`cyclobot_id`)
-    REFERENCES `ecosystem_db`.`agent_input` (`cyclobot_id`)
+    FOREIGN KEY (`device_id`)
+    REFERENCES `ecosystem_db`.`agent_input` (`device_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -183,6 +211,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `ecosystem_db`.`config_status`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `ecosystem_db`.`config_status` ;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`config_status` (
   `config_status_id` INT NOT NULL,
   `status_name` VARCHAR(45) NOT NULL,
@@ -194,6 +223,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `ecosystem_db`.`climate_season`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `ecosystem_db`.`climate_season` ;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`climate_season` (
   `climate_season_id` INT NOT NULL,
   `season_name` VARCHAR(45) NULL,
@@ -202,11 +232,12 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `ecosystem_db`.`configuration`
+-- Table `ecosystem_db`.`device.configuration`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `ecosystem_db`.`configuration` (
+DROP TABLE IF EXISTS `ecosystem_db`.`device_configuration` ;
+CREATE TABLE IF NOT EXISTS `ecosystem_db`.`device_configuration` (
   `configuration_id` INT NOT NULL AUTO_INCREMENT,
-  `cyclobot_id` INT NOT NULL,
+  `device_id` INT NOT NULL,
   `agent_input_id` INT NOT NULL,
   `config_status_id` INT NOT NULL,
   `run_physical_diagnostics` TINYINT NULL,
@@ -217,13 +248,13 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`configuration` (
   `watering_lenght_decrease_rate` INT NULL,
   `expected_climate_season` INT NULL,
   PRIMARY KEY (`configuration_id`),
-  INDEX `fk_configuration_agent_input_by_unit_id_idx` (`cyclobot_id` ASC) VISIBLE,
+  INDEX `fk_configuration_agent_input_by_unit_id_idx` (`device_id` ASC) VISIBLE,
   INDEX `fk_configuratin_agent_input_by_input_id_idx` (`agent_input_id` ASC) VISIBLE,
   INDEX `fk_configuratin_config_status_idx` (`config_status_id` ASC) VISIBLE,
   INDEX `fk_configuratin_climate_season_idx` (`expected_climate_season` ASC) VISIBLE,
   CONSTRAINT `fk_configuration_agent_input_by_unit_id`
-    FOREIGN KEY (`cyclobot_id`)
-    REFERENCES `ecosystem_db`.`agent_input` (`cyclobot_id`)
+    FOREIGN KEY (`device_id`)
+    REFERENCES `ecosystem_db`.`agent_input` (`device_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk_configuratin_agent_input_by_input_id`
@@ -247,6 +278,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `ecosystem_db`.`sensor_status`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `ecosystem_db`.`sensor_status` ;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`sensor_status` (
   `sensor_status_id` SMALLINT NOT NULL,
   `sensor_status_name` VARCHAR(45) NOT NULL,
@@ -258,12 +290,13 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `ecosystem_db`.`diagnostic`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `ecosystem_db`.`diagnostic` ;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`diagnostic` (
   `diagnostic_id` INT NOT NULL AUTO_INCREMENT,
-  `cyclobot_id` INT NOT NULL,
+  `device_id` INT NOT NULL,
   `agent_input_id` INT NOT NULL,
   `diagnostic_date_time` DATETIME NULL,
-  `cyclobot_message` VARCHAR(200) NULL,
+  `device_message` VARCHAR(200) NULL,
   `wifi_connected` SMALLINT NOT NULL,
   `watering_system` SMALLINT NOT NULL,
   `river_system` SMALLINT NOT NULL,
@@ -271,7 +304,7 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`diagnostic` (
   `lighting_system` SMALLINT NOT NULL,
   PRIMARY KEY (`diagnostic_id`),
   INDEX `fk_diagnostic_agent_input_by_input_id_idx` (`agent_input_id` ASC) VISIBLE,
-  INDEX `fk_diagnostic_agent_input_by_unit_id_idx` (`cyclobot_id` ASC) VISIBLE,
+  INDEX `fk_diagnostic_agent_input_by_unit_id_idx` (`device_id` ASC) VISIBLE,
   INDEX `fk_diagnostic_sensor_status_idx` (`wifi_connected` ASC) VISIBLE,
   CONSTRAINT `fk_diagnostic_agent_input_by_input_id`
     FOREIGN KEY (`agent_input_id`)
@@ -279,8 +312,8 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`diagnostic` (
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk_diagnostic_agent_input_by_unit_id`
-    FOREIGN KEY (`cyclobot_id`)
-    REFERENCES `ecosystem_db`.`agent_input` (`cyclobot_id`)
+    FOREIGN KEY (`device_id`)
+    REFERENCES `ecosystem_db`.`agent_input` (`device_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `fk_diagnostic_sensor_status_wifi_connected`

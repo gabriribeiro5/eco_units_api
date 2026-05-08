@@ -3,21 +3,20 @@ from config import Definitions
 from use_cases.db_setup.createSchema import SchemaSetupHandler
 from use_cases.simple_responses.trace import TraceHandler as Trace
 from use_cases.simple_responses.options import OptionsHandler as Options
+from use_cases.insert_agent.agentCreation import AgentCreationHandler as AgentCreation
 import logging
 
-class MasterHandler(Trace, Options):
+class MasterHandler(Trace, Options, AgentCreation):
     def __init__(self, request, client_address, server):
         # set protocol_version to HTTP/1.1 to enable automatic keepalive
         self.protocol_version = "HTTP/1.1"
+        self.request = request
+        self.client_address = client_address
+        self.server = server
         super().__init__(request, client_address, server)
 
     def test(self):
         pass
-    
-    # def require_authentication(self):
-    #     if not self.is_authenticated():
-    #         self.send_error(401, "Unauthorized")
-    #         return
     
     def run_handler(self, handler_name, *args, **kwargs):
         logging.info(f"calling handler: {handler_name}")
@@ -26,7 +25,7 @@ class MasterHandler(Trace, Options):
             try:
                 response_data = handler(*args, **kwargs)  # Call handler and get response data
             except Exception as e:
-                logging.error(f"Error executing handler '{handler_name}': {e}")
+                logging.error(f"Error executing handler '{handler_name}':\n {e}")
                 self.send_error(500, "Internal Server Error")
                 raise e
             return response_data

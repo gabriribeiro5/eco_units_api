@@ -18,7 +18,23 @@ class SessionManager(I_BaseHandler):
         # Start a daemon thread for periodic session cleanup
         cleanup_thread = threading.Thread(target=self.session_cleanup_task, daemon=True)
         cleanup_thread.start()
-
+    
+    def _determine_session_group(self, client_label: str) -> str:
+        """
+        Maps client labels to corresponding session groups.
+        """
+        match client_label:  # Requires Python 3.10 or newer
+            case "device":
+                return "device_sessions"
+            case "customer":
+                return "customer_sessions"
+            case "backuser":
+                return "backuser_sessions"
+            case "backuser_admin":
+                return "backuser_admin_sessions"
+            case _:
+                raise ValueError(f"Unknown client label '{client_label}'")
+            
     def _create_session_id(self, session_group: str) -> str:
         """
         Generates a unique session ID for the specified group.
@@ -50,20 +66,6 @@ class SessionManager(I_BaseHandler):
         session_id = self._create_session_id(session_group)
         self._cache_session_id(session_group, session_id)
         return session_id
-
-    def _determine_session_group(self, client_label: str) -> str:
-        """
-        Maps client labels to corresponding session groups.
-        """
-        match client_label:  # Requires Python 3.10 or newer
-            case "cyclobot":
-                return "cyclobot_sessions"
-            case "customer":
-                return "customer_sessions"
-            case "backoffice":
-                return "backoffice_sessions"
-            case _:
-                raise ValueError(f"Unknown client label '{client_label}'")
 
     def delete_session(self, session_id: str):
         """

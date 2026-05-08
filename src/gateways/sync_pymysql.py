@@ -1,15 +1,14 @@
+import time
 import pymysql # type: ignore
 from interfaces.database.sync_connector import I_SyncDBConnector
-from config import Definitions
 from utils.logger import log_running_and_done
 import logging
 
 class SyncronousPyMySQL(I_SyncDBConnector):
     def __init__(self, *args, **kwargs) -> None:
-        self.definitions = Definitions()
         super().__init__(*args, **kwargs)
 
-    def _connect(self):
+    def connect(self):
         connection = pymysql.connect(
             host=self.DB_HOST,
             user=self.DB_USER,
@@ -20,31 +19,70 @@ class SyncronousPyMySQL(I_SyncDBConnector):
         cursor = connection.cursor()
         return connection, cursor
 
-    def _executeScript(self, sqlScript):
-        # all SQL commands (split on ';')
-        sqlCommands = sqlScript.split(';\n')
-        connection, cursor = self._connect()
+    def run_script(self, sqlScript, *args, **kwargs):
+        # All SQL commands (split on ;\n while preserving multiline statements)
+        sqlCommands = [command.strip() for command in sqlScript.split(';\n') if command.strip()]
+        attempts = 0
+        max_attempts = kwargs.pop('max_attempts', 3)
 
-        # Execute every command from the input file
-        for command in sqlCommands:
+        while True:
+            connection = None
             try:
-                cursor.execute(command)
-            except pymysql.err.OperationalError as msg:
-                logging.error(f"Failed running SQL command\n {command}\n {msg}")
-                raise msg
-    
-    @log_running_and_done
-    def create_schema(self):
-        try:
-            self._executeScript(self.script_schema_ecosystem_db)
-        except Exception as e:
-            logging.error(e)
-            raise e
+                connection, cursor = self.connect()
 
-    @log_running_and_done
-    def insert_into_index_tables(self):
+                # Execute every command from the input file
+                for command in sqlCommands:
+                    cursor.execute(command, *args, **kwargs)
+                    connection.commit()
+
+                connection.close()
+                return
+            except pymysql.err.OperationalError as msg:
+                if connection is not None:
+                    connection.rollback()
+                    connection.close()
+
+                error_code = msg.args[0] if isinstance(msg.args, tuple) else None
+                if error_code == 1213 and attempts < max_attempts:
+                    attempts += 1
+                    logging.warning(f"Deadlock detected, retrying script (attempt {attempts}/{max_attempts})")
+                    time.sleep(0.5)
+                    continue
+
+                logging.error(f"Failed running SQL script after {attempts + 1} attempt(s)\n {msg}")
+                raise msg
+            
+
+    def run_query(self, sqlQuery, *args, **kwargs):
+        connection, cursor = self.connect()
+
+        # Execute the query
         try:
-            self._executeScript(self.script_insert_into_index_tables)
+            cursor.execute(sqlQuery, *args, **kwargs)
+        except pymysql.err.OperationalError as msg:
+            logging.error(f"Failed running SQL query\n {sqlQuery}\n {msg}")
+            connection.close()
+            raise msg
+
+        # Fetch all results
+        results = cursor.fetchall()
+        connection.close()
+        return results
+
+    def acquire_lock(self, lock_name, timeout=5):
+        """Acquire a named lock. Returns True if acquired, False otherwise."""
+        try:
+            result = self.run_query(f"SELECT GET_LOCK('{lock_name}', {timeout})")
+            return result[0][0] == 1
         except Exception as e:
-            logging.error(e)
-            raise e
+            logging.error(f"Failed to acquire lock '{lock_name}': {e}")
+            return False
+
+    def release_lock(self, lock_name):
+        """Release a named lock."""
+        try:
+            self.run_query(f"SELECT RELEASE_LOCK('{lock_name}')")
+        except Exception as e:
+            logging.error(f"Failed to release lock '{lock_name}': {e}")
+
+    

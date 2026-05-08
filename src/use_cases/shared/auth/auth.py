@@ -1,3 +1,5 @@
+import os
+from interfaces.database.db_scripts import I_DBScriptSource
 from use_cases.shared.auth.sessions import SessionManager as Sessions
 import uuid
 from datetime import datetime
@@ -5,7 +7,7 @@ from urllib.parse import parse_qs
 import logging
 import json
 
-class AuthHandler(Sessions):
+class AuthHandler(Sessions, I_DBScriptSource):
     '''
     - Quem és tú, Jaburu?
     - Atribuir label (Customer, Unit, etc)
@@ -13,112 +15,216 @@ class AuthHandler(Sessions):
     - Retorna o token
     '''
     def __init__(self, *args, **kwargs) -> None:
-        self.FIRST_AUTH_DEVICES = {}
-        self.ALLOWED_DEVICES = {}
+        self.FIRST_AUTH_AGENTS = {}
+        self.ALLOWED_AGENTS = {}
         self.SESSION_TOKENS = {}
+        I_DBScriptSource.__init__(self)  # make sure scripts are loaded for classes that inherit from this one
         super().__init__(*args, **kwargs)
 
-    def update_first_auth_devices(self):
+    def check_admin_credentials(self, admin_name, admin_secret):
         '''
-        This function must update the FIRST_AUTH_DEVICES dictionary by fetching the latest data from the database.
+        Check against environment variables
         '''
-        db_first_auth_devices = {"new_client_id_hash": "some_secret token"}
-        self.FIRST_AUTH_DEVICES = db_first_auth_devices
+        # This is a placeholder check. Replace with actual environment variable checks in production.
+        admin_names_and_secrets = os.getenv("API_ADMIN_SECRETS").split(",")
+        agent_credential = f"{admin_name}:{admin_secret}"
 
-    def update_allowed_devices(self):
+        if agent_credential not in list(admin_names_and_secrets):
+            logging.warning(f"Invalid admin credentials provided: {agent_credential}")
+            raise ValueError("Invalid admin credentials")
+
+    # database SELECTS to update in-memory auth data
+    def update_first_auth_agents(self):
         '''
-        This function must update the ALLOWED_DEVICES dictionary by fetching the latest data from the database.
+        Fetch the latest data from the database.
         '''
-        db_allowed_devices = {"client_id_hash": "my_secret_token", "other_client_id_hash": "not_my_token"}
-        self.ALLOWED_DEVICES = db_allowed_devices
+        db_first_auth_agents = {"new_client_id_hash": "some_secret token"}
+        self.FIRST_AUTH_AGENTS = db_first_auth_agents
+
+    def update_allowed_agents(self):
+        '''
+        Fetch the latest data from the database.
+        '''
+        db_allowed_agents = {"backuser_admin_id_hash": "my_secret_token", "backuser_id_hash": "not_my_token"}
+        self.ALLOWED_AGENTS = db_allowed_agents
 
     def update_session_tokens(self):
         '''
-        This function must update the SESSION_TOKENS dictionary by fetching the latest data from the database.
+        Fetch the latest data from the database.
         '''
-        db_session_tokens = {"client_id_hash": "my_secret_token"}
+        db_session_tokens = {
+            "my_id_hash": "my_secret_token",
+            "backuser_admin_id_hash": "backuser_admin_token",
+            "backuser_id_hash": "backuser_token",
+            "customer_id_hash": "customer_token",
+            "agent_id_hash": "agent_token"
+        }
         self.SESSION_TOKENS = db_session_tokens
 
-    def get_device_id(self, device_id_hash):
-        # Retrieve device_id based on the hash
+    # database INSERTS to update in-memory auth data
+    def insert_first_auth_agent(self, agent_id, token):
+        '''
+        Adds a new agent to the FIRST_AUTH_AGENTS list with the provided agent_id and token.
+        This is a placeholder implementation and should be replaced with actual database logic in production.
+        '''
+        self.FIRST_AUTH_AGENTS[agent_id] = token
+    
+    def insert_allowed_agent(self, agent_id, token):
+        '''
+        Adds a new agent to the ALLOWED_AGENTS list with the provided agent_id and token.
+        This is a placeholder implementation and should be replaced with actual database logic in production.
+        '''
+        self.ALLOWED_AGENTS[agent_id] = token
+
+    def insert_session_agent(self, agent_id, token):
+        '''
+        Adds a new session token to the SESSION_TOKENS list with the provided agent_id and token.
+        This is a placeholder implementation and should be replaced with actual database logic in production.
+        '''
+        self.SESSION_TOKENS[agent_id] = token
+
+    # Hash generation and validation
+    def new_hash(self, id, agent_type):
+        '''
+        Generates a hash token based on specific id (backuser, customer, etc.) and agent type.
+        This is a placeholder implementation and should be replaced with a secure hashing algorithm in production.
+        '''
+        return f"hash_type!{agent_type}_id!{id}"
+    def unhash(self, hash_string):
+        '''
+        Placeholder function to reverse the hashing process.
+        In a real implementation, this would not be possible with a secure hash, so this is just for demonstration purposes.
+        '''
+        
+        if hash_string.startswith("hash_"): # uses the simplest hashing algorithm
+            hash_components = hash_string.split("_") # find basic hash components
+
+            hash_data = {}
+            for i in range(len(hash_components)):
+                logging.debug(f"Hash component {i}: {hash_components[i]}") # log hash components for debugging
+                if hash_components[i].startswith("type!"):
+                    hash_data["agent_type"] = hash_components[i].split("!")[1] # extract agent type
+                    logging.debug(f"Extracted agent type: {hash_data['agent_type']} from hash component: {hash_components[i]}") # log extracted agent type for debugging
+                if hash_components[i].startswith("id!"):
+                    hash_data["id"] = hash_components[i].split("!")[1] # extract id
+                    logging.debug(f"Extracted id: {hash_data['id']} from hash component: {hash_components[i]}") # log extracted id for debugging
+
+            return hash_data
+        
+        return None
+    def select_agent_id_from_database(id, agent_type):
+        '''
+        Placeholder function to select agent_id from database based on id and agent_type.
+        In a real implementation, this would involve querying the database to retrieve the corresponding agent_id.
+        '''
+        # Retrieve agent_id based on the hash
         # TODO: look up the hash in a database
-        device_id_mapping = {
-            "new_client_id_hash": "new_client_id",
-            "client_id_hash": "existing_client_id",
-            "other_client_id_hash": "other_existing_client_id"
+        agent_id_mapping = {
+            "admin_id_hash": "new_client_id",
+            "backuser_id_hash": "existing_client_id",
+            "customer_id_hash": "other_existing_client_id",
+            "device_id_hash": "another_existing_client_id"
         }
-        
-        device_id = device_id_mapping.get(device_id_hash, None)
+        if agent_type == "backuser_admin":
+            # Search for agent_id in backuser_admins database table using the id extracted from the hash
+            agent_id = agent_id_mapping.get(id, None)
+        if agent_type == "backuser":
+            # Search for agent_id in backusers database table using the id extracted from the hash
+            agent_id = agent_id_mapping.get(id, None)
+        if agent_type == "customer":
+            # Search for agent_id in customers database table using the id extracted from the hash
+            agent_id = agent_id_mapping.get(id, None)
+        if agent_type == "device":
+            # Search for agent_id in devices database table using the id extracted from the hash
+            agent_id = agent_id_mapping.get(id, None)
+        return "agent_id_from_database"
+    
+    def find_agent_id(self, id_hash):
+        '''
+        Retrieves the agent_id corresponding to the provided agent_id_hash
+        '''
+        # Find agent type based on the hash
+        hash_data = self.unhash(id_hash)
+        id = hash_data.get("id") if hash_data else None
+        agent_type = hash_data.get("agent_type") if hash_data else None
 
-        if device_id:
-            logging.debug(f"Device ID {device_id} found for hash {device_id_hash}.")
+        if agent_type:
+            logging.debug(f"Agent type {agent_type} identified for hash {id_hash}.")
+            agent_id = self.select_agent_id_from_database(id, agent_type) # placeholder function to select agent_id from database based on id and agent_type
         else:
-            logging.warning(f"No device ID found for hash {device_id_hash}.")
+            logging.warning(f"No agent type identified for hash {id_hash}.")
+            agent_id = None
 
-        return device_id
+        return agent_id
 
-    def handle_device_first_auth(self):
+    def handle_backuser_admin_first_auth(self):
         '''
-        Handles the first authentication step for a client device.
-        1. Validates the provided device_id against FIRST_AUTH_DEVICES.
-        2. If device_id is valid, returns its token and moves it to ALLOWED_DEVICES.
+        Handles the first authentication step for a client (agent).
+        1. Validates the provided agent_id against FIRST_AUTH_AGENTS.
+        2. If agent_id is valid, returns its token and moves it to ALLOWED_AGENTS.
+        3. If agent_id is not valid, returns None.
         '''
         
-        device_id_hash = self.get_request_data().get("device_id_hash", None).lower()
-        device_id = self.get_device_id(device_id_hash) if device_id_hash else "all"
+        backuser_admin_id_hash = self.get_request_data().get("backuser_admin_id_hash", None).lower()
+        agent_id = self.find_agent_id(backuser_admin_id_hash) if backuser_admin_id_hash else None
         
-        # Validate device_id
+        # Validate agent_id
         try:
-            if device_id in self.FIRST_AUTH_DEVICES:
-                # Move item to allowed devices
+            if agent_id in self.FIRST_AUTH_AGENTS:
+                # Move item to allowed agents
                 # TODO: this item must be saved to a database
-                self.ALLOWED_DEVICES[device_id] = self.FIRST_AUTH_DEVICES[device_id]
-                logging.info(f"Device {device_id} added to allowed devices.")
+                self.ALLOWED_AGENTS[agent_id] = self.FIRST_AUTH_AGENTS[agent_id]
+                logging.info(f"Agent {agent_id} added to allowed agents.")
                 
-                del self.FIRST_AUTH_DEVICES[device_id]
-                logging.info(f"Device {device_id} removed from first auth devices.")
+                del self.FIRST_AUTH_AGENTS[agent_id]
+                logging.info(f"Agent {agent_id} removed from first auth agents.")
                 
-                return self.ALLOWED_DEVICES[device_id]
+                return self.ALLOWED_AGENTS[agent_id]
             else:
-                logging.warning(f"Device ID {device_id} not found in first auth devices.")
+                logging.warning(f"Agent ID {agent_id} not found in first auth agents.")
                 return None
             
         except Exception as e:
-            logging.error(f"Error during first authentication for {device_id}: {str(e)}")
+            logging.error(f"Error during first authentication for {agent_id}: {str(e)}")
             return None
         
-    def handle_device_login(self):
+    def handle_agent_login(self):
         '''
-        Handles the login process for a client device.
-        1. Validates the provided id and token against ALLOWED_DEVICES..
+        Handles the login process for a client (agent).
+        1. Validates the provided id and token against ALLOWED_AGENTS..
         2. Get and return a new session ID to the client for future authenticated requests.
         '''
         
         request_data = self.get_request_data()
-        device_id_hash = request_data.get("device_id_hash", None).lower()
+        agent_id_hash = request_data.get("agent_id_hash", None).lower()
         
-        device_id = self.get_device_id(device_id_hash) if device_id_hash else "all"
+        agent_id = self.find_agent_id(agent_id_hash) if agent_id_hash else "all"
         auth_header = self.headers.get("Authorization")
         if auth_header and auth_header.startswith("Bearer "):
             token = auth_header.split(" ")[1].lower()
 
-        # update ALLOWED_DEVICES by hitting database
-        self.update_allowed_devices()
+        # update ALLOWED_AGENTS by hitting database
+        self.update_allowed_agents()
         
-        # Validate device_id and token
+        # Validate agent_id and token, then get sessoin ID
         try:
-            if device_id in self.ALLOWED_DEVICES and self.ALLOWED_DEVICES[device_id] == token:
+            if agent_id in self.ALLOWED_AGENTS and self.ALLOWED_AGENTS[agent_id] == token:
                 # Get and return a new session ID.
                 # TODO: this item must be saved to a database
-                logging.info(f"Device {device_id} authenticated successfully.")                
-                return self.new_session_id(client_label="cyclobot")
+                logging.info(f"Agent {agent_id} authenticated successfully.")                
+                session_id = self.new_session_id(client_label="device")
             else:
-                logging.warning(f"Device ID {device_id} not found in first auth devices.")
+                logging.warning(f"Agent ID {agent_id} not found in first auth agents.")
                 return None
             
         except Exception as e:
-            logging.error(f"Error during first authentication for {device_id}: {str(e)}")
+            logging.error(f"Error during first authentication for {agent_id}: {str(e)}")
             return None
+        
+        # expected output: session_id
+        status = 200 if session_id else 401
+        response_data = (status, {}, json.dumps({"session_id": session_id}) if session_id else json.dumps({"error": "Unauthorized"}))
+        return response_data
     
 
     def is_authenticated(self):

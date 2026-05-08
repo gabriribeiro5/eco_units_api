@@ -58,19 +58,24 @@ Then open a terminal in the project root directory and execute:
 docker-compose up --build
 ```
 
-2. **To rebuild the images, run**:
+2. **To rebuild the images, run:**
 ```bash
 docker-compose down; docker-compose up --build
 ```
 Execute interactive commands using Docker Desktop
 
-3. **Iteractively run a single container**
+3. **To rebuild images and db volume, run:**
+   ```bash
+docker-compose down; docker volume rm cyclobot_api_db_cyclobots; docker-compose up --build
+```
+
+4. **Iteractively run a single container**
 On a new terminal, run the following:
 ```bash
 docker run -p 8080:8080 -iteractive cyclobots_api_image:latest
 ```
 
-4. **Accessing Docker container after running it**
+1. **Accessing Docker container after running it**
 On a new terminal, run the following:
 ```bash
 docker exec -it cyclobots_api_container /bin/sh

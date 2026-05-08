@@ -11,18 +11,19 @@ class Definitions():
         self._DB_SCRIPTS_DIR = self.SRC_DIR / "interfaces/database/_db_scripts"
 
         ### APPLICATION CONFIGURATION ###
-        self.AGENTS_LIST = ("cyclobot", "customer", "backuser", "backuser_admin")
+        self.AGENTS_LIST = ("device", "customer", "backuser", "backuser_admin")
         self.AGENT_INPUT_TABLES = ("agent_input", "diagnostic", "configuration", "ecosystem_state")
         self.ALLOWED_INPUT_TABLES = {
-            "cyclobot": (self.AGENT_INPUT_TABLES),
+            "device": (self.AGENT_INPUT_TABLES),
             "customer": (self.AGENT_INPUT_TABLES),
-            "back_user": (self.AGENT_INPUT_TABLES, "agent", "cyclobot", "customer"),
-            "back_user_admin": (self.AGENT_INPUT_TABLES, "agent", "cyclobot", "customer", "back_user")
+            "backuser": (self.AGENT_INPUT_TABLES, "agent", "device", "customer"),
+            "backuser_admin": (self.AGENT_INPUT_TABLES, "agent", "device", "customer", "backuser")
         }
         self.SESSION_GROUPS_AND_TIMEOUTS = {
-            "cyclobot_sessions": 5, # group_name: minutes
+            "device_sessions": 5, # group_name: minutes
             "customer_sessions": 30, # group_name: minutes
-            "backoffice_sessions": 30 # group_name: minutes
+            "backuser_sessions": 30, # group_name: minutes
+            "backuser_admin_sessions": 30 # group_name: minutes
         }
         self.LOGGING_ENABLED = True
         self.ASYNC_MODE = False

@@ -5,9 +5,9 @@
 -- -----------------------------------------------
 --                 Summary
 --                  to do
--- -> eco unit insert: self diagnostic
--- -> eco unit insert: current configuration
--- -> eco unit insert: environment state
+-- -> device insert: self diagnostic
+-- -> device insert: current configuration
+-- -> device insert: environment state
 -- 
 -- -> back user insert: unit diagnostic
 -- -> back user insert: unit configuration update
@@ -17,36 +17,35 @@
 -- -----------------------------------------------
 
 -- ------------------------------------
--- -> eco unit insert: self diagnostic
+-- -> device insert: self diagnostic
 -- ------------------------------------
 
--- eco unit input
-INSERT INTO agent_input
+-- device input
+INSERT IGNORE INTO agent_input
 (`agent_input_id`,
 `agent_id`,
-`cyclobot_id`,
+`device_id`,
 `date_time`,
 `failed_communication`)
 VALUES
 (DEFAULT,
-	(select e.agent_id
-		from cyclobot as e
-        order by e.date_time desc
+	(select d.agent_id
+		from device as d
+        order by d.device_id desc
         limit 1),
-	(select e.agent_id
-		from cyclobot as e
-        order by e.date_time desc
+	(select d.device_id
+		from device as d
+        order by d.device_id desc
         limit 1),
 CURRENT_TIMESTAMP,
 0);
 
-select * from diagnostic;
-INSERT INTO `ecosystem_db`.`diagnostic`
+INSERT IGNORE INTO `ecosystem_db`.`diagnostic`
 (`diagnostic_id`,
-`cyclobot_id`,
+`device_id`,
 `agent_input_id`,
 `diagnostic_date_time`,
-`cyclobot_message`,
+`device_message`,
 `wifi_connected`,
 `watering_system`,
 `river_system`,
@@ -54,7 +53,7 @@ INSERT INTO `ecosystem_db`.`diagnostic`
 `lighting_system`)
 VALUES
 (DEFAULT,
-	(select ainput.cyclobot_id 
+	(select ainput.device_id 
 		from agent_input as ainput 
         order by ainput.date_time
         limit 1),
@@ -71,32 +70,32 @@ VALUES
 1); -- 1 = running; 2 = malfunction; 3 = not installed
 
 -- ------------------------------------------
--- -> eco unit insert: current configuration
+-- -> device insert: current configuration
 -- ------------------------------------------
 
--- eco unit input
-INSERT INTO agent_input
+-- device input
+INSERT IGNORE INTO agent_input
 (`agent_input_id`,
 `agent_id`,
-`cyclobot_id`,
+`device_id`,
 `date_time`,
 `failed_communication`)
 VALUES
 (DEFAULT,
-	(select e.agent_id
-		from cyclobot as e
-        order by e.date_time desc
+	(select d.agent_id
+		from device as d
+        order by d.device_id desc
         limit 1),
-	(select e.agent_id
-		from cyclobot as e
-        order by e.date_time desc
+	(select d.device_id
+		from device as d
+        order by d.device_id desc
         limit 1),
 CURRENT_TIMESTAMP,
 0);
 
-INSERT INTO `configuration`
+INSERT IGNORE INTO `configuration`
 (`configuration_id`,
-`cyclobot_id`,
+`device_id`,
 `agent_input_id`,
 `config_status_id`, -- 1 = confirmed; 2 = sent; 3 = wating; 4 = expired
 `run_physical_diagnostics`,
@@ -108,7 +107,7 @@ INSERT INTO `configuration`
 `expected_climate_season`)
 VALUES
 (DEFAULT,
-	(select ainput.cyclobot_id
+	(select ainput.device_id
 		from agent_input as ainput
         order by ainput.date_time desc
         limit 1),
@@ -127,32 +126,32 @@ VALUES
 
 
 -- ---------------------------------------
--- -> eco unit insert: environment state
+-- -> device insert: environment state
 -- ---------------------------------------
 
--- eco unit input
-INSERT INTO agent_input
+-- device input
+INSERT IGNORE INTO agent_input
 (`agent_input_id`,
 `agent_id`,
-`cyclobot_id`,
+`device_id`,
 `date_time`,
 `failed_communication`)
 VALUES
 (DEFAULT,
-	(select e.agent_id
-		from cyclobot as e
-        order by e.date_time desc
+	(select d.agent_id
+		from device as d
+        order by d.device_id desc
         limit 1),
-	(select e.agent_id
-		from cyclobot as e
-        order by e.date_time desc
+	(select d.device_id
+		from device as d
+        order by d.device_id desc
         limit 1),
 CURRENT_TIMESTAMP,
 0);
 
-INSERT INTO ecosystem_state
+INSERT IGNORE INTO ecosystem_state
 (`ecosystem_state_id`,
-`cyclobot_id`,
+`device_id`,
 `agent_input_id`,
 `scan_date_time`,
 `soil_moisture`,
@@ -160,7 +159,7 @@ INSERT INTO ecosystem_state
 `rain_occurrences_per_day`)
 VALUES
 (DEFAULT,
-	(select ainput.cyclobot_id
+	(select ainput.device_id
 		from agent_input as ainput
         order by ainput.date_time desc
         limit 1),

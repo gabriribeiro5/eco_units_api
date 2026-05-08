@@ -1,7 +1,7 @@
 from http.client import HTTPSConnection
 import inspect
 
-class Client():
+class MicroserviceClient():
     def __init__(self, host, port):
         self.host = host
         self.port = port

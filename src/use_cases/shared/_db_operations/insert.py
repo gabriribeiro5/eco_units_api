@@ -1,4 +1,5 @@
 from interfaces.handler import I_BaseHandler
+from gateways.sync_pymysql import SyncronousPyMySQL
 import json
 import warnings
 import logging
@@ -74,7 +75,6 @@ class IndexTables(I_BaseHandler):
         return status, headers, body
 
 class AgentTables(I_BaseHandler):
-
     # Handlers para as rotas
     def handle_insert_some_data(self):
         self.send_response(200)
@@ -84,7 +84,6 @@ class AgentTables(I_BaseHandler):
         self.wfile.write(json.dumps(response).encode())
 
 class AgentInputTables(I_BaseHandler):
-
     # Handlers para as rotas
     def handle_post_unit_configurations(self,
                                         unit_ids: list = None,

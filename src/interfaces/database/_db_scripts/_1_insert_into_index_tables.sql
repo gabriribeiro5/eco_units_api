@@ -5,10 +5,9 @@
 -- ------------------------
 
 -- -----------------------------------------
--- Sensor status
+-- Sensor status (ignore insert if PK or FK already exists)
 -- -----------------------------------------
-select * from sensor_status;
-INSERT INTO `sensor_status`
+INSERT IGNORE INTO `sensor_status`
 (`sensor_status_id`,
 `sensor_status_name`,
 `sensor_status_description`)
@@ -26,8 +25,10 @@ AS `new`
 ON DUPLICATE KEY UPDATE sensor_status_name = `new`.sensor_status_name,
  sensor_status_description = `new`.sensor_status_description;
 
-select * from config_status;
-INSERT INTO `config_status`
+-- -----------------------------------------
+-- Config status (ignore insert if PK or FK already exists)
+-- -----------------------------------------
+INSERT IGNORE INTO `config_status`
 (`config_status_id`,
 `status_name`,
 `status_description`)
@@ -48,8 +49,10 @@ AS `new`
 ON DUPLICATE KEY UPDATE status_name = `new`.status_name,
  status_description = `new`.status_description;
 
-select * from climate_season;
-INSERT INTO `climate_season`
+-- -----------------------------------------
+-- Climate season (ignore insert if PK or FK already exists)
+-- -----------------------------------------
+INSERT IGNORE INTO `climate_season`
 (`climate_season_id`,
 `season_name`)
 VALUES
@@ -64,8 +67,10 @@ VALUES
 AS `new`
 ON DUPLICATE KEY UPDATE season_name = `new`.season_name;
 
-select * from ecosystem_category;
-INSERT INTO ecosystem_category
+-- -----------------------------------------
+-- Ecosystem category (ignore insert if PK or FK already exists)
+-- -----------------------------------------
+INSERT IGNORE INTO `ecosystem_category`
 (`ecosystem_category_id`,
 `category_name`,
 `category_description`)

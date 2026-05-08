@@ -8,23 +8,23 @@
 -- INSERT CUSTOMER
 -- ----------------
 -- 1. Insert agent but do NOT enable
-INSERT INTO agent
+INSERT IGNORE INTO agent
 (`agent_id`,
-  `cyclobot_id`,
-  `back_user_id`,
+  `device_id`,
+  `backuser_id`,
   `customer_id`,
   `creation_date_time`,
   `enabled`) -- 1 = true
 VALUES
 (DEFAULT,
-NULL,
-NULL,
-NULL,
+%s,
+%s,
+%s,
 CURRENT_TIMESTAMP,
 0); -- not enabled
 
 -- 2. Insert CUSTOMER with agent_id
-INSERT INTO customer
+INSERT IGNORE INTO customer
 (`customer_id`,
 `agent_id`,
 `customer_name`,
@@ -53,10 +53,10 @@ WHERE `agent_id` = (SELECT c.agent_id
 -- INSERT BACK_USER
 -- -----------------
 -- 1. Insert agent but do NOT enable
-INSERT INTO agent
+INSERT IGNORE INTO agent
 (`agent_id`,
-  `cyclobot_id`,
-  `back_user_id`,
+  `device_id`,
+  `backuser_id`,
   `customer_id`,
   `creation_date_time`,
   `enabled`) -- 1 = true
@@ -69,8 +69,8 @@ CURRENT_TIMESTAMP,
 0); -- not enabled
 
 -- 2. Insert BACK_USER with agent_id
-INSERT INTO back_user
-(`back_user_id`,
+INSERT IGNORE INTO back_user
+(`backuser_id`,
 `agent_id`,
 `name`,
 `back_user_surname`,
@@ -91,17 +91,17 @@ SET
 enabled = 1
 WHERE `agent_id` = (SELECT b.agent_id
 					FROM back_user AS b
-                    ORDER BY back_user_id DESC
+                    ORDER BY backuser_id DESC
                     LIMIT 1);
 
 -- ----------------
 -- INSERT ECO_UNIT
 -- ----------------
 -- 1. Insert agent but do NOT enable
-INSERT INTO agent
+INSERT IGNORE INTO agent
 (`agent_id`,
-  `cyclobot_id`,
-  `back_user_id`,
+  `device_id`,
+  `backuser_id`,
   `customer_id`,
   `creation_date_time`,
   `enabled`) -- 1 = true
@@ -114,13 +114,13 @@ CURRENT_TIMESTAMP,
 0); -- not enabled
 
 -- 2. Insert ECO_UNIT with agent_id
-SELECT * FROM cyclobot;
-INSERT INTO `cyclobot`
-(`cyclobot_id`,
+SELECT * FROM device;
+INSERT IGNORE INTO `device`
+(`device_id`,
 `agent_id`,
-`cyclobot_name`,
+`device_name`,
 `customer_id`,
-`ecossys_category_id`,
+`ecosystem_category_id`,
 `require_update`,
 `location`,
 `deactivated`)
@@ -142,6 +142,6 @@ UPDATE `ecosystem_db`.`agent`
 SET
 enabled = 1
 WHERE `agent_id` = (SELECT e.agent_id
-					FROM cyclobot AS b
-                    ORDER BY cyclobot_id DESC
+				FROM device AS b
+                    ORDER BY device_id DESC
                     LIMIT 1);

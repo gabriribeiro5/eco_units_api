@@ -41,6 +41,17 @@
         }
     },
     "POST": {
+        "/api/backuser/admin": {"method": "handle_post_backuser_admin",
+            "used_headers": {"Content-Type": "application/json"},
+            "parameters": {"agent_name": "(str) admin_name: required",
+                "agent_email": "(str) admin_email: required",
+                "agent_secret": "(encrypted string) admin_secret: required",
+                "confirmation_secret": "(encrypted string) confirmation_secret: required"
+            },
+            "target_agents": ["backuser_admin"],
+            "status": "TODO: ??? ",
+            "description": "Compare secret with second confirmation_secret, then check if admin_name and secret are in env var, then create a backuser with admin privileges. Returns confirmation message."
+        },
         "/api/device": {"method": "handle_post_device",
             "used_headers": {"Content-Type": "application/json",
                 "Accept-Post":"application/json"
@@ -57,7 +68,7 @@
             "parameters": {},
             "target_agents": ["backuser", "backuser_admin"],
             "status": "to do",
-            "description": "create a backoffice user"
+            "description": "Create a backoffice user"
         },
 
         "/api/backuser/enabler_token_request": {"method": "handle_post_backuser_enabler_token_request",
@@ -315,6 +326,23 @@
         }
     },
     "PATCH": {        
+        "/api/backuser/admin/enable": {"method": "handle_patch_backuser_admin_enable",
+            "parameters": {"first_authentication_token": "(encrypted string): required",
+                "agent_name":"(encrypted string): required",
+                "agent_secret":"(encrypted string): required"
+            },
+            "target_agents": ["backuser_admin"],
+            "status": "TODO: validate token and get agent_id",
+            "description": "If token is still valid and secrets match, enable agent. All parameters are required."
+        },
+        "/api/backuser/enable": {"method": "handle_patch_backuser_enable",
+            "parameters": {"first_authentication_token": "(encrypted string): required"
+            },
+            "target_agents": ["backuser"],
+            "status": "TODO: validate token and get agent_id",
+            "description": "If token is still valid and secrets match, enable agent. All parameters are required."
+        },
+
         "/api/backuser/save_new_secret": {"method": "handle_patch_backuser_save_new_secret",
             "parameters": {"token": "(encrypted string): required",
                 "secret":"(encrypted string): required",

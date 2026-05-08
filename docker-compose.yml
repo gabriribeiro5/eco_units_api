@@ -31,7 +31,10 @@ services:
       - ./logs/api1:/var/log/cyclobots_api  # Bind mount the 'logs' directory to '/var/log' inside the container
     environment:
       - PYTHONUNBUFFERED=1  # Optional, for better logging
-    
+      - ADMIN_NAMES="admin, admin2"
+      - API_ADMIN_SECRETS=admin:s3cr37@dblab73,admin2:s3cr37@dblab73
+      - DB_ADMIN_SECRETS=admin:s3cr37@dblab73,admin2:s3cr37@dblab73
+
     # enable iteractive mode
     stdin_open: true  # Keeps the STDIN open for interaction
     tty: true         # Allocates a pseudo-TTY
