@@ -10,25 +10,12 @@ Still, the first and main purpose of this API is to provide cyclobots with prope
 
 For a glance of what has already been done and what is to come, check out this project's backlog in the TODO.md file in the same directory of this README.md file.
 
-There, you'll see that the development proccess follows a learning roadmap that goes around topics such as "web servers", "database communication", "container orchestration", "synchronous & asynchronous models", "server gatway interfaces" and finally the project shuold evolve to use FastAPI Framework.
+There, you'll see that the development proccess follows a learning roadmap that goes around topics such as "web servers", "database communication", "container orchestration", "synchronous & asynchronous models", "server gateway interfaces" and finally the project shuold evolve to use FastAPI Framework.
 
 This long roadmap aims to provide me with a solid background to work with RESTfull APIs. Specially in python.
 
 ## VERSIONING PLAN:
-### V1 (MVP) - 1 LB, 1 synchronous DB initializer, 2 synchronous base apps, 1 DB
-A complete api service, ready to balance incoming requests between two identical applications using one DB
-
-### V2 (Async) -  1 LB, 1 asynchronous DB initializer, 2 asynchronous base apps, 1 DB
-Will use FastAPI to create an equivalent application
-
-### V3 (External auth) - 1 LB, 1 async DB initializer, 2 async auth apps with micro DB (key-value) 2 async base apps, 1 base DB (SQL)
-Create external authentication service with its own DB to simmulate microservice
-
-### V4 (Microservices) - 1 LB, 1 async DB initializer, 2 async auth apps with micro DB (key-value) 2 async base apps with micro DB (SQL), 2 async apps (micro DB to base DB), 1 base DB (SQL)
-Implement a full microservices archtecture
-
-### V5 (NoSQL with dynamic key-value tables for agent inputs) - 1 LB, 1 async DB initializer, 2 async auth apps with micro DB (key-value) 2 async base apps with micro DB (SQL), 2 async apps (micro DB to base DB), 1 base DB (SQL + key-value)
-Add key-value tables for dynamic agent inputs (personalized tables for each product type). Add route for key-value table creation (automate new product launches)
+Check TODO.md to see descriptions of future versions
 
 
 ## Design
