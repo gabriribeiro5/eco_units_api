@@ -78,7 +78,8 @@ GOAL: A complete api service, ready to balance incoming requests between two ide
       - [x] Prevents concurrent schema creation and index table inserts across api1/api2 containers
   - [x] validate database operation (run request and check db)
   - [x] doc(README): application versioning plan
-  - [x] refactor(db agent table): add field backuser_admin_id 
+  - [x] refactor(agent table): add field backuser_admin_id
+  - [x] feat(agent update queries): add sql files
   - [x] refactor(handle_post_backuser_admin): updates agent table including backuser_admin_id
   - [ ] make auth handler ready for microservice call (copy trace)
   - [x] implement handle_patch_backuser_admin_enable
