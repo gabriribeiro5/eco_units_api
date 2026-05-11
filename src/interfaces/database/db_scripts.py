@@ -15,9 +15,17 @@ class I_DBScriptSource():
         self.script_insert_disabled_agent = self._load_sql(self.config._DB_SCRIPTS_DIR / "_2_00_insert_disabled_agent.sql")
         
         self.script_insert_backuser_admin = self._load_sql(self.config._DB_SCRIPTS_DIR / "_2_10_insert_backuser_admin.sql")
+        self.script_set_backuser_admin_id = self._load_sql(self.config._DB_SCRIPTS_DIR / "_2_11_set_backuser_admin_id.sql")
+
         self.script_insert_backuser = self._load_sql(self.config._DB_SCRIPTS_DIR / "_2_20_insert_backuser.sql")
+        self.script_set_backuser_id = self._load_sql(self.config._DB_SCRIPTS_DIR / "_2_21_set_backuser_id.sql")
+
         self.script_insert_customer = self._load_sql(self.config._DB_SCRIPTS_DIR / "_2_30_insert_customer.sql")
+        self.script_set_customer_id = self._load_sql(self.config._DB_SCRIPTS_DIR / "_2_31_set_customer_id.sql")
+
         self.script_insert_device = self._load_sql(self.config._DB_SCRIPTS_DIR / "_2_40_insert_device.sql")
+        self.script_set_device_id = self._load_sql(self.config._DB_SCRIPTS_DIR / "_2_41_set_device_id.sql")
+
 
         self.script_enable_agent = self._load_sql(self.config._DB_SCRIPTS_DIR / "_2_99_enable_agent.sql")
         

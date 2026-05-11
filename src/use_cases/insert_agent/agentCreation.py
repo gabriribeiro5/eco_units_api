@@ -1,3 +1,5 @@
+from unittest import case
+
 from use_cases.shared.auth.auth import AuthHandler
 from gateways.sync_pymysql import SyncronousPyMySQL
 from gateways.email_client import EmailClient
@@ -65,23 +67,25 @@ class AgentCreationHandler(AuthHandler):
         connection, cursor = self.db.connect()
         try:
             cursor.execute(self.script_insert_disabled_agent)
+            logging.debug("Executed script to create new disabled agent")
+            connection.commit()
+            logging.debug("Committed new agent to database")
+            agent_id = cursor.lastrowid
+            logging.debug(f"Created new agent with ID: {agent_id}")
+            connection.close()
+            return agent_id
         except pymysql.err.OperationalError as msg:
             logging.error(f"Failed running SQL query\n {self.script_insert_disabled_agent}\n {msg}")
-            connection.close() if connection else None
+            connection.close()
             raise msg
         except AttributeError as attErr:
             logging.error(f"Attribute error while creating agent:\n {attErr}")
-            connection.close() if connection else None
+            connection.close()
             raise attErr
         except Exception as e:
             logging.error(f"Error while creating agent:\n {e}")
-            connection.close() if connection else None
+            connection.close()
             raise e
-
-        # Fetch all results
-        agent_id = cursor.lastrowid
-        connection.close() if connection else None
-        return agent_id
 
     def create_backuser_admin(self, agent_id, name, surname, email):
         '''
@@ -95,14 +99,25 @@ class AgentCreationHandler(AuthHandler):
         connection, cursor = self.db.connect()
         try:
             cursor.execute(self.script_insert_backuser_admin, (agent_id, name, surname, email))
+            backuser_admin_id = cursor.lastrowid
+            logging.debug(f"Created backuser admin with ID: {backuser_admin_id} for agent ID: {agent_id}")
+            connection.commit()
+            connection.close()
         except pymysql.err.OperationalError as msg:
-            logging.error(f"Failed running SQL query\n {self.script_insert_backuser_admin}\n {msg}")
+            logging.error(f"Failed running SQL query script_insert_backuser_admin\n {msg}")
             connection.close()
             raise msg
-
-        # Fetch all results
-        backuser_admin_id = cursor.lastrowid
-        connection.close()
+        
+        connection, cursor = self.db.connect()
+        try:
+            cursor.execute(self.script_set_backuser_admin_id, (backuser_admin_id, agent_id))
+            connection.commit()
+            connection.close()
+        except pymysql.err.OperationalError as msg:
+            logging.error(f"Failed running SQL query script_set_backuser_admin_id\n {msg}")
+            connection.close()
+            raise msg
+        
         return backuser_admin_id
 
     def create_backuser(self, agent_id, name, surname, email):
@@ -170,10 +185,10 @@ class AgentCreationHandler(AuthHandler):
         device_id = cursor.lastrowid
         connection.close()
         return device_id
-
-    ##################################################
-    # BACKUSER ADMIN CREATION AND ENABLEMENT    
-    ##################################################
+    
+    ####################################################################
+    # HANDLERS FOR BACKUSER AND BACKUSER ADMIN CREATION AND ENABLEMENT
+    ####################################################################
     @require_authentication
     @log_running_and_done
     def handle_post_backuser_admin(self):
@@ -210,8 +225,6 @@ class AgentCreationHandler(AuthHandler):
                                                         request_data.get("agent_surname"),
                                                         request_data.get("agent_email")
                                                         )
-
-        logging.debug("backuser admin created")
 
         first_authentication_token = self.new_hash(backuser_admin_id, "backuser_admin")
 

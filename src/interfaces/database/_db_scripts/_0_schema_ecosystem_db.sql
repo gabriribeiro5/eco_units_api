@@ -16,9 +16,10 @@ USE `ecosystem_db` ;
 DROP TABLE IF EXISTS `ecosystem_db`.`agent` ;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`agent` (
   `agent_id` INT NOT NULL AUTO_INCREMENT,
-  `device_id` INT NULL,
+  `backuser_admin_id` INT NULL,
   `backuser_id` INT NULL,
   `customer_id` INT NULL,
+  `device_id` INT NULL,
   `creation_date_time` DATETIME NOT NULL,
   `enabled` TINYINT NOT NULL,
   PRIMARY KEY (`agent_id`),
