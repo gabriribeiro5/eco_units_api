@@ -248,17 +248,16 @@ class AgentCreationHandler(AuthHandler):
         '''
         Enable backuser_admin
         '''
-        result = {}
         request_data = self.get_request_data()
 
         # Check if admin_name and secret are in env var
         self.check_admin_credentials(request_data.get("agent_name"), request_data.get("agent_secret"))
-        
+
         # Validate token
         self.update_first_auth_agents()
         if request_data.get("first_authentication_token") not in self.FIRST_AUTH_AGENTS.values():
             raise ValueError("Invalid first_authentication_token")
-        
+
         # Use token to find agent_id
         agent_id = None
         for key, value in self.FIRST_AUTH_AGENTS.items():
@@ -539,7 +538,6 @@ class AgentCreationHandler(AuthHandler):
         '''
         Enable backuser
         '''
-        result = {}
         request_data = self.get_request_data()
         
         # Validate token

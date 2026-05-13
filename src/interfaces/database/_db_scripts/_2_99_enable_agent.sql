@@ -1,4 +1,4 @@
--- Enable BACK_USER
+-- Enable agent
 UPDATE `agent`
 SET
 enabled = 1

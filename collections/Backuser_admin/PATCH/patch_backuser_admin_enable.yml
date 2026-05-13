@@ -1,0 +1,23 @@
+info:
+  name: patch_backuser_admin_enable
+  type: http
+  seq: 1
+
+http:
+  method: PATCH
+  url: "{{base_url}}/api/backuser/admin/enable"
+  body:
+    type: json
+    data: |-
+      {
+        "first_authentication_token": "some_secret_token",
+        "agent_name": "admin",
+        "agent_secret": "s3cr37@dblab73"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

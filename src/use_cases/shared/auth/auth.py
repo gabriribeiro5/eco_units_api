@@ -20,7 +20,7 @@ def try_external_api_call(func):
                                                 self.request_version,
                                                 self.headers.items(),
                                                 data_type = "dict")
-            if isinstance(response_data, tuple): # Expected output: session_id
+            if response_data:
                 return response_data
             else:
                 raise ValueError("Incompatible response format from external API. Expected a tuple with (status, headers, body).")
@@ -61,7 +61,9 @@ class AuthHandler(Sessions, I_DBScriptSource):
         '''
         Fetch the latest data from the database.
         '''
-        db_first_auth_agents = {"new_client_id_hash": "some_secret token"}
+        db_first_auth_agents = {"1": "some_secret_token",
+                                "2": "another_secret_token",
+                                "3": "yet_another_secret_token"}
         self.FIRST_AUTH_AGENTS = db_first_auth_agents
 
     def update_allowed_agents(self):

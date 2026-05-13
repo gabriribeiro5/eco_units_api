@@ -84,7 +84,7 @@ GOAL: A complete api service, ready to balance incoming requests between two ide
   - [x] fix(trace microservice call): inherit api_client class from gateways
   - [x] feat(external call by auth): make auth handlers ready for microservice call (copy trace)
   - [x] feat(try_external_api_call): create decorator for auth handler
-  - [ ] feat(handle_patch_backuser_admin_enable): implement and validate database operation (run request and check db)
+  - [x] feat(handle_patch_backuser_admin_enable): implement and validate database operation (run request and check db)
   - [ ] implement handle_post_backuser
   - [ ] validate database operation (run request and check db)
   - [ ] implement handle_patch_backuser_enable

@@ -1,6 +1,9 @@
 info:
   name: PATCH
   type: folder
-  seq: 5
+  seq: 1
 
-request: {}
+request:
+  auth:
+    type: bearer
+    token: backuser_admin_token

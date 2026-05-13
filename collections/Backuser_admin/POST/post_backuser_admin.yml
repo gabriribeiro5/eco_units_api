@@ -1,7 +1,7 @@
 info:
-  name: post_backuser
+  name: post_backuser_admin
   type: http
-  seq: 5
+  seq: 2
 
 http:
   method: POST
