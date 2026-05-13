@@ -81,7 +81,8 @@ GOAL: A complete api service, ready to balance incoming requests between two ide
   - [x] refactor(agent table): add field backuser_admin_id
   - [x] feat(agent update queries): add sql files
   - [x] refactor(handle_post_backuser_admin): updates agent table including backuser_admin_id
-  - [ ] make auth handler ready for microservice call (copy trace)
+  - [x] fix(trace microservice call): inherit api_client class from gateways
+  - [x] feat(external call by auth): make auth handlers ready for microservice call (copy trace)
   - [x] implement handle_patch_backuser_admin_enable
   - [ ] validate database operation (run request and check db)
   - [ ] implement handle_post_backuser

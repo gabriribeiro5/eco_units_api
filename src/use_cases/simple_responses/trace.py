@@ -1,3 +1,4 @@
+from gateways.sync_api_client import MicroserviceClient
 from use_cases.shared.auth.auth import AuthHandler
 from utils.logger import log_running_and_done
 import logging
@@ -23,6 +24,7 @@ class TraceHandler(AuthHandler):
     Reflects the request back to the client as per the HTTP/1.1 specification.
     """
     def __init__(self, *args, **kwargs) -> None:
+        self.api_client = MicroserviceClient(host="localhost", port=8000)  # Example host and port for microservice
         super().__init__(*args, **kwargs)
         
     def development_test(self):
@@ -34,29 +36,28 @@ class TraceHandler(AuthHandler):
         """
         Returns the request back to the client. Useful for API health check.
         """        
-        # try: # Call external microsservice, if exists
-        #     expected_data = self.client.external_call(self.command,
-        #                                         self.path,
-        #                                         self.request_version,
-        #                                         self.headers.items(),
-        #                                         data_type = "dict")
-        #     if expected_data:
-        #         response_line = expected_data["request_line"]
-        #         header_lines = expected_data["header_lines"]
-        #     else:
-        #         raise ValueError("External call incomplete.")
-        # except ValueError as e: # Apply business rules
-        #     # Log message
-        #     logging.info(f'''{e} Running internal Business Logic.''')
-        #     # Construct response components
-        #     response_line = f'''{self.requestline}'''
-        #     header_lines = self.headers
-        header_lines = self.headers
+        try: # Call external microsservice, if exists
+            expected_data = self.api_client.external_call(self.command,
+                                                self.path,
+                                                self.request_version,
+                                                self.headers.items(),
+                                                data_type = "dict")
+            if expected_data:
+                response_line = expected_data["request_line"]
+                header_lines = expected_data["header_lines"]
+            else:
+                raise ValueError("External call incomplete.")
+        except ValueError as e: # Apply business rules
+            # Log message
+            logging.info(f'''{e} Running internal Business Logic.''')
+            # Construct response components
+            response_line = f'''{self.requestline}'''
+            header_lines = self.headers
 
         # Generate response variables
         status = 200
         headers = header_lines
-        body = f'''~{self.requestline}\r\n'''
+        body = f'''~{response_line}\r\n'''
     
         return status, headers, body
     

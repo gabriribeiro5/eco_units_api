@@ -1,8 +1,6 @@
-from unittest import case
-
 from use_cases.shared.auth.auth import AuthHandler
 from gateways.sync_pymysql import SyncronousPyMySQL
-from gateways.email_client import EmailClient
+from gateways.sync_email_client import EmailClient
 from utils.logger import log_running_and_done
 from urllib.parse import parse_qs
 import logging

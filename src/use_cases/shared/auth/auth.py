@@ -1,6 +1,7 @@
-import os
+from gateways.sync_api_client import MicroserviceClient
 from interfaces.database.db_scripts import I_DBScriptSource
 from use_cases.shared.auth.sessions import SessionManager as Sessions
+import os
 import uuid
 from datetime import datetime
 from urllib.parse import parse_qs
@@ -18,6 +19,7 @@ class AuthHandler(Sessions, I_DBScriptSource):
         self.FIRST_AUTH_AGENTS = {}
         self.ALLOWED_AGENTS = {}
         self.SESSION_TOKENS = {}
+        self.api_client = MicroserviceClient(host="localhost", port=8000)  # Example host and port for microservice
         I_DBScriptSource.__init__(self)  # make sure scripts are loaded for classes that inherit from this one
         super().__init__(*args, **kwargs)
 
@@ -164,67 +166,98 @@ class AuthHandler(Sessions, I_DBScriptSource):
         2. If agent_id is valid, returns its token and moves it to ALLOWED_AGENTS.
         3. If agent_id is not valid, returns None.
         '''
-        
-        backuser_admin_id_hash = self.get_request_data().get("backuser_admin_id_hash", None).lower()
-        agent_id = self.find_agent_id(backuser_admin_id_hash) if backuser_admin_id_hash else None
-        
-        # Validate agent_id
-        try:
-            if agent_id in self.FIRST_AUTH_AGENTS:
-                # Move item to allowed agents
-                # TODO: this item must be saved to a database
-                self.ALLOWED_AGENTS[agent_id] = self.FIRST_AUTH_AGENTS[agent_id]
-                logging.info(f"Agent {agent_id} added to allowed agents.")
-                
-                del self.FIRST_AUTH_AGENTS[agent_id]
-                logging.info(f"Agent {agent_id} removed from first auth agents.")
-                
-                return self.ALLOWED_AGENTS[agent_id]
+        try: # Call external microsservice, if exists
+            expected_data = self.api_client.external_call(self.command,
+                                                self.path,
+                                                self.request_version,
+                                                self.headers.items(),
+                                                data_type = "dict")
+            if expected_data and expected_data.get("agent_id", None) and expected_data.get("token", None): # Expected output: agent_id and token
+                return expected_data
             else:
-                logging.warning(f"Agent ID {agent_id} not found in first auth agents.")
-                return None
+                raise ValueError("External call incomplete.")
+        except Exception as e: # Apply business rules
+            # Log message
+            logging.info(f'''{e} Running internal Business Logic.''')
+
+            backuser_admin_id_hash = self.get_request_data().get("backuser_admin_id_hash", None).lower()
+            backuser_admin_token = self.get_request_data().get("backuser_admin_token", None).lower()
+            agent_id = self.find_agent_id(backuser_admin_id_hash) if backuser_admin_id_hash else None
             
-        except Exception as e:
-            logging.error(f"Error during first authentication for {agent_id}: {str(e)}")
-            return None
+            # Validate agent_id
+            try:
+                if agent_id in self.FIRST_AUTH_AGENTS and self.FIRST_AUTH_AGENTS[agent_id] == backuser_admin_token:
+                    # Move item to allowed agents
+                    # TODO: this item must be saved to a database
+                    self.ALLOWED_AGENTS[agent_id] = self.FIRST_AUTH_AGENTS[agent_id]
+                    logging.info(f"Agent {agent_id} added to allowed agents.")
+                    
+                    del self.FIRST_AUTH_AGENTS[agent_id]
+                    logging.info(f"Agent {agent_id} removed from first auth agents.")
+                    
+                    authorized = True
+                else:
+                    logging.warning(f"Agent ID {agent_id} not found in first auth agents.")
+                    authorized = False
+                
+            except Exception as e:
+                logging.error(f"Error during first authentication for {agent_id}: {str(e)}")
+                authorized = False
+            
+            # expected output: agent_id
+            status = 200 if authorized else 401
+            response_data = (status, {}, {})
+            return response_data
         
     def handle_agent_login(self):
         '''
         Handles the login process for a client (agent).
-        1. Validates the provided id and token against ALLOWED_AGENTS..
-        2. Get and return a new session ID to the client for future authenticated requests.
+        1. Validates the provided id and token against ALLOWED_AGENTS
+        2. Get and return a new session ID to the client for future authenticated requests
         '''
-        
-        request_data = self.get_request_data()
-        agent_id_hash = request_data.get("agent_id_hash", None).lower()
-        
-        agent_id = self.find_agent_id(agent_id_hash) if agent_id_hash else "all"
-        auth_header = self.headers.get("Authorization")
-        if auth_header and auth_header.startswith("Bearer "):
-            token = auth_header.split(" ")[1].lower()
-
-        # update ALLOWED_AGENTS by hitting database
-        self.update_allowed_agents()
-        
-        # Validate agent_id and token, then get sessoin ID
-        try:
-            if agent_id in self.ALLOWED_AGENTS and self.ALLOWED_AGENTS[agent_id] == token:
-                # Get and return a new session ID.
-                # TODO: this item must be saved to a database
-                logging.info(f"Agent {agent_id} authenticated successfully.")                
-                session_id = self.new_session_id(client_label="device")
+        try: # Call external microsservice, if exists
+            response_data = self.api_client.external_call(self.command,
+                                                self.path,
+                                                self.request_version,
+                                                self.headers.items(),
+                                                data_type = "dict")
+            if response_data and response_data.get("session_id", None): # Expected output: session_id
+                return response_data
             else:
-                logging.warning(f"Agent ID {agent_id} not found in first auth agents.")
+                raise ValueError("Response incomplete.")
+        except Exception as e: # Apply business rules
+            # Log message
+            logging.info(f'''{e} Running internal Business Logic.''')
+            request_data = self.get_request_data()
+            agent_id_hash = request_data.get("agent_id_hash", None).lower()
+            
+            agent_id = self.find_agent_id(agent_id_hash) if agent_id_hash else "all"
+            auth_header = self.headers.get("Authorization")
+            if auth_header and auth_header.startswith("Bearer "):
+                token = auth_header.split(" ")[1].lower()
+
+            # update ALLOWED_AGENTS by hitting database
+            self.update_allowed_agents()
+            
+            # Validate agent_id and token, then get sessoin ID
+            try:
+                if agent_id in self.ALLOWED_AGENTS and self.ALLOWED_AGENTS[agent_id] == token:
+                    # Get and return a new session ID.
+                    # TODO: this item must be saved to a database
+                    logging.info(f"Agent {agent_id} authenticated successfully.")                
+                    session_id = self.new_session_id(client_label="device")
+                else:
+                    logging.warning(f"Agent ID {agent_id} not found in first auth agents.")
+                    return None
+                
+            except Exception as e:
+                logging.error(f"Error during first authentication for {agent_id}: {str(e)}")
                 return None
             
-        except Exception as e:
-            logging.error(f"Error during first authentication for {agent_id}: {str(e)}")
-            return None
-        
-        # expected output: session_id
-        status = 200 if session_id else 401
-        response_data = (status, {}, json.dumps({"session_id": session_id}) if session_id else json.dumps({"error": "Unauthorized"}))
-        return response_data
+            # expected output: session_id
+            status = 200 if session_id else 401
+            response_data = (status, {}, json.dumps({"session_id": session_id}) if session_id else json.dumps({"error": "Unauthorized"}))
+            return response_data
     
 
     def is_authenticated(self):
