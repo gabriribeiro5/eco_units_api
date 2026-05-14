@@ -61,10 +61,12 @@ class AuthHandler(Sessions, I_DBScriptSource):
         '''
         Fetch the latest data from the database.
         '''
-        db_first_auth_agents = {"1": "some_secret_token",
-                                "2": "another_secret_token",
-                                "3": "yet_another_secret_token"}
-        self.FIRST_AUTH_AGENTS = db_first_auth_agents
+        # db_first_auth_agents = {"1": "backuser_admin_token",
+        #                         "2": "backuser_token",
+        #                         "3": "customer_token",
+        #                         "4": "device_token"}
+        # self.FIRST_AUTH_AGENTS = db_first_auth_agents
+        pass
 
     def update_allowed_agents(self):
         '''

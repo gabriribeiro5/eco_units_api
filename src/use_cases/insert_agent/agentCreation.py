@@ -130,14 +130,25 @@ class AgentCreationHandler(AuthHandler):
         connection, cursor = self.db.connect()
         try:
             cursor.execute(self.script_insert_backuser, (agent_id, name, surname, email))
+            backuser_id = cursor.lastrowid
+            logging.debug(f"Created backuser with ID: {backuser_id} for agent ID: {agent_id}")
+            connection.commit()
+            connection.close()
         except pymysql.err.OperationalError as msg:
-            logging.error(f"Failed running SQL query\n {self.script_insert_backuser}\n {msg}")
+            logging.error(f"Failed running SQL query script_insert_backuser\n {msg}")
             connection.close()
             raise msg
-
-        # Fetch all results
-        backuser_id = cursor.lastrowid
-        connection.close()
+        
+        connection, cursor = self.db.connect()
+        try:
+            cursor.execute(self.script_set_backuser_id, (backuser_id, agent_id))
+            connection.commit()
+            connection.close()
+        except pymysql.err.OperationalError as msg:
+            logging.error(f"Failed running SQL query script_set_backuser_admin_id\n {msg}")
+            connection.close()
+            raise msg
+        
         return backuser_id
 
     def create_customer(self, agent_id, customer_name, customer_surname, customer_email ):
@@ -311,16 +322,13 @@ class AgentCreationHandler(AuthHandler):
             raise ValueError("agent_secret and confirmation_secret do not match")
         # Validate email pattern
         if "@" not in request_data.get("agent_email") or "." not in request_data.get("agent_email"):
-            raise ValueError("Invalid email format")
-       
+            raise ValueError("Invalid email format")       
+
         backuser_id = self.create_backuser(self.create_new_agent(),
                                                 request_data.get("agent_name"),
                                                 request_data.get("agent_surname"),
                                                 request_data.get("agent_email")
                                                 )
-
-        logging.debug("backuser created")
-
 
         first_authentication_token = self.new_hash(backuser_id, "backuser_admin")
 
@@ -345,29 +353,33 @@ class AgentCreationHandler(AuthHandler):
     def handle_patch_backuser_enable(self):
         '''
         Enable backuser
-        '''
-        result = {}
+        '''        
         request_data = self.get_request_data()
-        
+        logging.debug(f"Received request data for enabling backuser: {request_data}")
+
         # Validate token
         self.update_first_auth_agents()
         if request_data.get("first_authentication_token") not in self.FIRST_AUTH_AGENTS.values():
             raise ValueError("Invalid first_authentication_token")
-        
+    
         # Use token to find agent_id
         agent_id = None
         for key, value in self.FIRST_AUTH_AGENTS.items():
+            logging.debug(f"Checking token for agent_id: {key} with token value: {value}")
             if value == request_data.get("first_authentication_token"):
+                logging.debug(f"Found matching agent_id: {key} for provided first_authentication_token")
                 agent_id = key
                 break
 
         # Enable backoffice user
         try:
+            logging.debug(f"Attempting to enable agent with ID: {agent_id} using script: {self.script_enable_agent}")
             self.db.run_script(self.script_enable_agent, (agent_id))
         except Exception as e:
             logging.error(e)
             raise e
-     
+
+        logging.debug(f"Successfully enabled backuser with agent_id: {agent_id}")
         # Construct response components based on agent_type
         response_dict = {}
         response = json.dumps(response_dict) # Convert dict to JSON string
@@ -378,6 +390,7 @@ class AgentCreationHandler(AuthHandler):
         body = response + "\r\n"
     
         return status, headers, body
+    
 
     ##################################################
     # CUSTOMER CREATION AND ENABLEMENT    
@@ -534,7 +547,7 @@ class AgentCreationHandler(AuthHandler):
 
     @require_authentication
     @log_running_and_done
-    def handle_patch_backuser_enable(self):
+    def handle_patch_device_enable(self):
         '''
         Enable backuser
         '''

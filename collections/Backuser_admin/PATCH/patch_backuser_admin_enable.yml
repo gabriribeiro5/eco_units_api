@@ -10,7 +10,7 @@ http:
     type: json
     data: |-
       {
-        "first_authentication_token": "some_secret_token",
+        "first_authentication_token": "backuser_admin_token",
         "agent_name": "admin",
         "agent_secret": "s3cr37@dblab73"
       }

@@ -17,7 +17,7 @@ config:
 request:
   auth:
     type: bearer
-    token: my_secret_token
+    token: backuser_token
 bundled: false
 extensions:
   bruno:

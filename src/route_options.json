@@ -63,17 +63,6 @@
             "status": "implemented",
             "description": "Compare secret with second confirmation_secret, then check if admin_name and secret are in env var, then create a backuser with admin privileges. Returns confirmation message."
         },
-        "/api/device": {"method": "handle_post_device",
-            "used_headers": {"Content-Type": "application/json",
-                "Accept-Post":"application/json"
-            },
-            "parameters": {"device_ip":"(uuid): optional", 
-                "customer_id":"(uuid): optional"
-            },
-            "target_agents": ["backuser"],
-            "status": "to do",
-            "description": "Create a device then return its id and temporary token. If device_id is provided, return new temporary token"
-        },
         
         "/api/backuser": {"method": "handle_post_backuser",
             "parameters": {},
@@ -149,6 +138,18 @@
             "target_agents": ["customer"],
             "status": "to do",
             "description": "If email is in customer table, send validation link (token attached) to this address with explicit expire date and hidden token"
+        },
+
+        "/api/device": {"method": "handle_post_device",
+            "used_headers": {"Content-Type": "application/json",
+                "Accept-Post":"application/json"
+            },
+            "parameters": {"device_ip":"(uuid): optional", 
+                "customer_id":"(uuid): optional"
+            },
+            "target_agents": ["backuser"],
+            "status": "to do",
+            "description": "Create a device then return its id and temporary token. If device_id is provided, return new temporary token"
         },
 
         "/api/device/diagnostic": {"method": "handle_post_device_diagnostic",
@@ -343,7 +344,7 @@
                 "agent_secret":"(encrypted string): required"
             },
             "target_agents": ["backuser_admin"],
-            "status": "TODO: validate token and get agent_id",
+            "status": "implemented",
             "description": "If token is still valid and secrets match, enable agent. All parameters are required."
         },
         "/api/backuser/enable": {"method": "handle_patch_backuser_enable",

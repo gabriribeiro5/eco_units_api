@@ -1,0 +1,23 @@
+info:
+  name: patch_backuser_enable
+  type: http
+  seq: 1
+
+http:
+  method: PATCH
+  url: "{{base_url}}/api/backuser/enable"
+  body:
+    type: json
+    data: |-
+      {
+        "first_authentication_token": "backuser_token",
+        "agent_name": "gabriel",
+        "agent_secret": "some_secret"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,5 +1,5 @@
--- Insert BACK_USER with agent_id
-INSERT IGNORE INTO back_user
+-- Insert BACKUSER with agent_id
+INSERT IGNORE INTO backuser
 (`backuser_id`,
 `agent_id`,
 `backuser_name`,

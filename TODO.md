@@ -85,19 +85,13 @@ GOAL: A complete api service, ready to balance incoming requests between two ide
   - [x] feat(external call by auth): make auth handlers ready for microservice call (copy trace)
   - [x] feat(try_external_api_call): create decorator for auth handler
   - [x] feat(handle_patch_backuser_admin_enable): implement and validate database operation (run request and check db)
-  - [ ] implement handle_post_backuser
-  - [ ] validate database operation (run request and check db)
-  - [ ] implement handle_patch_backuser_enable
-  - [ ] validate database operation (run request and check db)
-  - [ ] implement handle_post_customer
-  - [ ] validate database operation (run request and check db)
-  - [ ] implement handle_patch_customer_enable
-  - [ ] validate database operation (run request and check db)
-  - [ ] implement handle_post_device
-  - [ ] validate database operation (run request and check db)
-  - [ ] implement handle_patch_device_enable
-  - [ ] validate database operation (run request and check db)
-  - [ ] review(db creation): check if/how scripts are being used
+  - [x] feat(handle_post_backuser): implement and validate database operation (run request and check db)
+  - [ ] feat(auth db): key value database
+  - [ ] feat(handle_patch_backuser_enable): implement and validate database operation (run request and check db)
+  - [ ] feat(handle_post_customer): implement and validate database operation (run request and check db)
+  - [ ] feat(handle_patch_customer_enable): implement and validate database operation (run request and check db)
+  - [ ] feat(handle_post_device): implement and validate database operation (run request and check db)
+  - [ ] feat(handle_patch_device_enable): implement and validate database operation (run request and check db)
   - [ ] refactor(shared): remove _db_operations dir
 - [ ] feat(DB initializer): 1 container for db setup
   - [ ] create container
