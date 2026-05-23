@@ -5,7 +5,7 @@ INSERT IGNORE INTO `agent`
   `backuser_id`,
   `customer_id`,
   `creation_date_time`,
-  `enabled`) -- 1 = true
+  `is_enabled`) -- 1 = true
 VALUES
 (DEFAULT,
 NULL,

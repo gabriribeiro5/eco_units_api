@@ -1,7 +1,7 @@
 info:
   name: post_backuser
   type: http
-  seq: 4
+  seq: 2
 
 http:
   method: POST
@@ -10,10 +10,11 @@ http:
     type: json
     data: |-
       {
-        "agent_name": "Gabriel",
+        "agent_id": "1",
+        "agent_name": "Gabriel Ribeiro",
         "agent_email": "gabriel@email.com",
-        "agent_secret": "some_secret",
-        "confirmation_secret": "some_secret"
+        "agent_secret": "s0m3s3cr37",
+        "confirmation_secret": "s0m3s3cr37"
       }
   auth: inherit
 

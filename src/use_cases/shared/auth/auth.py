@@ -1,5 +1,6 @@
 from gateways.sync_api_client import MicroserviceClient
 from interfaces.database.db_scripts import I_DBScriptSource
+from gateways.sync_pymysql import SyncronousPyMySQL
 from use_cases.shared.auth.sessions import SessionManager as Sessions
 import os
 import uuid
@@ -38,8 +39,7 @@ class AuthHandler(Sessions, I_DBScriptSource):
     '''
     def __init__(self, *args, **kwargs) -> None:
         self.FIRST_AUTH_AGENTS = {}
-        self.ALLOWED_AGENTS = {}
-        self.SESSION_TOKENS = {}
+        self.db = SyncronousPyMySQL()
         self.api_client = MicroserviceClient(host="localhost", port=8000)  # Example host and port for microservice
         I_DBScriptSource.__init__(self)  # make sure scripts are loaded for classes that inherit from this one
         super().__init__(*args, **kwargs)
@@ -56,59 +56,112 @@ class AuthHandler(Sessions, I_DBScriptSource):
             logging.warning(f"Invalid admin credentials provided: {agent_credential}")
             raise ValueError("Invalid admin credentials")
 
-    # database SELECTS to update in-memory auth data
-    def update_first_auth_agents(self):
-        '''
-        Fetch the latest data from the database.
-        '''
-        # db_first_auth_agents = {"1": "backuser_admin_token",
-        #                         "2": "backuser_token",
-        #                         "3": "customer_token",
-        #                         "4": "device_token"}
-        # self.FIRST_AUTH_AGENTS = db_first_auth_agents
-        pass
-
-    def update_allowed_agents(self):
-        '''
-        Fetch the latest data from the database.
-        '''
-        db_allowed_agents = {"backuser_admin_id_hash": "my_secret_token", "backuser_id_hash": "not_my_token"}
-        self.ALLOWED_AGENTS = db_allowed_agents
-
-    def update_session_tokens(self):
-        '''
-        Fetch the latest data from the database.
-        '''
-        db_session_tokens = {
-            "my_id_hash": "my_secret_token",
-            "backuser_admin_id_hash": "backuser_admin_token",
-            "backuser_id_hash": "backuser_token",
-            "customer_id_hash": "customer_token",
-            "agent_id_hash": "agent_token"
-        }
-        self.SESSION_TOKENS = db_session_tokens
-
     # database INSERTS to update in-memory auth data
     def insert_first_auth_agent(self, agent_id, token):
         '''
         Adds a new agent to the FIRST_AUTH_AGENTS list with the provided agent_id and token.
         This is a placeholder implementation and should be replaced with actual database logic in production.
         '''
-        self.FIRST_AUTH_AGENTS[agent_id] = token
-    
-    def insert_allowed_agent(self, agent_id, token):
-        '''
-        Adds a new agent to the ALLOWED_AGENTS list with the provided agent_id and token.
-        This is a placeholder implementation and should be replaced with actual database logic in production.
-        '''
-        self.ALLOWED_AGENTS[agent_id] = token
+        try:
+            self.db.run_script(self.script_insert_first_auth_agent, agent_id, token)
+        except Exception as e:
+            logging.error(e)
+            return e
 
-    def insert_session_agent(self, agent_id, token):
+    def insert_session(self, agent_id, token):
         '''
-        Adds a new session token to the SESSION_TOKENS list with the provided agent_id and token.
+        Adds a new session token to the session table with the provided agent_id and token.
         This is a placeholder implementation and should be replaced with actual database logic in production.
         '''
-        self.SESSION_TOKENS[agent_id] = token
+        try:
+            self.db.run_script(self.script_insert_session, agent_id, token)
+        except Exception as e:
+            logging.error(e)
+            return e
+
+    # database SELECTS to update in-memory auth data
+    def first_auth_token_is_valid(self, agent_id, received_token):
+        '''
+        Fetch the latest data from the database.
+        '''
+        try:
+            selected_rows = self.db.run_query(self.script_select_first_auth_agent__token, agent_id)
+            if not selected_rows or len(selected_rows) == 0:
+                logging.warning(f"Agent {agent_id} not found in first_auth_agent")
+                return False
+            # Expect the first row to be a dict with a 'token' column; fall back to first value if needed
+            first_row = selected_rows[0]
+            token_value = None
+            if isinstance(first_row, dict):
+                token_value = first_row.get('token') if 'token' in first_row else (list(first_row.values())[0] if first_row else None)
+            else:
+                token_value = first_row[0] if first_row else None
+
+            if token_value != received_token:
+                logging.warning(f"Unauthorized token: {received_token}")
+                logging.warning(f"Expected token: {token_value}")
+                return False
+            return True
+        except Exception as e:
+            logging.error(e)
+            return e
+        
+
+    def agent_is_enabled(self, agent_id):
+        '''
+        Fetch the latest data from the database.
+        '''
+        try:
+            agent_rows = self.db.run_query(self.script_select_agent__is_enabled, (agent_id,))
+            if not agent_rows or len(agent_rows) == 0:
+                return False
+            first_row = agent_rows[0]
+            if isinstance(first_row, dict):
+                # try common column name first
+                is_enabled = first_row.get('is_enabled') if 'is_enabled' in first_row else list(first_row.values())[0]
+            else:
+                is_enabled = first_row[0]
+            return is_enabled
+        except Exception as e:
+            logging.error(e)
+            raise e
+
+    def delete_first_auth_agent(self, agent_id):
+        '''
+        Deletes the first auth agent from the database to prevent reuse of the token.
+        This is a placeholder implementation and should be replaced with actual database logic in production.
+        '''
+        try:
+            self.db.run_script(self.script_delete_first_auth_agent, agent_id)
+            logging.info(f"First auth agent {agent_id} deleted successfully.")
+        except Exception as e:
+            logging.error(e)
+            return e
+
+    def session_token_is_valid(self, agent_id, session_token):
+        '''
+        Fetch the latest data from the database.
+        '''
+        try:
+            selected_rows = self.db.run_query(self.script_select_session, agent_id)
+            if not selected_rows or len(selected_rows) == 0:
+                logging.warning(f"Agent {agent_id} not found in session tokens")
+                return False
+            first_row = selected_rows[0]
+            token_value = None
+            if isinstance(first_row, dict):
+                token_value = first_row.get('token') if 'token' in first_row else list(first_row.values())[0]
+            else:
+                token_value = first_row[0]
+
+            if token_value != session_token:
+                logging.warning(f"Unauthorized access attempt: {session_token}")
+                return False
+            return True
+        except Exception as e:
+            logging.error(e)
+            return e
+
 
     # Hash generation and validation
     def new_hash(self, id, agent_type):
@@ -117,29 +170,28 @@ class AuthHandler(Sessions, I_DBScriptSource):
         This is a placeholder implementation and should be replaced with a secure hashing algorithm in production.
         '''
         return f"hash_type!{agent_type}_id!{id}"
+    
     def unhash(self, hash_string):
         '''
         Placeholder function to reverse the hashing process.
         In a real implementation, this would not be possible with a secure hash, so this is just for demonstration purposes.
         '''
         
+        hash_data = {}
         if hash_string.startswith("hash_"): # uses the simplest hashing algorithm
             hash_components = hash_string.split("_") # find basic hash components
 
-            hash_data = {}
             for i in range(len(hash_components)):
-                logging.debug(f"Hash component {i}: {hash_components[i]}") # log hash components for debugging
                 if hash_components[i].startswith("type!"):
                     hash_data["agent_type"] = hash_components[i].split("!")[1] # extract agent type
-                    logging.debug(f"Extracted agent type: {hash_data['agent_type']} from hash component: {hash_components[i]}") # log extracted agent type for debugging
                 if hash_components[i].startswith("id!"):
                     hash_data["id"] = hash_components[i].split("!")[1] # extract id
-                    logging.debug(f"Extracted id: {hash_data['id']} from hash component: {hash_components[i]}") # log extracted id for debugging
+        else:
+            logging.warning(f"Invalid hash format: {hash_string}")
 
-            return hash_data
-        
-        return None
-    def select_agent_id_from_database(id, agent_type):
+        return hash_data
+    
+    def select_agent_id_from_database(self, id, agent_type):
         '''
         Placeholder function to select agent_id from database based on id and agent_type.
         In a real implementation, this would involve querying the database to retrieve the corresponding agent_id.
@@ -153,7 +205,7 @@ class AuthHandler(Sessions, I_DBScriptSource):
             "device_id_hash": "another_existing_client_id"
         }
         if agent_type == "backuser_admin":
-            # Search for agent_id in backuser_admins database table using the id extracted from the hash
+            # Search for agent_id in backuser_admin database table using the id extracted from the hash
             agent_id = agent_id_mapping.get(id, None)
         if agent_type == "backuser":
             # Search for agent_id in backusers database table using the id extracted from the hash
@@ -236,8 +288,10 @@ class AuthHandler(Sessions, I_DBScriptSource):
         if auth_header and auth_header.startswith("Bearer "):
             token = auth_header.split(" ")[1].lower()
 
-        # update ALLOWED_AGENTS by hitting database
-        self.update_allowed_agents()
+        # check if agent is enabled in the database, if not, return None
+        if not self.agent_is_enabled(agent_id):
+            logging.warning(f"Agent {agent_id} is not enabled.")
+            return None
         
         # Validate agent_id and token, then get sessoin ID
         try:
@@ -265,15 +319,14 @@ class AuthHandler(Sessions, I_DBScriptSource):
         Validates the session token provided in the Authorization header of the request.
         Returns True if the token is valid and corresponds to an active session, otherwise returns False.
         '''
+        request_data = self.get_request_data()
         try:
+            agent_id = request_data.get("agent_id")
             auth_header = self.headers.get("Authorization")
             if auth_header and auth_header.startswith("Bearer "):
                 token = auth_header.split(" ")[1]
-                self.update_session_tokens()
-                if token in self.SESSION_TOKENS.values():
-                    return True
-                logging.warning(f"Unauthorized access attempt with token: {token}")
-                return False
+                logging.debug(f"Received authentication attempt for agent_id: {agent_id} with token: {token}")
+                return self.session_token_is_valid(agent_id, token)
             logging.warning("Unauthorized access attempt without valid Authorization header.")
             return False
         except Exception as e:

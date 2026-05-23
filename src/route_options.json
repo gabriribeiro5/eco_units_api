@@ -216,6 +216,15 @@
         }
     },
     "GET": {
+        "/api/backuser/admin/login": {"method": "handle_get_backuser_admin_login",
+            "parameters": {"user_email": "(str): required",
+                "password": "(encrypted string): required"
+            },
+            "target_agents": ["backuser"],
+            "status": "to do",
+            "description": "Returns session token"
+        },
+
         "/api/backuser/login": {"method": "handle_get_backuser_login",
             "parameters": {"user_email": "(str): required",
                 "password": "(encrypted string): required"

@@ -4,9 +4,10 @@ from use_cases.db_setup.createSchema import SchemaSetupHandler
 from use_cases.simple_responses.trace import TraceHandler as Trace
 from use_cases.simple_responses.options import OptionsHandler as Options
 from use_cases.insert_agent.agentCreation import AgentCreationHandler as AgentCreation
+from use_cases.agent_login.agentLogin import AgentLoginHandler as AgentLogin
 import logging
 
-class MasterHandler(Trace, Options, AgentCreation):
+class MasterHandler(Trace, Options, AgentCreation, AgentLogin):
     def __init__(self, request, client_address, server):
         # set protocol_version to HTTP/1.1 to enable automatic keepalive
         self.protocol_version = "HTTP/1.1"

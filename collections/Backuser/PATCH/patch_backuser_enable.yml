@@ -14,7 +14,9 @@ http:
         "agent_name": "gabriel",
         "agent_secret": "some_secret"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: hash_type!backuser_id!1
 
 settings:
   encodeUrl: true

@@ -25,6 +25,11 @@ class SyncronousPyMySQL(I_SyncDBConnector):
         attempts = 0
         max_attempts = kwargs.pop('max_attempts', 3)
 
+        if len(args) == 1 and not isinstance(args[0], (tuple, list, dict)):
+            params = (args[0],)
+        else:
+            params = args if args else None
+
         while True:
             connection = None
             try:
@@ -32,7 +37,10 @@ class SyncronousPyMySQL(I_SyncDBConnector):
 
                 # Execute every command from the input file
                 for command in sqlCommands:
-                    cursor.execute(command, *args, **kwargs)
+                    if params is not None:
+                        cursor.execute(command, params)
+                    else:
+                        cursor.execute(command)
                     connection.commit()
 
                 connection.close()
@@ -56,9 +64,17 @@ class SyncronousPyMySQL(I_SyncDBConnector):
     def run_query(self, sqlQuery, *args, **kwargs):
         connection, cursor = self.connect()
 
+        if len(args) == 1 and not isinstance(args[0], (tuple, list, dict)):
+            params = (args[0],)
+        else:
+            params = args if args else None
+
         # Execute the query
         try:
-            cursor.execute(sqlQuery, *args, **kwargs)
+            if params is not None:
+                cursor.execute(sqlQuery, params)
+            else:
+                cursor.execute(sqlQuery)
         except pymysql.err.OperationalError as msg:
             logging.error(f"Failed running SQL query\n {sqlQuery}\n {msg}")
             connection.close()
@@ -66,6 +82,16 @@ class SyncronousPyMySQL(I_SyncDBConnector):
 
         # Fetch all results
         results = cursor.fetchall()
+
+        # Normalize results to a list of dictionaries using cursor.description
+        try:
+            if results and isinstance(results[0], tuple):
+                columns = [col[0] for col in cursor.description]
+                results = [dict(zip(columns, row)) for row in results]
+        except Exception:
+            # If any issue occurs during normalization, fall back to raw results
+            pass
+
         connection.close()
         return results
 
@@ -73,7 +99,12 @@ class SyncronousPyMySQL(I_SyncDBConnector):
         """Acquire a named lock. Returns True if acquired, False otherwise."""
         try:
             result = self.run_query(f"SELECT GET_LOCK('{lock_name}', {timeout})")
-            return result[0][0] == 1
+            if not result:
+                return False
+            # result[0] is expected to be a dict with a single value (the GET_LOCK result)
+            first_row = result[0]
+            first_value = list(first_row.values())[0]
+            return int(first_value) == 1
         except Exception as e:
             logging.error(f"Failed to acquire lock '{lock_name}': {e}")
             return False

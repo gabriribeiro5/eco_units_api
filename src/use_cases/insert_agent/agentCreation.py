@@ -37,39 +37,13 @@ class AgentCreationHandler(AuthHandler):
         
     def development_test(self):
         pass
-        
-    def get_request_data(self):
-        # Select request_data
-        content_length = int(self.headers.get("Content-Length", 0))
-        request_body = self.rfile.read(content_length).decode('utf-8') if content_length else ""
-
-        try:
-            request_body = request_body.strip()  # Remove leading/trailing whitespace
-            # Try parsing as JSON first, then fall back to form data
-            if request_body:
-                try:
-                    request_data = json.loads(request_body)
-                except json.JSONDecodeError:
-                    # Parse as URL-encoded form data
-                    parsed = parse_qs(request_body)
-                    request_data = {k: v[0] if v else "" for k, v in parsed.items()}
-            else:
-                request_data = {}
-            
-            return request_data
-        except Exception as e:
-            logging.exception(f"Failed to decode request body: {request_body}\nException: {str(e)}")
-            raise e
 
     def create_new_agent(self):
         connection, cursor = self.db.connect()
         try:
             cursor.execute(self.script_insert_disabled_agent)
-            logging.debug("Executed script to create new disabled agent")
             connection.commit()
-            logging.debug("Committed new agent to database")
             agent_id = cursor.lastrowid
-            logging.debug(f"Created new agent with ID: {agent_id}")
             connection.close()
             return agent_id
         except pymysql.err.OperationalError as msg:
@@ -85,20 +59,20 @@ class AgentCreationHandler(AuthHandler):
             connection.close()
             raise e
 
-    def create_backuser_admin(self, agent_id, name, surname, email):
+    def create_backuser_admin(self, agent_id, email, name, surname, secret):
         '''
         Create a backuser admin
         Expected request data:
         `agent_id`,
+        `backuser_admin_email`
         `name`,
         `backuser_admin_surname`,
-        `backuser_admin_email`
+        `backuser_admin_secret`
         '''
         connection, cursor = self.db.connect()
         try:
-            cursor.execute(self.script_insert_backuser_admin, (agent_id, name, surname, email))
+            cursor.execute(self.script_insert_backuser_admin, (agent_id, email, name, surname, secret))
             backuser_admin_id = cursor.lastrowid
-            logging.debug(f"Created backuser admin with ID: {backuser_admin_id} for agent ID: {agent_id}")
             connection.commit()
             connection.close()
         except pymysql.err.OperationalError as msg:
@@ -118,18 +92,19 @@ class AgentCreationHandler(AuthHandler):
         
         return backuser_admin_id
 
-    def create_backuser(self, agent_id, name, surname, email):
+    def create_backuser(self, agent_id, email, name, surname, secret):
         '''
         Create a backuser
         Expected request data:
         `agent_id`,
-        `name`,
+        `backuser_email`,
+        `backuser_name`,
         `backuser_surname`,
-        `backuser_email`
+        `backuser_secret`
         '''
         connection, cursor = self.db.connect()
         try:
-            cursor.execute(self.script_insert_backuser, (agent_id, name, surname, email))
+            cursor.execute(self.script_insert_backuser, (agent_id, email, name, surname, secret))
             backuser_id = cursor.lastrowid
             logging.debug(f"Created backuser with ID: {backuser_id} for agent ID: {agent_id}")
             connection.commit()
@@ -145,24 +120,25 @@ class AgentCreationHandler(AuthHandler):
             connection.commit()
             connection.close()
         except pymysql.err.OperationalError as msg:
-            logging.error(f"Failed running SQL query script_set_backuser_admin_id\n {msg}")
+            logging.error(f"Failed running SQL query script_set_backuser_id\n {msg}")
             connection.close()
             raise msg
         
         return backuser_id
 
-    def create_customer(self, agent_id, customer_name, customer_surname, customer_email ):
+    def create_customer(self, agent_id, customer_name, customer_surname, customer_email, customer_secret):
         '''
         Create a customer
         Expected request data:
         `agent_id`,
         `customer_name`,
         `customer_surname`,
-        `customer_email`
+        `customer_email`,
+        `customer_secret`
         '''
         connection, cursor = self.db.connect()
         try:
-            cursor.execute(self.script_insert_customer, (agent_id, customer_name, customer_surname, customer_email))
+            cursor.execute(self.script_insert_customer, (agent_id, customer_email, customer_name, customer_surname, customer_secret))
         except pymysql.err.OperationalError as msg:
             logging.error(f"Failed running SQL query\n {self.script_insert_customer}\n {msg}")
             connection.close()
@@ -198,7 +174,6 @@ class AgentCreationHandler(AuthHandler):
     ####################################################################
     # HANDLERS FOR BACKUSER AND BACKUSER ADMIN CREATION AND ENABLEMENT
     ####################################################################
-    @require_authentication
     @log_running_and_done
     def handle_post_backuser_admin(self):
         '''
@@ -230,12 +205,13 @@ class AgentCreationHandler(AuthHandler):
         
 
         backuser_admin_id = self.create_backuser_admin(self.create_new_agent(),
+                                                        request_data.get("agent_email"),
                                                         request_data.get("agent_name"),
                                                         request_data.get("agent_surname"),
-                                                        request_data.get("agent_email")
+                                                        request_data.get("agent_secret")
                                                         )
 
-        first_authentication_token = self.new_hash(backuser_admin_id, "backuser_admin")
+        first_authentication_token = self.new_hash(backuser_admin_id, "admin")
 
         # add token to first auth agents database
         self.insert_first_auth_agent(backuser_admin_id, first_authentication_token)
@@ -253,38 +229,47 @@ class AgentCreationHandler(AuthHandler):
     
         return status, headers, body
 
-    @require_authentication
     @log_running_and_done
     def handle_patch_backuser_admin_enable(self):
         '''
         Enable backuser_admin
         '''
-        request_data = self.get_request_data()
-
-        # Check if admin_name and secret are in env var
-        self.check_admin_credentials(request_data.get("agent_name"), request_data.get("agent_secret"))
+        try:
+            auth_header = self.headers.get("Authorization")
+            if auth_header and auth_header.startswith("Bearer "):
+                token = auth_header.split(" ")[1]
+            hash_data = self.unhash(token)
+            agent_id = hash_data["id"]
+        except Exception as e:
+            logging.error(e)
+            raise e
 
         # Validate token
-        self.update_first_auth_agents()
-        if request_data.get("first_authentication_token") not in self.FIRST_AUTH_AGENTS.values():
-            raise ValueError("Invalid first_authentication_token")
+        if not self.first_auth_token_is_valid(agent_id, token):
+            # Construct response components based on agent_type
+            response_dict = {"agent_is_enabled": False}
+            response = json.dumps(response_dict) # Convert dict to JSON string
 
-        # Use token to find agent_id
-        agent_id = None
-        for key, value in self.FIRST_AUTH_AGENTS.items():
-            if value == request_data.get("first_authentication_token"):
-                agent_id = key
-                break
+            # Expected response variables
+            status = 401
+            headers = {"Content-Type": "application/json"}
+            body = response + "\r\n"
+        
+            return status, headers, body
 
-        # Enable backoffice user
+        # Enable backoffice administrator
         try:
-            self.db.run_script(self.script_enable_agent, (agent_id))
+            self.db.run_script(self.script_set_agent__is_enabled, (agent_id,))
         except Exception as e:
             logging.error(e)
             raise e
      
+        # delete first auth agent to prevent reuse of token
+        if self.agent_is_enabled(agent_id):
+            self.delete_first_auth_agent(agent_id)
+
         # Construct response components based on agent_type
-        response_dict = {}
+        response_dict = {"agent_is_enabled": True}
         response = json.dumps(response_dict) # Convert dict to JSON string
     
         # Expected response variables
@@ -322,21 +307,26 @@ class AgentCreationHandler(AuthHandler):
             raise ValueError("agent_secret and confirmation_secret do not match")
         # Validate email pattern
         if "@" not in request_data.get("agent_email") or "." not in request_data.get("agent_email"):
-            raise ValueError("Invalid email format")       
+            raise ValueError("Invalid email format")
+
+        # Check if admin_name and secret are in env var
+        self.check_admin_credentials(request_data.get("agent_name"), request_data.get("agent_secret"))
+        
 
         backuser_id = self.create_backuser(self.create_new_agent(),
-                                                request_data.get("agent_name"),
-                                                request_data.get("agent_surname"),
-                                                request_data.get("agent_email")
-                                                )
+                                            request_data.get("agent_email"),
+                                            request_data.get("agent_name"),
+                                            request_data.get("agent_surname"),
+                                            request_data.get("agent_secret")
+                                            )
 
-        first_authentication_token = self.new_hash(backuser_id, "backuser_admin")
+        first_authentication_token = self.new_hash(backuser_id, "admin")
 
         # add token to first auth agents database
         self.insert_first_auth_agent(backuser_id, first_authentication_token)
 
         # Send verification token via email
-        self.email.send_admin_token(first_authentication_token)
+        self.email.send_backuser_token(first_authentication_token)
      
         # Construct response components
         response = json.dumps(result) # Convert dict to JSON string
@@ -353,35 +343,41 @@ class AgentCreationHandler(AuthHandler):
     def handle_patch_backuser_enable(self):
         '''
         Enable backuser
-        '''        
-        request_data = self.get_request_data()
-        logging.debug(f"Received request data for enabling backuser: {request_data}")
-
-        # Validate token
-        self.update_first_auth_agents()
-        if request_data.get("first_authentication_token") not in self.FIRST_AUTH_AGENTS.values():
-            raise ValueError("Invalid first_authentication_token")
-    
-        # Use token to find agent_id
-        agent_id = None
-        for key, value in self.FIRST_AUTH_AGENTS.items():
-            logging.debug(f"Checking token for agent_id: {key} with token value: {value}")
-            if value == request_data.get("first_authentication_token"):
-                logging.debug(f"Found matching agent_id: {key} for provided first_authentication_token")
-                agent_id = key
-                break
-
-        # Enable backoffice user
+        '''
         try:
-            logging.debug(f"Attempting to enable agent with ID: {agent_id} using script: {self.script_enable_agent}")
-            self.db.run_script(self.script_enable_agent, (agent_id))
+            auth_header = self.headers.get("Authorization")
+            if auth_header and auth_header.startswith("Bearer "):
+                token = auth_header.split(" ")[1]
+            hash_data = self.unhash(token)
+            logging.debug(f"Unhashed token data: {hash_data}")
+            agent_id = hash_data["id"]
+            logging.debug(f"Extracted agent_id from token: {agent_id}")
         except Exception as e:
             logging.error(e)
             raise e
 
-        logging.debug(f"Successfully enabled backuser with agent_id: {agent_id}")
+        # Validate token
+        if not self.first_auth_token_is_valid(agent_id, token):
+            # Construct response components based on agent_type
+            response_dict = {"agent_is_enabled": False}
+            response = json.dumps(response_dict) # Convert dict to JSON string
+        
+            # Expected response variables
+            status = 401
+            headers = {"Content-Type": "application/json"}
+            body = response + "\r\n"
+        
+            return status, headers, body
+
+        # Enable backoffice
+        try:
+            self.db.run_script(self.script_set_agent__is_enabled, (agent_id,))
+        except Exception as e:
+            logging.error(e)
+            raise e
+     
         # Construct response components based on agent_type
-        response_dict = {}
+        response_dict = {"agent_is_enabled": True}
         response = json.dumps(response_dict) # Convert dict to JSON string
     
         # Expected response variables
@@ -420,22 +416,21 @@ class AgentCreationHandler(AuthHandler):
         # Validate email pattern
         if "@" not in request_data.get("agent_email") or "." not in request_data.get("agent_email"):
             raise ValueError("Invalid email format")
-       
+
         customer_id = self.create_customer(self.create_new_agent(),
-                                                request_data.get("agent_name"),
-                                                request_data.get("agent_surname"),
-                                                request_data.get("agent_email")
-                                                )
+                                            request_data.get("agent_email"),
+                                            request_data.get("agent_name"),
+                                            request_data.get("agent_surname"),
+                                            request_data.get("agent_secret")
+                                            )
 
-        logging.debug("customer created")
-
-        
-        first_authentication_token = self.new_hash(customer_id, "backuser_admin")
+        first_authentication_token = self.new_hash(customer_id, "admin")
 
         # add token to first auth agents database
         self.insert_first_auth_agent(customer_id, first_authentication_token)
 
         # Send verification token via email
+        logging.debug(f"Sending admin token to email: {request_data.get('agent_email')} with token: {first_authentication_token}")
         self.email.send_admin_token(first_authentication_token)
      
         # Construct response components
@@ -454,30 +449,40 @@ class AgentCreationHandler(AuthHandler):
         '''
         Enable customer
         '''
-        result = {}
-        request_data = self.get_request_data()
-        
-        # Validate token
-        self.update_first_auth_agents()
-        if request_data.get("first_authentication_token") not in self.FIRST_AUTH_AGENTS.values():
-            raise ValueError("Invalid first_authentication_token")
-        
-        # Use token to find agent_id
-        agent_id = None
-        for key, value in self.FIRST_AUTH_AGENTS.items():
-            if value == request_data.get("first_authentication_token"):
-                agent_id = key
-                break
-
-        # Enable backoffice user
         try:
-            self.db.run_script(self.script_enable_agent, (agent_id))
+            auth_header = self.headers.get("Authorization")
+            if auth_header and auth_header.startswith("Bearer "):
+                token = auth_header.split(" ")[1]
+            hash_data = self.unhash(token)
+            logging.debug(f"Unhashed token data: {hash_data}")
+            agent_id = hash_data["id"]
+            logging.debug(f"Extracted agent_id from token: {agent_id}")
+        except Exception as e:
+            logging.error(e)
+            raise e
+
+        # Validate token
+        if not self.first_auth_token_is_valid(agent_id, token):
+            # Construct response components based on agent_type
+            response_dict = {"agent_is_enabled": False}
+            response = json.dumps(response_dict) # Convert dict to JSON string
+        
+            # Expected response variables
+            status = 401
+            headers = {"Content-Type": "application/json"}
+            body = response + "\r\n"
+        
+            return status, headers, body
+
+        # Enable backoffice
+        try:
+            self.db.run_script(self.script_set_agent__is_enabled, (agent_id,))
         except Exception as e:
             logging.error(e)
             raise e
      
         # Construct response components based on agent_type
-        response_dict = {}
+        response_dict = {"agent_is_enabled": True}
         response = json.dumps(response_dict) # Convert dict to JSON string
     
         # Expected response variables
@@ -554,7 +559,7 @@ class AgentCreationHandler(AuthHandler):
         request_data = self.get_request_data()
         
         # Validate token
-        self.update_first_auth_agents()
+        self.first_auth_token_is_valid()
         if request_data.get("first_authentication_token") not in self.FIRST_AUTH_AGENTS.values():
             raise ValueError("Invalid first_authentication_token")
         
@@ -567,7 +572,7 @@ class AgentCreationHandler(AuthHandler):
 
         # Enable backoffice user
         try:
-            self.db.run_script(self.script_enable_agent, (agent_id))
+            self.db.run_script(self.script_set_agent__is_enabled, (agent_id,))
         except Exception as e:
             logging.error(e)
             raise e

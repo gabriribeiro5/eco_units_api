@@ -1,5 +1,4 @@
 -- MySQL Workbench Forward Engineering
-
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
@@ -21,13 +20,56 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`agent` (
   `customer_id` INT NULL,
   `device_id` INT NULL,
   `creation_date_time` DATETIME NOT NULL,
-  `enabled` TINYINT NOT NULL,
+  `is_enabled` TINYINT NOT NULL,
   PRIMARY KEY (`agent_id`),
   UNIQUE INDEX `device_id_UNIQUE` (`device_id` ASC) VISIBLE,
   UNIQUE INDEX `backuser_id_UNIQUE` (`backuser_id` ASC) VISIBLE,
   UNIQUE INDEX `customer_id_UNIQUE` (`customer_id` ASC) VISIBLE)
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table `ecosystem_db`.`backuser_admin`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `ecosystem_db`.`backuser_admin` ;
+CREATE TABLE IF NOT EXISTS `ecosystem_db`.`backuser_admin` (
+  `backuser_admin_id` INT NOT NULL AUTO_INCREMENT,
+  `agent_id` INT NOT NULL,
+  `backuser_admin_email` VARCHAR(100) UNIQUE NOT NULL,
+  `backuser_admin_name` VARCHAR(100) NOT NULL,
+  `backuser_admin_surname` VARCHAR(100) NOT NULL,
+  `backuser_admin_secret` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`backuser_admin_id`),
+  INDEX `email_idx` (`backuser_admin_email` ASC) INVISIBLE,
+  INDEX `name_surname_idx` (`backuser_admin_name` ASC, `backuser_admin_surname` ASC) VISIBLE,
+  INDEX `fk_backuser_admin_agent_id_idx` (`agent_id` ASC) INVISIBLE,
+  CONSTRAINT `fk_backuser_admin_agent_id`
+    FOREIGN KEY (`agent_id`)
+    REFERENCES `ecosystem_db`.`agent` (`agent_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `ecosystem_db`.`backuser`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `ecosystem_db`.`backuser` ;
+CREATE TABLE IF NOT EXISTS `ecosystem_db`.`backuser` (
+  `backuser_id` INT NOT NULL AUTO_INCREMENT,
+  `agent_id` INT NOT NULL,
+  `backuser_email` VARCHAR(100) UNIQUE NOT NULL,
+  `backuser_name` VARCHAR(100) NOT NULL,
+  `backuser_surname` VARCHAR(100) NOT NULL,
+  `backuser_secret` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`backuser_id`),
+  INDEX `email_idx` (`backuser_email` ASC) INVISIBLE,
+  INDEX `name_surname_idx` (`backuser_name` ASC, `backuser_surname` ASC) VISIBLE,
+  INDEX `fk_backuser_agent_id_idx` (`agent_id` ASC) INVISIBLE,
+  CONSTRAINT `fk_backuser_agent_id`
+    FOREIGN KEY (`agent_id`)
+    REFERENCES `ecosystem_db`.`agent` (`agent_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `ecosystem_db`.`customer`
@@ -36,9 +78,10 @@ DROP TABLE IF EXISTS `ecosystem_db`.`customer` ;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`customer` (
   `customer_id` INT NOT NULL AUTO_INCREMENT,
   `agent_id` INT NOT NULL,
+  `customer_email` VARCHAR(100) UNIQUE NOT NULL,
   `customer_name` VARCHAR(100) NOT NULL,
   `customer_surname` VARCHAR(100) NOT NULL,
-  `customer_email` VARCHAR(100) NOT NULL,
+  `customer_secret` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`customer_id`),
   UNIQUE INDEX `email_UNIQUE` (`customer_email` ASC) INVISIBLE,
   INDEX `customer_email_idx` (`customer_email` ASC) VISIBLE,
@@ -52,14 +95,13 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`customer` (
 ENGINE = InnoDB
 COMMENT = '		';
 
-
 -- -----------------------------------------------------
 -- Table `ecosystem_db`.`ecosystem_category`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `ecosystem_db`.`ecosystem_category` ;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`ecosystem_category` (
   `ecosystem_category_id` INT NOT NULL AUTO_INCREMENT,
-  `category_name` VARCHAR(100) NULL, -- '1 = vegetable garden,\n2 = habitat,\n3 = rainforest,\n4 = swamp,\n5 = prairie',
+  `category_name` VARCHAR(100) NOT NULL, -- '1 = vegetable garden,\n2 = habitat,\n3 = rainforest,\n4 = swamp,\n5 = prairie',
   `category_description` VARCHAR(200) NULL,
   `min_temperature_expected` INT NULL,
   `max_temperature_expected` INT NULL,
@@ -100,48 +142,36 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`device` (
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-COMMENT = '					';
+COMMENT = '		';
 
 -- -----------------------------------------------------
--- Table `ecosystem_db`.`backuser_admin`
+-- Table `ecosystem_db`.`first_auth_agent`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `ecosystem_db`.`backuser_admin` ;
-CREATE TABLE IF NOT EXISTS `ecosystem_db`.`backuser_admin` (
-  `backuser_admin_id` INT NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `ecosystem_db`.`first_auth_agent` ;
+CREATE TABLE IF NOT EXISTS `ecosystem_db`.`first_auth_agent` (
   `agent_id` INT NOT NULL,
-  `backuser_admin_name` VARCHAR(100) NULL,
-  `backuser_admin_surname` VARCHAR(100) NULL,
-  `backuser_admin_email` VARCHAR(100) NULL,
-  PRIMARY KEY (`backuser_admin_id`),
-  INDEX `email_idx` (`backuser_admin_email` ASC) INVISIBLE,
-  INDEX `name_surname_idx` (`backuser_admin_name` ASC, `backuser_admin_surname` ASC) VISIBLE,
-  INDEX `fk_backuser_admin_agent_id_idx` (`agent_id` ASC) INVISIBLE,
-  CONSTRAINT `fk_backuser_admin_agent_id`
+  `token` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`agent_id`),
+  CONSTRAINT `fk_first_auth_agent__agent`
     FOREIGN KEY (`agent_id`)
     REFERENCES `ecosystem_db`.`agent` (`agent_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `ecosystem_db`.`backuser`
+-- Table `ecosystem_db`.`session`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `ecosystem_db`.`backuser` ;
-CREATE TABLE IF NOT EXISTS `ecosystem_db`.`backuser` (
-  `backuser_id` INT NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `ecosystem_db`.`session` ;
+CREATE TABLE IF NOT EXISTS `ecosystem_db`.`session` (
   `agent_id` INT NOT NULL,
-  `backuser_name` VARCHAR(100) NULL,
-  `backuser_surname` VARCHAR(100) NULL,
-  `backuser_email` VARCHAR(100) NULL,
-  PRIMARY KEY (`backuser_id`),
-  INDEX `email_idx` (`backuser_email` ASC) INVISIBLE,
-  INDEX `name_surname_idx` (`backuser_name` ASC, `backuser_surname` ASC) VISIBLE,
-  INDEX `fk_backuser_agent_id_idx` (`agent_id` ASC) INVISIBLE,
-  CONSTRAINT `fk_backuser_agent_id`
+  `token` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`agent_id`),
+  CONSTRAINT `fk_session__agent`
     FOREIGN KEY (`agent_id`)
     REFERENCES `ecosystem_db`.`agent` (`agent_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 

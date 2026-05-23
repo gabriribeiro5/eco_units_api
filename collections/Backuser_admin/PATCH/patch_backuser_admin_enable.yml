@@ -14,7 +14,9 @@ http:
         "agent_name": "admin",
         "agent_secret": "s3cr37@dblab73"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: hash_type!admin_id!1
 
 settings:
   encodeUrl: true
