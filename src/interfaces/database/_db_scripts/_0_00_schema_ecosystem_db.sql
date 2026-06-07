@@ -21,7 +21,37 @@ USE `ecosystem_db` ;
 DROP TABLE IF EXISTS `ecosystem_db`.`agent` ;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`agent` (
   `agent_id` INT NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`agent_id`)
+  `backoffice_admin_id` INT NULL,
+  `device_operation_agent_id` INT NULL,
+  `supply_chain_manager_id` INT NULL,
+  `sales_service_id` INT NULL,
+  `creation_date_time` DATETIME NOT NULL,
+  `is_enabled` TINYINT NOT NULL,
+  PRIMARY KEY (`agent_id`),
+  UNIQUE INDEX `idx_UNIQUE_backoffice_admin_id` (`backoffice_admin_id` ASC) VISIBLE,
+  UNIQUE INDEX `idx_UNIQUE_device_operation_agent_id` (`device_operation_agent_id` ASC) VISIBLE,
+  UNIQUE INDEX `idx_UNIQUE_supply_chain_manager_id` (`supply_chain_manager_id` ASC) VISIBLE,
+  UNIQUE INDEX `idx_UNIQUE_sales_service_id` (`sales_service_id` ASC) VISIBLE,
+  CONSTRAINT `fk_agent__backoffice_admin`
+    FOREIGN KEY (`backoffice_admin_id`)
+    REFERENCES `ecosystem_db`.`backoffice_admin` (`backoffice_admin_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_agent__device_operation_agent`
+    FOREIGN KEY (`device_operation_agent_id`)
+    REFERENCES `ecosystem_db`.`device_operation_agent` (`device_operation_agent_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_agent__supply_chain_manager`
+    FOREIGN KEY (`supply_chain_manager_id`)
+    REFERENCES `ecosystem_db`.`supply_chain_manager` (`manager_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_agent__sales_service`
+    FOREIGN KEY (`sales_service_id`)
+    REFERENCES `ecosystem_db`.`sales_service` (`sales_service_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 )
 ENGINE = InnoDB;
 
@@ -100,7 +130,6 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`device_operation_agent` (
   `device_id` INT NULL,
   `customer_id` INT NULL,
   `creation_date_time` DATETIME NOT NULL,
-  `is_enabled` TINYINT NOT NULL,
   PRIMARY KEY (`device_operation_agent_id`),
   UNIQUE INDEX `idx_UNIQUE_agent_id` (`agent_id` ASC) VISIBLE,
   UNIQUE INDEX `idx_UNIQUE_supervisor_id` (`supervisor_id` ASC) VISIBLE,

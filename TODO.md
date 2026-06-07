@@ -99,6 +99,10 @@ GOAL: A complete api service, ready to balance incoming requests between two ide
     - [x] refactor(supply_chain_order): depends on device_id only
     - [x] feat(sales_service): will insert device and open supply_chain order
     - [x] refactor(device_model): depends on supply_chain and absorbs device details
+  - [ ] fix(tested routes): review all routes
+    - [x] refactor(post_backuser_admin): fix queries
+    - [ ] refactor(post_device_operation_supervisor): fix queries
+    - [ ] ...
   - [ ] feat(handle_post_backuser): implement and validate database operation (run request and check db)
   - [ ] feat(handle_patch_backuser_enable): implement and validate database operation (run request and check db)
   - [ ] feat(handle_post_customer): implement and validate database operation (run request and check db)
