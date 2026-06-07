@@ -101,6 +101,7 @@ GOAL: A complete api service, ready to balance incoming requests between two ide
     - [x] refactor(device_model): depends on supply_chain and absorbs device details
   - [ ] fix(tested routes): review all routes
     - [x] refactor(post_backuser_admin): fix queries
+    - [ ] refactor(get_backuser_admin_login): fix queries
     - [ ] refactor(post_device_operation_supervisor): fix queries
     - [ ] ...
   - [ ] feat(handle_post_backuser): implement and validate database operation (run request and check db)

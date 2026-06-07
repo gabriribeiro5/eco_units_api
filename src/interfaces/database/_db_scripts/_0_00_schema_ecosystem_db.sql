@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `ecosystem_db`.`agent` (
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- AUTHENTICATION Table `ecosystem_db`.`first_auth_device_operation_agent`
+-- AUTHENTICATION Table `ecosystem_db`.`first_auth_agent`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `ecosystem_db`.`first_auth_agent` ;
 CREATE TABLE IF NOT EXISTS `ecosystem_db`.`first_auth_agent` (

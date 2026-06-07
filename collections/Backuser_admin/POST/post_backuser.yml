@@ -10,7 +10,7 @@ http:
     type: json
     data: |-
       {
-        "device_operation_agent_id": "1",
+        "agent_id": "1",
         "device_operation_agent_name": "Gabriel Ribeiro",
         "device_operation_agent_email": "gabriel@email.com",
         "device_operation_agent_secret": "s0m3s3cr37",

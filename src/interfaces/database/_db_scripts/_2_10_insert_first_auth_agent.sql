@@ -1,6 +1,6 @@
 -- insert first auth token
-INSERT IGNORE INTO `first_auth_device_operation_agent`
-(`device_operation_agent_id`,
+INSERT IGNORE INTO `first_auth_agent`
+(`agent_id`,
 `token`)
 VALUES
 (%s,

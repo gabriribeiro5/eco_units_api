@@ -2,6 +2,6 @@
 SELECT
     `token`
 FROM
-    `first_auth_device_operation_agent`
+    `first_auth_agent`
 WHERE
     device_operation_agent_id = %s;
