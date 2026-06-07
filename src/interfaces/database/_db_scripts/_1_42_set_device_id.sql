@@ -1,5 +1,5 @@
--- Enable device_operation_agent
+-- Associate DEVICE with the device_operation_agent row
 UPDATE `device_operation_agent`
 SET
-is_enabled = 1
+device_id = %s
 WHERE `device_operation_agent_id` = %s;

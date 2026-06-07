@@ -1,18 +1,17 @@
 info:
-  name: patch_backuser_admin_enable
+  name: patch_backoffice_admin_enable
   type: http
   seq: 1
 
 http:
   method: PATCH
-  url: "{{base_url}}/api/backuser/admin/enable"
+  url: "{{base_url}}/api/device_operation_supervisor/admin/enable"
   body:
     type: json
     data: |-
       {
-        "first_authentication_token": "backuser_admin_token",
-        "agent_name": "admin",
-        "agent_secret": "s3cr37@dblab73"
+        "id": "1",
+        "agent_type": "backoffice_admin"
       }
   auth:
     type: bearer

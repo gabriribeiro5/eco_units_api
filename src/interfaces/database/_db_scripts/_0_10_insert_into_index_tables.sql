@@ -7,10 +7,10 @@
 -- -----------------------------------------
 -- Sensor status (ignore insert if PK or FK already exists)
 -- -----------------------------------------
-INSERT IGNORE INTO `sensor_status`
-(`sensor_status_id`,
-`sensor_status_name`,
-`sensor_status_description`)
+INSERT IGNORE INTO `component_status`
+(`component_status_id`,
+`component_status_name`,
+`component_status_description`)
 VALUES
 (1,
 'RUNNING',
@@ -22,8 +22,8 @@ VALUES
 'NOT INSTALLED',
 'The referenced cyclobot does not have this physical component')
 AS `new`
-ON DUPLICATE KEY UPDATE sensor_status_name = `new`.sensor_status_name,
- sensor_status_description = `new`.sensor_status_description;
+ON DUPLICATE KEY UPDATE component_status_name = `new`.component_status_name,
+ component_status_description = `new`.component_status_description;
 
 -- -----------------------------------------
 -- Config status (ignore insert if PK or FK already exists)
@@ -67,30 +67,42 @@ VALUES
 AS `new`
 ON DUPLICATE KEY UPDATE season_name = `new`.season_name;
 
--- -----------------------------------------
--- Ecosystem category (ignore insert if PK or FK already exists)
--- -----------------------------------------
-INSERT IGNORE INTO `ecosystem_category`
-(`ecosystem_category_id`,
-`category_name`,
-`category_description`)
+INSERT IGNORE INTO `device_strategy`
+(`device_strategy_id`,
+`strategy_full_name`,
+`strategy_description`,
+`min_temperature_expected`,
+`max_temperature_expected`)
 VALUES
 (1,
 'VEGETABLE GARDEN',
-'Eco_unit is expected to work as a propper growth box'
+'Eco_unit is expected to work as a propper growth box',
+NULL,
+NULL
 ),
 (2,
 'PET HABITAT',
-'Here systems must serve the animal life'),
+'Here systems must serve the animal life',
+NULL,
+NULL
+),
 (3,
 'RAINFOREST',
-'Where the rain is key to life'),
+'Where the rain is key to life',
+NULL,
+NULL
+),
 (4,
 'SWAMP',
-'Why would you want it'),
+'Why would you want it',
+NULL,
+NULL
+),
 (5,
 'PRAIRIE',
-'Haja mato')
+'Haja mato',
+NULL,
+NULL)
 AS `new`
-ON DUPLICATE KEY UPDATE category_name = `new`.category_name,
- category_description = `new`.category_description;
+ON DUPLICATE KEY UPDATE strategy_full_name = `new`.strategy_full_name,
+ strategy_description = `new`.strategy_description;

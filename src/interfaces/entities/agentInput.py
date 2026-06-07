@@ -2,11 +2,10 @@ import datetime
 
 class I_AgentInput():
     def __init__(self) -> None:
-        self.agent_input_id:int
-        self.agent_id:int
+        self.device_operation_agent_id:int
         self.device_id:int
         self.date_time:datetime.datetime
-        self.failed_communication:bool
+        self.operation_type:int
         self.allowed_tables = None # This interface can not be used alone
 
 

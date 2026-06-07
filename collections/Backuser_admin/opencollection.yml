@@ -17,7 +17,7 @@ config:
 request:
   auth:
     type: bearer
-    token: backuser_admin_token
+    token: backoffice_admin_token
 bundled: false
 extensions:
   bruno:

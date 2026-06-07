@@ -5,7 +5,7 @@
 INSERT IGNORE INTO `diagnostic`
 (`diagnostic_id`,
 `device_id`,
-`agent_input_id`,
+`device_operation_agent_id`,
 `diagnostic_date_time`,
 `device_message`,
 `wifi_connected`,
@@ -16,11 +16,11 @@ INSERT IGNORE INTO `diagnostic`
 VALUES
 (DEFAULT,
 	(select ainput.device_id 
-		from agent_input as ainput 
+		from device_operation_agent as ainput 
         order by ainput.date_time
         limit 1),
-	(select ainput.agent_input_id
-		from agent_input as ainput 
+	(select ainput.device_operation_agent_id
+		from device_operation_agent as ainput 
         order by ainput.date_time
         limit 1),
 '2024-10-30 07:55:00.000000',

@@ -7,7 +7,7 @@ class EmailClient(I_EmailSender):
     def send_admin_token(self, token):
         pass
     
-    def send_backuser_token(self, token):
+    def send_device_operation_supervisor_token(self, token):
         pass
     
     def send_customer_token(self, token):

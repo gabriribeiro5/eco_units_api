@@ -1,3 +1,3 @@
--- delete session for a given token
-DELETE FROM `sessions`
-WHERE `agent_id` = %s;
+-- delete session for a given device_operation_agent
+DELETE FROM `session`
+WHERE `device_operation_agent_id` = %s;

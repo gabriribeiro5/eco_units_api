@@ -28,10 +28,10 @@ class SessionManager(I_BaseHandler):
                 return "device_sessions"
             case "customer":
                 return "customer_sessions"
-            case "backuser":
-                return "backuser_sessions"
-            case "backuser_admin":
-                return "backuser_admin_sessions"
+            case "device_operation_supervisor":
+                return "device_operation_supervisor_sessions"
+            case "backoffice_admin":
+                return "backoffice_admin_sessions"
             case _:
                 raise ValueError(f"Unknown client label '{client_label}'")
             

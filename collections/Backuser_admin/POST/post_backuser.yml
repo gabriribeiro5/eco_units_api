@@ -1,22 +1,24 @@
 info:
-  name: post_backuser
+  name: post_device_operation_supervisor
   type: http
   seq: 2
 
 http:
   method: POST
-  url: "{{base_url}}/api/backuser"
+  url: "{{base_url}}/api/device_operation_supervisor"
   body:
     type: json
     data: |-
       {
-        "agent_id": "1",
-        "agent_name": "Gabriel Ribeiro",
-        "agent_email": "gabriel@email.com",
-        "agent_secret": "s0m3s3cr37",
+        "device_operation_agent_id": "1",
+        "device_operation_agent_name": "Gabriel Ribeiro",
+        "device_operation_agent_email": "gabriel@email.com",
+        "device_operation_agent_secret": "s0m3s3cr37",
         "confirmation_secret": "s0m3s3cr37"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: session$hash_type!admin_id!1
 
 settings:
   encodeUrl: true

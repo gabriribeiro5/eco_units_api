@@ -11,19 +11,19 @@ class Definitions():
         self._DB_SCRIPTS_DIR = self.SRC_DIR / "interfaces/database/_db_scripts"
 
         ### APPLICATION CONFIGURATION ###
-        self.AGENTS_LIST = ("device", "customer", "backuser", "backuser_admin")
-        self.AGENT_INPUT_TABLES = ("agent_input", "diagnostic", "configuration", "ecosystem_state")
+        self.AGENTS_LIST = ("device", "customer", "device_operation_supervisor", "backoffice_admin")
+        self.AGENT_INPUT_TABLES = ("device_operation_agent", "diagnostic", "configuration", "ecosystem_state")
         self.ALLOWED_INPUT_TABLES = {
             "device": (self.AGENT_INPUT_TABLES),
             "customer": (self.AGENT_INPUT_TABLES),
-            "backuser": (self.AGENT_INPUT_TABLES, "agent", "device", "customer"),
-            "backuser_admin": (self.AGENT_INPUT_TABLES, "agent", "device", "customer", "backuser")
+            "device_operation_supervisor": (self.AGENT_INPUT_TABLES, "device_operation_agent", "device", "customer"),
+            "backoffice_admin": (self.AGENT_INPUT_TABLES, "device_operation_agent", "device", "customer", "device_operation_supervisor")
         }
         self.SESSION_GROUPS_AND_TIMEOUTS = {
             "device_sessions": 5, # group_name: minutes
             "customer_sessions": 30, # group_name: minutes
-            "backuser_sessions": 30, # group_name: minutes
-            "backuser_admin_sessions": 30 # group_name: minutes
+            "device_operation_supervisor_sessions": 30, # group_name: minutes
+            "backoffice_admin_sessions": 30 # group_name: minutes
         }
         self.LOGGING_ENABLED = True
         self.ASYNC_MODE = False

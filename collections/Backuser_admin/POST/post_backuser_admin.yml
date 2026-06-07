@@ -1,11 +1,11 @@
 info:
-  name: post_backuser_admin
+  name: post_backoffice_admin
   type: http
   seq: 2
 
 http:
   method: POST
-  url: "{{base_url}}/api/backuser/admin"
+  url: "{{base_url}}/api/device_operation_supervisor/admin"
   body:
     type: json
     data: |-

@@ -1,6 +1,6 @@
 -- insert session token
 INSERT IGNORE INTO `session`
-(`agent_id`,
+(`device_operation_agent_id`,
 `token`)
 VALUES
 (%s,

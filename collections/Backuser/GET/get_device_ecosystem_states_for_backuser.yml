@@ -1,11 +1,11 @@
 info:
-  name: get_device_ecosystem_states_for_backuser
+  name: get_device_ecosystem_states_for_device_operation_supervisor
   type: http
   seq: 4
 
 http:
   method: GET
-  url: "{{base_url}}/api/backuser/device_ecosystem_states"
+  url: "{{base_url}}/api/device_operation_supervisor/device_ecosystem_states"
 
 settings:
   encodeUrl: true

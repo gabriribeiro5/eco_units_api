@@ -22,7 +22,7 @@ def require_authentication(func):
 
 class AgentLoginHandler(AuthHandler):
     """
-    Handler for agent login and related operations such as creating backusers, customers, and devices.
+    Handler for agent login and related operations such as creating device_operation_supervisors, customers, and devices.
     """
     def __init__(self, *args, **kwargs) -> None:
         self.db = SyncronousPyMySQL()
@@ -33,13 +33,13 @@ class AgentLoginHandler(AuthHandler):
     
     def authenticate_agent(self, email, secret, agent_type):
         '''
-        Authenticate an agent (backuser admin, backuser, or customer) based on email and secret.
+        Authenticate an agent (device_operation_supervisor admin, device_operation_supervisor, or customer) based on email and secret.
         '''
         try:
             if agent_type == "admin":
-                query = self.script_select_backuser_admin_by_email
-            elif agent_type == "backuser":
-                query = self.script_select_backuser_by_email
+                query = self.script_select_backoffice_admin_by_email
+            elif agent_type == "device_operation_supervisor":
+                query = self.script_select_device_operation_supervisor_by_email
             elif agent_type == "customer":
                 query = self.script_select_customer_by_email
             else:
@@ -47,9 +47,9 @@ class AgentLoginHandler(AuthHandler):
 
             result = self.db.run_query(query, (email,))
             if result and len(result) > 0:
-                stored_secret = result[0]["backuser_admin_secret"] if agent_type == "admin" else result[0]["backuser_secret"] if agent_type == "backuser" else result[0]["customer_secret"]
+                stored_secret = result[0]["backoffice_admin_secret"] if agent_type == "admin" else result[0]["device_operation_supervisor_secret"] if agent_type == "device_operation_supervisor" else result[0]["customer_secret"]
                 if stored_secret == secret:
-                    return self.new_hash(result[0]["agent_id"], agent_type)  # Generate and return a session token
+                    return f"session${self.new_hash(result[0]['device_operation_agent_id'], agent_type)}"  # Generate and return a session token
                 else:
                     logging.warning(f"Authentication failed for {agent_type}: {email} - Incorrect secret")
             else:
@@ -61,7 +61,7 @@ class AgentLoginHandler(AuthHandler):
     ####################################################################
     # HANDLERS FOR AGENT LOGIN AND ENABLEMENT
     ####################################################################
-    def handle_get_backuser_admin_login(self):
+    def handle_get_backoffice_admin_login(self):
         '''
         '''
         result = {}
@@ -74,9 +74,36 @@ class AgentLoginHandler(AuthHandler):
         # Validate email pattern
         if "@" not in request_data.get("agent_email") or "." not in request_data.get("agent_email"):
             raise ValueError("Invalid email format")
+        
+        try:
+            backoffice_admin_details = self.db.run_query(self.script_select_backoffice_admin_by_email, (request_data.get("agent_email"),))
+            if not backoffice_admin_details or len(backoffice_admin_details) == 0:
+                logging.warning(f"Login attempt failed: No device_operation_supervisor admin found with email {request_data.get('agent_email')}")
+
+                response_dict = {"error": "Invalid email or secret"}
+                response = json.dumps(response_dict) # Convert dict to JSON string
+
+                # Expected response variables
+                status = 401
+                headers = {"Content-Type": "application/json"}
+                body = response + "\r\n"
+                return status, headers, body
+            agent_id = backoffice_admin_details[0]["device_operation_agent_id"]
+        except Exception as e:
+            logging.error(f"Error retrieving device_operation_supervisor admin details for email {request_data.get('agent_email')}: {str(e)}")
+            response_dict = {"error": "Internal server error"}
+            response = json.dumps(response_dict) # Convert dict to JSON string
+
+            # Expected response variables
+            status = 500
+            headers = {"Content-Type": "application/json"}
+            body = response + "\r\n"
+            return status, headers, body
 
         session_token = self.authenticate_agent(request_data.get("agent_email"), request_data.get("agent_secret"), "admin")
+        
         if session_token:
+            self.insert_session(agent_id, session_token)
             result["session_token"] = session_token
      
         # Construct response components

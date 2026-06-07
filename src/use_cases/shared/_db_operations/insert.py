@@ -14,10 +14,10 @@ External services or modules should NOT directly access this module.
 class IndexTables(I_BaseHandler):
     '''
     index tables are:
-    - sensor_status
+    - component_status
     - config_status
     - climate_season
-    - ecosystem_category
+    - device_strategy
     '''
     def create_query(self, table_name, data):
         try:
@@ -33,13 +33,13 @@ class IndexTables(I_BaseHandler):
         pass
     # Handlers para as rotas
     @log_running_and_done
-    def insert_into_sensor_status(self, data:dict = None):
+    def insert_into_component_status(self, data:dict = None):
         '''
         data:
         - By default, this method reads from `self.rfile`.
         - Provide specific data if you wish to ignore `self.rfile`
         '''
-        table_name = "sensor_status"
+        table_name = "component_status"
         
         # build response data
         status = 200

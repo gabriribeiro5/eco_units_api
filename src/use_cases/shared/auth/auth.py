@@ -166,7 +166,7 @@ class AuthHandler(Sessions, I_DBScriptSource):
     # Hash generation and validation
     def new_hash(self, id, agent_type):
         '''
-        Generates a hash token based on specific id (backuser, customer, etc.) and agent type.
+        Generates a hash token based on specific id (device_operation_supervisor, customer, etc.) and agent type.
         This is a placeholder implementation and should be replaced with a secure hashing algorithm in production.
         '''
         return f"hash_type!{agent_type}_id!{id}"
@@ -200,15 +200,15 @@ class AuthHandler(Sessions, I_DBScriptSource):
         # TODO: look up the hash in a database
         agent_id_mapping = {
             "admin_id_hash": "new_client_id",
-            "backuser_id_hash": "existing_client_id",
+            "device_operation_supervisor_id_hash": "existing_client_id",
             "customer_id_hash": "other_existing_client_id",
             "device_id_hash": "another_existing_client_id"
         }
-        if agent_type == "backuser_admin":
-            # Search for agent_id in backuser_admin database table using the id extracted from the hash
+        if agent_type == "backoffice_admin":
+            # Search for agent_id in backoffice_admin database table using the id extracted from the hash
             agent_id = agent_id_mapping.get(id, None)
-        if agent_type == "backuser":
-            # Search for agent_id in backusers database table using the id extracted from the hash
+        if agent_type == "device_operation_supervisor":
+            # Search for agent_id in device_operation_supervisors database table using the id extracted from the hash
             agent_id = agent_id_mapping.get(id, None)
         if agent_type == "customer":
             # Search for agent_id in customers database table using the id extracted from the hash
@@ -237,20 +237,20 @@ class AuthHandler(Sessions, I_DBScriptSource):
         return agent_id
 
     @try_external_api_call
-    def handle_backuser_admin_first_auth(self):
+    def handle_backoffice_admin_first_auth(self):
         '''
         Handles the first authentication step for a client (agent).
         1. Validates the provided agent_id against FIRST_AUTH_AGENTS.
         2. If agent_id is valid, returns its token and moves it to ALLOWED_AGENTS.
         3. If agent_id is not valid, returns None.
         '''
-        backuser_admin_id_hash = self.get_request_data().get("backuser_admin_id_hash", None).lower()
-        backuser_admin_token = self.get_request_data().get("backuser_admin_token", None).lower()
-        agent_id = self.find_agent_id(backuser_admin_id_hash) if backuser_admin_id_hash else None
+        backoffice_admin_id_hash = self.get_request_data().get("backoffice_admin_id_hash", None).lower()
+        backoffice_admin_token = self.get_request_data().get("backoffice_admin_token", None).lower()
+        agent_id = self.find_agent_id(backoffice_admin_id_hash) if backoffice_admin_id_hash else None
         
         # Validate agent_id
         try:
-            if agent_id in self.FIRST_AUTH_AGENTS and self.FIRST_AUTH_AGENTS[agent_id] == backuser_admin_token:
+            if agent_id in self.FIRST_AUTH_AGENTS and self.FIRST_AUTH_AGENTS[agent_id] == backoffice_admin_token:
                 # Move item to allowed agents
                 # TODO: this item must be saved to a database
                 self.ALLOWED_AGENTS[agent_id] = self.FIRST_AUTH_AGENTS[agent_id]

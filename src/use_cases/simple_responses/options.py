@@ -67,7 +67,7 @@ class OptionsHandler(Auth, RoutesManager):
     @log_running_and_done
     def handle_options_for_unauthenticated_client(self):
         '''
-        agent_type might be "cyclobot", "customer", "backuser" or "backuser_admin"
+        agent_type might be "cyclobot", "customer", "device_operation_supervisor" or "backoffice_admin"
         '''
         # Find out agent_type from request body, default to "all" if not provided or invalid
         content_length = int(self.headers.get("Content-Length", 0))
@@ -123,12 +123,12 @@ class OptionsHandler(Auth, RoutesManager):
     
     @require_authentication
     @log_running_and_done
-    def handle_options_for_backuser(self):
+    def handle_options_for_device_operation_supervisor(self):
         '''
-        return all routes for "backuser"
+        return all routes for "device_operation_supervisor"
         '''
         # Construct response components based on agent_type
-        agent_options = self.collect_agent_options("backuser")
+        agent_options = self.collect_agent_options("device_operation_supervisor")
         response = json.dumps(agent_options) # Convert dict to JSON string
     
         # Expected response variables
@@ -141,12 +141,12 @@ class OptionsHandler(Auth, RoutesManager):
     
     @require_authentication
     @log_running_and_done
-    def handle_options_for_backuser_admin(self):
+    def handle_options_for_backoffice_admin(self):
         '''
-        return all routes for "backuser_admin"
+        return all routes for "backoffice_admin"
         '''
         # Construct response components based on agent_type
-        agent_options = self.collect_agent_options("backuser_admin")
+        agent_options = self.collect_agent_options("backoffice_admin")
         response = json.dumps(agent_options) # Convert dict to JSON string
     
         # Expected response variables

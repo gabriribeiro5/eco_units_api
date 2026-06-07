@@ -1,7 +1,7 @@
--- Insert CUSTOMER with agent_id
+-- Insert CUSTOMER with device_operation_agent_id
 INSERT IGNORE INTO customer
 (`customer_id`,
-`agent_id`,
+`device_operation_agent_id`,
 `customer_email`,
 `customer_name`,
 `customer_surname`,

@@ -1,5 +1,5 @@
 info:
-  name: backuser_login
+  name: device_operation_supervisor_login
   type: http
   seq: 3
 

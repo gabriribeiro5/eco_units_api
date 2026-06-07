@@ -1,22 +1,22 @@
 info:
-  name: patch_backuser_enable
+  name: patch_device_operation_supervisor_enable
   type: http
   seq: 1
 
 http:
   method: PATCH
-  url: "{{base_url}}/api/backuser/enable"
+  url: "{{base_url}}/api/device_operation_supervisor/enable"
   body:
     type: json
     data: |-
       {
-        "first_authentication_token": "backuser_token",
-        "agent_name": "gabriel",
-        "agent_secret": "some_secret"
+        "first_authentication_token": "device_operation_supervisor_token",
+        "device_operation_agent_name": "gabriel",
+        "device_operation_agent_secret": "some_secret"
       }
   auth:
     type: bearer
-    token: hash_type!backuser_id!1
+    token: hash_type!device_operation_supervisor_id!1
 
 settings:
   encodeUrl: true

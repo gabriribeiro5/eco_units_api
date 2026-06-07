@@ -85,18 +85,31 @@ GOAL: A complete api service, ready to balance incoming requests between two ide
   - [x] feat(external call by auth): make auth handlers ready for microservice call (copy trace)
   - [x] feat(try_external_api_call): create decorator for auth handler
   - [x] feat(handle_patch_backuser_admin_enable): implement and validate database operation (run request and check db)
-  - [x] feat(handle_post_backuser): implement and validate database operation (run request and check db)
   - [x] feat(auth tables): add provisory relational tables and finish authentication flow
+  - [x] feat(supply chain tables): add relational tables
+  - [x] refactor(db): adapt db to supply chain and sales context
+    - [x] refactor(agent_input): becomes `device_operation`
+    - [x] refactor(device_operation): with `type` (insert, update, delete) insted of `failed_comunication`
+    - [x] refactor(agent): becomes `device_operation_agent`
+    - [x] refactor(agent_id): becomes `device_operation_agent_id`
+    - [x] refactor(backuser_admin): does not need to be a device_operation_agent
+    - [x] refactor(backuser_admin): becomes backoffice_admin
+    - [x] refactor(backuser): becomes `device_operation_supervisor`
+    - [x] feat(supply_chain_manager): create entity
+    - [x] refactor(supply_chain_order): depends on device_id only
+    - [x] feat(sales_service): will insert device and open supply_chain order
+    - [x] refactor(device_model): depends on supply_chain and absorbs device details
+  - [ ] feat(handle_post_backuser): implement and validate database operation (run request and check db)
   - [ ] feat(handle_patch_backuser_enable): implement and validate database operation (run request and check db)
   - [ ] feat(handle_post_customer): implement and validate database operation (run request and check db)
   - [ ] feat(handle_patch_customer_enable): implement and validate database operation (run request and check db)
   - [ ] feat(handle_post_device): implement and validate database operation (run request and check db)
   - [ ] feat(handle_patch_device_enable): implement and validate database operation (run request and check db)
-  - [ ] refactor(shared): remove _db_operations dir
+- [ ] refactor(shared): remove _db_operations dir and async modules
 - [ ] feat(DB initializer): 1 container for db setup
   - [ ] create container
   - [ ] disable db setup in base app
-- [ ] feat(agent input methods): include logic
+- [ ] feat(device_operation_agent input methods): include logic
 - [ ] refactor(Auth): improve generate_hash method
 - [ ] test(unit_tests): include unit_test coverage
 - [ ] logging creates new file (and folder) every day, when running nonstop
@@ -107,7 +120,7 @@ GOAL: A complete api service, ready to balance incoming requests between two ide
 GOAL: Create external authentication service with its own DB to simmulate a microservice. Use key-value DB for simpler
 
 #### V3 (NoSQL) - 1 queue, 1 LB, 1 sync DB init, 1 sync auth app with micro DB (key-value), 2 sync base apps, 1 NoSQL base DB (SQL + key-value)
-GOAL: Add key-value tables for dynamic agent inputs (personalized tables for each product type/cyclobot strategy). Add route for key-value table creation (automate new product launches).
+GOAL: Add key-value tables for dynamic device_operation_agent inputs (personalized tables for each product type/cyclobot strategy). Add route for key-value table creation (automate new product launches).
 
 #### V4 (Async with TDD) - 1 queue, 1 LB, 1 sync DB init, 1 async auth app with micro DB (key-value), 2 async base apps, 1 NoSQL base DB (SQL + key-value)
 GOAL: Use FastAPI to create an equivalent application (begining with authentication app). Avoid ORM and try to keep sql files in use. Begin with unit tests.

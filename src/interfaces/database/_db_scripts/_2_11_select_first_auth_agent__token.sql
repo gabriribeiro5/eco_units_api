@@ -1,7 +1,7 @@
--- Select first auth agent token
+-- Select first auth device operation agent token
 SELECT
     `token`
 FROM
-    `first_auth_agent`
+    `first_auth_device_operation_agent`
 WHERE
-    agent_id = %s;
+    device_operation_agent_id = %s;

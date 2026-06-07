@@ -4,7 +4,7 @@
         "/api": {"method": "handle_trace",
             "used_headers": {"Content-Type": "text/plain"},
             "parameters": {},
-            "target_agents": ["backuser_admin"],
+            "target_agents": ["backoffice_admin"],
             "status": "implemented",
             "description": "Returns the request back to the client. Useful for API diagnostics."
         }
@@ -13,98 +13,98 @@
         "_comment": "OPTIONS is used to describe the communication options for the target resource. It helps the client understand what methods and headers are allowed",
         "/api": {"method": "handle_options_for_unauthenticated_client",
             "used_headers": {"Content-Type": "application/json"},
-            "parameters": {"agent_type": "(list) device, customer, backuser or backuser_admin"},
-            "target_agents": ["customer", "backuser", "backuser_admin"],
+            "parameters": {"agent_type": "(list) device, customer, device_operation_supervisor or backoffice_admin"},
+            "target_agents": ["customer", "device_operation_supervisor", "backoffice_admin"],
             "status": "implemented - to be deprecated (avoid vulnerability)",
             "description": "Returns the API implemented options and their details.\n Tailored details for each egent might be implemented in the future"
         },
         "/api/customer": {"method": "handle_options_for_customer",
             "used_headers": {"Content-Type": "application/json"},
-            "parameters": {"agent_type": "(str) device, customer, backuser or backuser_admin"},
+            "parameters": {"agent_type": "(str) device, customer, device_operation_supervisor or backoffice_admin"},
             "target_agents": ["customer"],
             "status": "TODO: add authentication decorator",
             "description": "Returns the API implemented options and their details.\n Tailored details for each egent might be implemented in the future"
         },
-        "/api/backuser": {"method": "handle_options_for_backuser",
+        "/api/device_operation_supervisor": {"method": "handle_options_for_device_operation_supervisor",
             "used_headers": {"Content-Type": "application/json"},
-            "parameters": {"agent_type": "(str) device, customer, backuser or backuser_admin"},
-            "target_agents": ["backuser"],
+            "parameters": {"agent_type": "(str) device, customer, device_operation_supervisor or backoffice_admin"},
+            "target_agents": ["device_operation_supervisor"],
             "status": "TODO: add authentication decorator",
             "description": "Returns the API implemented options and their details.\n Tailored details for each egent might be implemented in the future"
         },
-        "/api/backuser/admin": {"method": "handle_options_for_backuser_admin",
+        "/api/device_operation_supervisor/admin": {"method": "handle_options_for_backoffice_admin",
             "used_headers": {"Content-Type": "application/json"},
-            "parameters": {"agent_type": "(str) device, customer, backuser or backuser_admin"},
-            "target_agents": ["backuser_admin"],
+            "parameters": {"agent_type": "(str) device, customer, device_operation_supervisor or backoffice_admin"},
+            "target_agents": ["backoffice_admin"],
             "status": "TODO: add authentication decorator",
             "description": "Returns the API implemented options and their details.\n Tailored details for each egent might be implemented in the future"
         }
     },
     "POST": {
-        "/api/backuser/admin": {"method": "handle_post_backuser_admin",
+        "/api/device_operation_supervisor/admin": {"method": "handle_post_backoffice_admin",
             "used_headers": {"Content-Type": "application/json"},
             "parameters": {"agent_name": "(str) admin_name: required",
                 "agent_email": "(str) admin_email: required",
                 "agent_secret": "(encrypted string) admin_secret: required",
                 "confirmation_secret": "(encrypted string) confirmation_secret: required"
             },
-            "target_agents": ["backuser_admin"],
+            "target_agents": ["backoffice_admin"],
             "status": "implemented",
-            "description": "Compare secret with second confirmation_secret, then check if admin_name and secret are in env var, then create a backuser with admin privileges. Returns confirmation message."
+            "description": "Compare secret with second confirmation_secret, then check if admin_name and secret are in env var, then create a device_operation_supervisor with admin privileges. Returns confirmation message."
         },
-        "/api/backuser/admin/first/auth": {"method": "handle_backuser_admin_first_auth",
+        "/api/device_operation_supervisor/admin/first/auth": {"method": "handle_backoffice_admin_first_auth",
             "used_headers": {"Content-Type": "application/json"},
             "parameters": {"agent_name": "(str) admin_name: required",
                 "agent_email": "(str) admin_email: required",
                 "agent_secret": "(encrypted string) admin_secret: required",
                 "confirmation_secret": "(encrypted string) confirmation_secret: required"
             },
-            "target_agents": ["backuser_admin"],
+            "target_agents": ["backoffice_admin"],
             "status": "implemented",
-            "description": "Compare secret with second confirmation_secret, then check if admin_name and secret are in env var, then create a backuser with admin privileges. Returns confirmation message."
+            "description": "Compare secret with second confirmation_secret, then check if admin_name and secret are in env var, then create a device_operation_supervisor with admin privileges. Returns confirmation message."
         },
         
-        "/api/backuser": {"method": "handle_post_backuser",
+        "/api/device_operation_supervisor": {"method": "handle_post_device_operation_supervisor",
             "parameters": {},
-            "target_agents": ["backuser", "backuser_admin"],
+            "target_agents": ["device_operation_supervisor", "backoffice_admin"],
             "status": "to do",
             "description": "Create a backoffice user"
         },
 
-        "/api/backuser/enabler_token_request": {"method": "handle_post_backuser_enabler_token_request",
+        "/api/device_operation_supervisor/enabler_token_request": {"method": "handle_post_device_operation_supervisor_enabler_token_request",
             "parameters": {"user_email": "(str): required"},
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
-            "description": "If email is in backuser table, send validation link (token attached) to this address with explicit expire date and hidden token"
+            "description": "If email is in device_operation_supervisor table, send validation link (token attached) to this address with explicit expire date and hidden token"
         },
 
-        "/api/backuser/validate_token": {"method": "handle_post_backuser_validate_token",
+        "/api/device_operation_supervisor/validate_token": {"method": "handle_post_device_operation_supervisor_validate_token",
             "parameters": {"token": "(encrypted string): required"},
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
             "description": "If token is valid, redirect to link save_secret"
         },
 
-        "/api/backuser/save_secret": {"method": "handle_post_backuser_save_secret",
+        "/api/device_operation_supervisor/save_secret": {"method": "handle_post_device_operation_supervisor_save_secret",
             "parameters": {"token": "(encrypted string): required",
                 "secret":"(encrypted string): required",
                 "confirmed_secret":"(encrypted string): optional"
             },
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
             "description": "If token is still valid and secrets match, save secret. Log warning if the optional secret was not provided, save secret anyway."
         },
 
-        "/api/backuser/request_secret_reset": {"method": "handle_post_backuser_request_secret_reset",
+        "/api/device_operation_supervisor/request_secret_reset": {"method": "handle_post_device_operation_supervisor_request_secret_reset",
             "parameters": {"email": "(encrypted string): required"},
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
             "description": "If email is in customer table, send validation link (token attached) to this address with explicit expire date and hidden token"
         },
 
         "/api/customer": {"method": "handle_post_customer",
             "parameters": {},
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
             "description": "create a customer"
         },
@@ -144,10 +144,12 @@
             "used_headers": {"Content-Type": "application/json",
                 "Accept-Post":"application/json"
             },
-            "parameters": {"device_ip":"(uuid): optional", 
+            "parameters": {"device_strategy_id":"(int): required",
+                "supply_chain_id":"(int): required",
+                "device_ip":"(uuid): optional", 
                 "customer_id":"(uuid): optional"
             },
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
             "description": "Create a device then return its id and temporary token. If device_id is provided, return new temporary token"
         },
@@ -156,43 +158,43 @@
             "parameters": {},
             "target_agents": ["device"],
             "status": "to do",
-            "description": "Save device's diagnostics. Returns transaction identifier (agent_input)"
+            "description": "Save device's diagnostics. Returns transaction identifier (device_operation_agent)"
         },
         
         "/api/device/configuration": {"method": "handle_post_device_config",
             "parameters": {},
             "target_agents": ["device"],
             "status": "to do",
-            "description": "Save device's configuration. Returns transaction identifier (agent_input)"
+            "description": "Save device's configuration. Returns transaction identifier (device_operation_agent)"
         },
 
         "/api/device/ecosystem_state": {"method": "handle_post_device_ecosystem_state",
             "parameters": {},
             "target_agents": ["device"],
             "status": "to do",
-            "description": "Save device's environment state. Returns transaction identifier (agent_input)"
+            "description": "Save device's environment state. Returns transaction identifier (device_operation_agent)"
         },
 
-        "/api/backuser/device_diagnostics": {"method": "handle_post_device_diagnostics_from_backuser",
+        "/api/device_operation_supervisor/device_diagnostics": {"method": "handle_post_device_diagnostics_from_device_operation_supervisor",
             "parameters": {"device_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None",
                 "customer_id": "(list): optional, default None",
                 "device_location": "(list): optional, default None"
             },
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
-            "description": "Send device's diagnostics to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's diagnostics to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (device_operation_agent_id)"
         },
 
-        "/api/backuser/device_configurations": {"method": "handle_post_device_configurations_from_backuser",
+        "/api/device_operation_supervisor/device_configurations": {"method": "handle_post_device_configurations_from_device_operation_supervisor",
             "parameters": {"device_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None",
                 "customer_id": "(list): optional, default None",
                 "device_location": "(list): optional, default None"
             },
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
-            "description": "Send device's configuration to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's configuration to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (device_operation_agent_id)"
         },
 
         "/api/customer/device_diagnostics": {"method": "handle_post_device_diagnostics_from_customer",
@@ -202,7 +204,7 @@
             },
             "target_agents": ["customer"],
             "status": "to do",
-            "description": "Send device's diagnostics to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's diagnostics to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (device_operation_agent_id)"
         },
 
         "/api/customer/device_configurations": {"method": "handle_post_device_configurations_from_customer",
@@ -212,24 +214,24 @@
             },
             "target_agents": ["customer"],
             "status": "to do",
-            "description": "Send device's configuration to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's configuration to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (device_operation_agent_id)"
         }
     },
     "GET": {
-        "/api/backuser/admin/login": {"method": "handle_get_backuser_admin_login",
+        "/api/device_operation_supervisor/admin/login": {"method": "handle_get_backoffice_admin_login",
             "parameters": {"user_email": "(str): required",
                 "password": "(encrypted string): required"
             },
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
             "description": "Returns session token"
         },
 
-        "/api/backuser/login": {"method": "handle_get_backuser_login",
+        "/api/device_operation_supervisor/login": {"method": "handle_get_device_operation_supervisor_login",
             "parameters": {"user_email": "(str): required",
                 "password": "(encrypted string): required"
             },
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
             "description": "Returns session token"
         },
@@ -277,53 +279,53 @@
             "description": "Returns the previous configuration for a given device"
         },
 
-        "/api/backuser/device_configurations": {"method": "handle_get_device_configuration_for_backuser",
+        "/api/device_operation_supervisor/device_configurations": {"method": "handle_get_device_configuration_for_device_operation_supervisor",
             "parameters": {"device_id": "(uuid list): optional",
                 "device_location": "(str list): optional",
                 "evironment_category": "(str list): optional"
             },
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
             "description": "Returns a set of device configurations matching the given parameters"
         },
 
-        "/api/backuser/device_diagnostics": {"method": "handle_get_device_diagnostics_for_backuser",
+        "/api/device_operation_supervisor/device_diagnostics": {"method": "handle_get_device_diagnostics_for_device_operation_supervisor",
             "parameters": {"device_id": "(uuid list): optional",
                 "device_location": "(str list): optional",
                 "evironment_category": "(str list): optional"
             },
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
             "description": "Returns a set of device diagnostics matching the given parameters"
         },
 
-        "/api/backuser/device_ecosystem_states": {"method": "handle_get_device_ecosystem_states_for_backuser",
+        "/api/device_operation_supervisor/device_ecosystem_states": {"method": "handle_get_device_ecosystem_states_for_device_operation_supervisor",
             "parameters": {"device_id": "(uuid list): optional",
                 "device_location": "(str list): optional",
                 "evironment_category": "(str list): optional"
             },
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
             "description": "Returns a set of device environment states matching the given parameters"
         }
     },
     "PUT": {
-        "/api/backuser/device_diagnostic/{diagnostic_id}": {"method": "handle_put_device_diagnostics_from_backuser",
+        "/api/device_operation_supervisor/device_diagnostic/{diagnostic_id}": {"method": "handle_put_device_diagnostics_from_device_operation_supervisor",
             "parameters": {},
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
-            "description": "Send device's diagnostics to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's diagnostics to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (device_operation_agent_id)"
         },
 
-        "/api/backuser/device_configurations": {"method": "handle_put_device_configurations_from_backuser",
+        "/api/device_operation_supervisor/device_configurations": {"method": "handle_put_device_configurations_from_device_operation_supervisor",
             "parameters": {"device_ids": "(list): optional, default None",
                 "evironment_category": "(list): optional, default None",
                 "customer_id": "(list): optional, default None",
                 "device_location": "(list): optional, default None"
             },
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
-            "description": "Send device's configuration to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's configuration to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (device_operation_agent_id)"
         },
 
         "/api/customer/device_diagnostics": {"method": "handle_put_device_diagnostics_from_customer",
@@ -333,7 +335,7 @@
             },
             "target_agents": ["customer"],
             "status": "to do",
-            "description": "Send device's diagnostics to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's diagnostics to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (device_operation_agent_id)"
         },
 
         "/api/customer/device_configurations": {"method": "handle_put_device_configurations_from_customer",
@@ -343,94 +345,108 @@
             },
             "target_agents": ["customer"],
             "status": "to do",
-            "description": "Send device's configuration to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (agent_input_id)"
+            "description": "Send device's configuration to db_operations.inserts.handle_post_device_configurations. Returns transaction identifier (device_operation_agent_id)"
         }
     },
     "PATCH": {        
-        "/api/backuser/admin/enable": {"method": "handle_patch_backuser_admin_enable",
+        "/api/device_operation_supervisor/admin/enable": {"method": "handle_patch_backoffice_admin_enable",
             "parameters": {"first_authentication_token": "(encrypted string): required",
                 "agent_name":"(encrypted string): required",
                 "agent_secret":"(encrypted string): required"
             },
-            "target_agents": ["backuser_admin"],
+            "target_agents": ["backoffice_admin"],
             "status": "implemented",
             "description": "If token is still valid and secrets match, enable agent. All parameters are required."
         },
-        "/api/backuser/enable": {"method": "handle_patch_backuser_enable",
+        "/api/device_operation_supervisor/enable": {"method": "handle_patch_device_operation_supervisor_enable",
             "parameters": {"first_authentication_token": "(encrypted string): required"
             },
-            "target_agents": ["backuser"],
-            "status": "TODO: validate token and get agent_id",
+            "target_agents": ["device_operation_supervisor"],
+            "status": "TODO: validate token and get device_operation_agent_id",
             "description": "If token is still valid and secrets match, enable agent. All parameters are required."
         },
+        "/api/customer/enable": {"method": "handle_patch_customer_enable",
+            "parameters": {"first_authentication_token": "(encrypted string): required"
+            },
+            "target_agents": ["customer"],
+            "status": "TODO: validate token and get device_operation_agent_id",
+            "description": "If token is still valid and secrets match, enable customer. All parameters are required."
+        },
+        "/api/device/enable": {"method": "handle_patch_device_enable",
+            "parameters": {"first_authentication_token": "(encrypted string): required"
+            },
+            "target_agents": ["device"],
+            "status": "TODO: validate token and get device_operation_agent_id",
+            "description": "If token is still valid and secrets match, enable device. All parameters are required."
+        },
 
-        "/api/backuser/save_new_secret": {"method": "handle_patch_backuser_save_new_secret",
+        "/api/device_operation_supervisor/save_new_secret": {"method": "handle_patch_device_operation_supervisor_save_new_secret",
             "parameters": {"token": "(encrypted string): required",
                 "secret":"(encrypted string): required",
                 "confirmed_secret":"(encrypted string): required"
             },
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
             "description": "If token is still valid and secrets match, save secret. All parameters are required."
         },
         
         "/api/device/disable": {"method": "handle_patch_device_disable",
             "parameters": {"device_id": "(uuid): required"},
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
             "description": "Change agent status. Returns confirmation message."
         },
         
-        "/api/backuser/disable": {"method": "handle_patch_backuser_disable",
-            "parameters": {"backuser_id": "(uuid): required"},
-            "target_agents": ["backuser_admin"],
+        "/api/device_operation_supervisor/disable": {"method": "handle_patch_device_operation_supervisor_disable",
+            "parameters": {"device_operation_supervisor_id": "(uuid): required"},
+            "target_agents": ["backoffice_admin"],
             "status": "to do",
             "description": "Change agent status. Returns confirmation message."
         },
         
         "/api/customer/disable": {"method": "handle_patch_customer_disable",
             "parameters": {"customer_id": "(uuid): required"},
-            "target_agents": ["backuser"],
+            "target_agents": ["device_operation_supervisor"],
             "status": "to do",
             "description": "Change agent status. Returns confirmation message."
         }
     },
     "DELETE": {
         "_comment": "DELETE is used to remove one or more item from an entity",
-        "/api/backuser": {"method": "handle_delete_backuser",
+        "/api/device_operation_supervisor": {"method": "handle_delete_device_operation_supervisor",
             "parameters": {},
-            "target_agents": ["backuser_admin"],
+            "target_agents": ["backoffice_admin"],
             "status": "to do",
-            "description": "Delete backuser"
+            "description": "Delete device_operation_supervisor"
         },
         "/api/customer": {"method": "handle_delete_customer",
             "parameters": {},
-            "target_agents": ["backuser", "backuser_admin"],
+            "target_agents": ["device_operation_supervisor", "backoffice_admin"],
             "status": "to do",
             "description": "Delete customer"
         },
         "/api/device": {"method": "handle_delete_device",
             "parameters": {},
-            "target_agents": ["backuser", "backuser_admin"],
+            "target_agents": ["device_operation_supervisor", "backoffice_admin"],
             "status": "to do",
             "description": "Delete device"
         },
 
         "/api/device/diagnostic": {"method": "handle_delete_device_diagnostic",
             "parameters": {},
-            "target_agents": ["backuser", "backuser_admin"],
+            "target_agents": ["device_operation_supervisor", "backoffice_admin"],
             "status": "to do",
             "description": "Delete device diagnostic"
         },
         "/api/device/configuration": {"method": "handle_delete_device_config",
             "parameters": {},
-            "target_agents": ["backuser", "backuser_admin"],
+            "target_agents": ["device_operation_supervisor", "backoffice_admin"],
             "status": "to do",
             "description": "Delete device configuration"
         },
         "/api/device/ecosystem_state": {"method": "handle_delete_device_ecosystem_state",
             "parameters": {},
-            "target_agents": ["backuser", "backuser_admin"],
+            "target_agents": ["device_operation_supervisor", "backoffice_admin"],
             "status": "to do",
             "description": "Delete device ecosystem_state"
         }

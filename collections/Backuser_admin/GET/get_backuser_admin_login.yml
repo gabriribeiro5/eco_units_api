@@ -1,11 +1,11 @@
 info:
-  name: get_backuser_admin_login
+  name: get_backoffice_admin_login
   type: http
   seq: 1
 
 http:
   method: GET
-  url: "{{base_url}}/api/backuser/admin/login"
+  url: "{{base_url}}/api/device_operation_supervisor/admin/login"
   body:
     type: json
     data: |-

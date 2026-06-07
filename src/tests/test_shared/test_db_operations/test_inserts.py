@@ -9,10 +9,10 @@ class Test_Insert_into_Index_Tables(unittest.TestCase):
     Tests the insert methods for Index Tables to ensure they complete the expected tasks
 
     Index tables:
-    - sensor_status
+    - component_status
     - config_status
     - climate_season
-    - ecosystem_category
+    - device_strategy
     '''
     #######################################
     ### METHODS TO SUPPORT UNIT TESTING ###
@@ -31,7 +31,7 @@ class Test_Insert_into_Index_Tables(unittest.TestCase):
         self.db_operation.wfile = BytesIO()  # Mock writable output stream
         self.db_operation.send_error = MagicMock()
         
-        self.sensor_status_data = {
+        self.component_status_data = {
             "valid_field": "value",
             "valid_field2": "value2"
         }
@@ -45,7 +45,7 @@ class Test_Insert_into_Index_Tables(unittest.TestCase):
         expected_headers = {"Content-Type": "application/json"}
 
         # Trigger method
-        status, headers, body = self.db_operation.insert_into_sensor_status(self.sensor_status_data)
+        status, headers, body = self.db_operation.insert_into_component_status(self.component_status_data)
 
         # Assertions
         self.assertEqual(status, 200)
@@ -55,9 +55,9 @@ class Test_Insert_into_Index_Tables(unittest.TestCase):
     @patch("utils.logger.logging.info")
     def test_Inserts_into_Index_Tables_basic_logging(self, mock_logging):
         func_module = "insert" # define filename name
-        handler_name = "insert_into_sensor_status"
+        handler_name = "insert_into_component_status"
         # Trigger method
-        status, headers, body = self.db_operation.insert_into_sensor_status(self.sensor_status_data)
+        status, headers, body = self.db_operation.insert_into_component_status(self.component_status_data)
         mock_logging.assert_any_call(f"{func_module} - ({handler_name}): running")
         mock_logging.assert_any_call(f"{func_module} - ({handler_name}): done")
 
@@ -72,11 +72,11 @@ class Test_Insert_into_Index_Tables(unittest.TestCase):
         handler_name = "create_query"
         
         # define error condition
-        self.sensor_status_data = {"test_unexistent_field": "unexistent_value"}
+        self.component_status_data = {"test_unexistent_field": "unexistent_value"}
         msg_err = f"Invalid data"
         with self.assertRaises(KeyError):
             # Trigger method
-            status, headers, body = self.db_operation.insert_into_sensor_status(self.sensor_status_data)
+            status, headers, body = self.db_operation.insert_into_component_status(self.component_status_data)
 
             # Verify the expected error parameters were sent to send_error
             send_error_calls = [call.args for call in self.db_operation.send_error.call_args_list]

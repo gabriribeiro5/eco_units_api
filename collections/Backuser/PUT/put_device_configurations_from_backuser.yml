@@ -1,11 +1,11 @@
 info:
-  name: put_device_configurations_from_backuser
+  name: put_device_configurations_from_device_operation_supervisor
   type: http
   seq: 2
 
 http:
   method: PUT
-  url: "{{base_url}}/api/backuser/device_configurations"
+  url: "{{base_url}}/api/device_operation_supervisor/device_configurations"
 
 settings:
   encodeUrl: true

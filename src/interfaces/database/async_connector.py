@@ -16,7 +16,7 @@ class I_AsyncDBConnector():
         self.script_schema_ecosystem_db = await self._load_sql(self.config._DB_SCRIPTS_DIR / "_0_schema_ecosystem_db.sql")
         self.script_insert_into_index_tables = await self._load_sql(self.config._DB_SCRIPTS_DIR / "_1_insert_into_index_tables.sql")
         self.script_insert_into_agent_tables = await self._load_sql(self.config._DB_SCRIPTS_DIR / "_2_insert_into_agent_tables.sql")
-        self.script_insert_into_agent_input_tables = await self._load_sql(self.config._DB_SCRIPTS_DIR / "_3_insert_into_agent_input_tables.sql")
+        self.script_insert_into_device_operation_agent_tables = await self._load_sql(self.config._DB_SCRIPTS_DIR / "_3_insert_into_device_operation_agent_tables.sql")
     
     async def _load_sql(self, filename):
         '''

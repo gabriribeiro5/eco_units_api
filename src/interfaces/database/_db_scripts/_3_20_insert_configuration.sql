@@ -5,7 +5,7 @@
 INSERT IGNORE INTO `device_configuration`
 (`configuration_id`,
 `device_id`,
-`agent_input_id`,
+`device_operation_agent_id`,
 `config_status_id`, -- 1 = confirmed; 2 = sent; 3 = wating; 4 = expired
 `run_physical_diagnostics`,
 `soil_moisture_max`,
@@ -17,11 +17,11 @@ INSERT IGNORE INTO `device_configuration`
 VALUES
 (DEFAULT,
 	(select ainput.device_id
-		from agent_input as ainput
+		from device_operation_agent as ainput
         order by ainput.date_time desc
         limit 1),
-	(select ainput.agent_input_id
-		from agent_input as ainput
+	(select ainput.device_operation_agent_id
+		from device_operation_agent as ainput
         order by ainput.date_time desc
         limit 1),
 1, -- 1 = confirmed; 2 = sent; 3 = wating; 4 = expired

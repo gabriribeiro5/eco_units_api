@@ -92,6 +92,7 @@ class SyncronousPyMySQL(I_SyncDBConnector):
             # If any issue occurs during normalization, fall back to raw results
             pass
 
+        connection.commit()
         connection.close()
         return results
 
