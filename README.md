@@ -104,8 +104,3 @@ To stop the running container, press Ctrl+C or use:
 ```bash
     docker stop <container_id>
 ```
-
-
-
-## Remote Procedure Call (RPC) API runing on port <9090>
-(TODO)
