@@ -1,5 +1,6 @@
 # cyclobots_api
 
+## Intro
 This API collects data from IoT devices (called cyclobots) and provide them with configuration updates.
 
 Those devices are designed to maintain control over micro-ecosystems, leveraging from sensors (to collect data) and actuators (to interact with their environment).
