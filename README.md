@@ -1,6 +1,6 @@
 # cyclobots_api
 
-## Intro
+## Introduction
 This API collects data from IoT devices (called cyclobots) and provide them with configuration updates.
 
 Those devices are designed to maintain control over micro-ecosystems, leveraging from sensors (to collect data) and actuators (to interact with their environment).
@@ -15,7 +15,7 @@ There, you'll see that the development proccess follows a learning roadmap that 
 
 This long roadmap aims to provide me with a solid background to work with RESTfull APIs. Specially in python.
 
-## VERSIONING PLAN:
+## Versioning plan:
 Check TODO.md to see descriptions of future versions
 
 
