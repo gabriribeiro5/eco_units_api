@@ -1,3 +1,3 @@
--- delete session for a given device_operation_agent
+-- Delete all sessions for a given agent
 DELETE FROM `session`
-WHERE `device_operation_agent_id` = %s;
+WHERE `agent_id` = %s;

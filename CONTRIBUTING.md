@@ -51,22 +51,22 @@ For now, choose one of the following instructions (at your taste) to install Com
 ### ▶️ Runing the application iteractivelly
 In order to access the container iteractive shell, you may choose between one of the following options:
 
-1. **Use Docker-Compose to build the images**
+1. **Use Docker Compose to build the images**
 Open the **Docker Desktop** application.
 Then open a terminal in the project root directory and execute:
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 2. **To rebuild the images, run:**
 ```bash
-docker-compose down; docker-compose up --build
+docker compose down; docker compose up --build
 ```
 Execute interactive commands using Docker Desktop
 
 3. **To rebuild images and db volume, run:**
-   ```bash
-docker-compose down; docker volume rm cyclobot_api_db_cyclobots; docker-compose up --build
+```bash
+docker compose down; docker volume rm cyclobot_api_db_cyclobots; docker compose up --build
 ```
 
 4. **Iteractively run a single container**
@@ -88,8 +88,8 @@ Understand and manipulate the application using one (or a combination) of the fo
 Inside the container, all logs will be written to `/var/log/cyclobots_api`.
 This directory is bound to `\logs`, outside the container.
 
-[Tip]: If docker-compose is being used, iteractive shell is not necessary.
-Due to mount bindings on docker-compose.yml, you should be able to read from `./cyclobots_api/logs/purePython.log` directly on your OS file system.
+[Tip]: If docker compose is being used, iteractive shell is not necessary.
+Due to mount bindings on docker compose.yml, you should be able to read from `./cyclobots_api/logs/purePython.log` directly on your OS file system.
 
 If you are inside the container (iteractive shell),
 use the following command to read log updates in real time:
@@ -98,8 +98,8 @@ tail -f /var/log/cyclobots_api/purePython.log
 ```
 
 2. **Editing files** 
-If docker-compose is being used, iteractive shell is not necessary.
-Due to mount bindings on docker-compose.yml, you should be able to update files at `./src` directly on your OS file system.
+If docker compose is being used, iteractive shell is not necessary.
+Due to mount bindings on docker compose.yml, you should be able to update files at `./src` directly on your OS file system.
 
 By default, the docker image does not have any editor installed.
 To apply any experimental change without having to rebuild the app,

@@ -1,7 +1,7 @@
--- Insert BACKUSER with device_operation_agent_id
+-- Insert a supervisor linked to a device operation agent
 INSERT IGNORE INTO `device_operation_supervisor`
 (`device_operation_supervisor_id`,
-`agent_id`,
+`device_operation_agent_id`,
 `device_operation_supervisor_email`,
 `device_operation_supervisor_name`,
 `device_operation_supervisor_surname`,

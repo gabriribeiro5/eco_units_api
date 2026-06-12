@@ -99,11 +99,27 @@ GOAL: A complete api service, ready to balance incoming requests between two ide
     - [x] refactor(supply_chain_order): depends on device_id only
     - [x] feat(sales_service): will insert device and open supply_chain order
     - [x] refactor(device_model): depends on supply_chain and absorbs device details
+    - [ ] refactor(db): adapt db to supply chain and sales context
+    - [x] feat(chart): depends on customer
+    - [x] feat(payment): depends on chart, payment_status and payment_method
+    - [x] refactor(sales_service): relate only with customer
+    - [x] feat(field): device_status [`waiting supply chain`, `stocked`, `transport to customer`, `delivered`]
+    - [x] feat(order_status): relate to `supply_chain_order`
+    - [x] feat(suborder_status): relate to `supply_chain_suborder`
+    - [x] refactor(field names): `supply_chain_suborder`
+    - [x] refactor(device_position): relate to device
   - [ ] fix(tested routes): review all routes
     - [x] refactor(post_backuser_admin): fix queries
     - [ ] refactor(get_backuser_admin_login): fix queries
     - [ ] refactor(post_device_operation_supervisor): fix queries
     - [ ] ...
+  - [ ] refactor(route_options.json): split into use cases
+    - [ ] create routes directory
+    - [ ] create 'use_case_name_file.json'
+    - [ ] update logic
+      - [ ] each use case loads an specific route file
+      - [ ] each use case `__init__` loads their own 'self.only_METHOD' variables
+    - [ ] update imports
   - [ ] feat(handle_post_backuser): implement and validate database operation (run request and check db)
   - [ ] feat(handle_patch_backuser_enable): implement and validate database operation (run request and check db)
   - [ ] feat(handle_post_customer): implement and validate database operation (run request and check db)

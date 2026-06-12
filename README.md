@@ -40,7 +40,7 @@ Modules are organized as follows:
 
 ## Building Docker Container and Running the Application
 
-### Building with docker-compose (recomended)
+### Building with docker compose (recomended)
 
 To set up and run the API in a Docker container, follow these steps:
 
@@ -54,7 +54,7 @@ or open the **Docker Desktop** application.
 1. **Build (or rebuild) the Docker Image**
 Open a terminal in the project root directory and execute:  
 ```bash
-    docker-compose up --build
+    docker compose up --build
 ```
 The API will now be accessible at http://localhost:8080.
 
@@ -68,12 +68,12 @@ Use the following command to read log updates in real time:
 3. **Stop and Restart for Changes**
 To stop the container:
 ```bash
-    docker-compose down
+    docker compose down
 ```
 
 To restart with changes:
 ```bash
-    docker-compose up --build
+    docker compose up --build
 ```
 
 ### Building with dockerfile only

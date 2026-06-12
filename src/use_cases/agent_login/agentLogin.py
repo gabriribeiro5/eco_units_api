@@ -49,7 +49,8 @@ class AgentLoginHandler(AuthHandler):
             if result and len(result) > 0:
                 stored_secret = result[0]["backoffice_admin_secret"] if agent_type == "admin" else result[0]["device_operation_supervisor_secret"] if agent_type == "device_operation_supervisor" else result[0]["customer_secret"]
                 if stored_secret == secret:
-                    return f"session${self.new_hash(result[0]['device_operation_agent_id'], agent_type)}"  # Generate and return a session token
+                    agent_row_id = result[0].get("agent_id") or result[0].get("device_operation_agent_id")
+                    return f"session${self.new_hash(agent_row_id, agent_type)}"  # Generate and return a session token
                 else:
                     logging.warning(f"Authentication failed for {agent_type}: {email} - Incorrect secret")
             else:
@@ -88,7 +89,9 @@ class AgentLoginHandler(AuthHandler):
                 headers = {"Content-Type": "application/json"}
                 body = response + "\r\n"
                 return status, headers, body
-            agent_id = backoffice_admin_details[0]["device_operation_agent_id"]
+            agent_id = backoffice_admin_details[0].get("agent_id") or backoffice_admin_details[0].get("device_operation_agent_id")
+            if agent_id is None:
+                raise ValueError("No agent_id found for backoffice admin")
         except Exception as e:
             logging.error(f"Error retrieving device_operation_supervisor admin details for email {request_data.get('agent_email')}: {str(e)}")
             response_dict = {"error": "Internal server error"}

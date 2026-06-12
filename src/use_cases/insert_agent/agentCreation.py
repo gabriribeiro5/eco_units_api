@@ -75,6 +75,7 @@ class AgentCreationHandler(AuthHandler):
         try:
             cursor.execute(self.script_insert_backoffice_admin, (agent_id, email, name, surname, secret))
             backoffice_admin_id = cursor.lastrowid
+            cursor.execute("UPDATE `agent` SET `backoffice_admin_id` = %s WHERE `agent_id` = %s", (backoffice_admin_id, agent_id))
             connection.commit()
             connection.close()
         except pymysql.err.OperationalError as msg:
@@ -83,6 +84,30 @@ class AgentCreationHandler(AuthHandler):
             raise msg
                 
         return backoffice_admin_id
+
+    def ensure_device_operation_agent(self, agent_id):
+        connection, cursor = self.db.connect()
+        try:
+            cursor.execute("SELECT `device_operation_agent_id` FROM `agent` WHERE `agent_id` = %s", (agent_id,))
+            result = cursor.fetchall()
+            existing_device_operation_agent_id = result[0][0] if result and len(result) > 0 else None
+            if existing_device_operation_agent_id is not None:
+                connection.close()
+                return existing_device_operation_agent_id
+
+            cursor.execute(
+                "INSERT INTO `device_operation_agent` (`device_operation_agent_id`, `agent_id`, `creation_date_time`) VALUES (DEFAULT, %s, CURRENT_TIMESTAMP)",
+                (agent_id,)
+            )
+            device_operation_agent_id = cursor.lastrowid
+            cursor.execute("UPDATE `agent` SET `device_operation_agent_id` = %s WHERE `agent_id` = %s", (device_operation_agent_id, agent_id))
+            connection.commit()
+            connection.close()
+            return device_operation_agent_id
+        except Exception as e:
+            logging.error(f"Failed ensuring device_operation_agent for agent_id {agent_id}: {e}")
+            connection.close()
+            raise e
 
     def create_device_operation_supervisor(self, agent_id, email, name, surname, secret):
         '''
@@ -94,9 +119,10 @@ class AgentCreationHandler(AuthHandler):
         `device_operation_supervisor_surname`,
         `device_operation_supervisor_secret`
         '''
+        device_operation_agent_id = self.ensure_device_operation_agent(agent_id)
         connection, cursor = self.db.connect()
         try:
-            cursor.execute(self.script_insert_device_operation_supervisor, (agent_id, email, name, surname, secret))
+            cursor.execute(self.script_insert_device_operation_supervisor, (device_operation_agent_id, email, name, surname, secret))
             device_operation_supervisor_id = cursor.lastrowid
             logging.debug(f"Created device_operation_supervisor with ID: {device_operation_supervisor_id} for agent ID: {agent_id}")
             connection.commit()
@@ -108,7 +134,7 @@ class AgentCreationHandler(AuthHandler):
         
         connection, cursor = self.db.connect()
         try:
-            cursor.execute(self.script_update_agent_set_device_operation_supervisor_id, (device_operation_supervisor_id, agent_id))
+            cursor.execute(self.script_update_agent_set_device_operation_supervisor_id, (device_operation_supervisor_id, device_operation_agent_id))
             connection.commit()
             connection.close()
         except pymysql.err.OperationalError as msg:
@@ -128,16 +154,17 @@ class AgentCreationHandler(AuthHandler):
         `customer_email`,
         `customer_secret`
         '''
+        device_operation_agent_id = self.ensure_device_operation_agent(agent_id)
         connection, cursor = self.db.connect()
         try:
-            cursor.execute(self.script_insert_customer, (agent_id, customer_email, customer_name, customer_surname, customer_secret))
+            cursor.execute(self.script_insert_customer, (device_operation_agent_id, customer_email, customer_name, customer_surname, customer_secret))
         except pymysql.err.OperationalError as msg:
             logging.error(f"Failed running SQL query\n {self.script_insert_customer}\n {msg}")
             connection.close()
             raise msg
 
-        # Fetch all results
         customer_id = cursor.lastrowid
+        cursor.execute(self.script_update_agent_set_customer_id, (customer_id, device_operation_agent_id))
         connection.commit()
         connection.close()
         return customer_id
@@ -189,10 +216,10 @@ class AgentCreationHandler(AuthHandler):
 
         # Extract optional fields from request_data
         device_secret = self.generate_random_encrypted_secret()
-        # use agent_id to find device_operation_supervisor_id
+        device_operation_agent_id = self.ensure_device_operation_agent(agent_id)
         try:
             result = self.db.run_query(self.script_select_agent__device_operation_supervisor_id, (agent_id,))
-            device_operation_supervisor_id = result[0][0] if result and len(result) > 0 else None
+            device_operation_supervisor_id = result[0].get("supervisor_id") if result and len(result) > 0 else None
         except Exception as msg:
             logging.error(f"Failed running SQL query\n {self.script_select_agent__device_operation_supervisor_id}\n {msg}")
             raise msg
@@ -201,82 +228,38 @@ class AgentCreationHandler(AuthHandler):
             logging.error(f"No device_operation_supervisor_id found for agent_id: {agent_id}")
             raise ValueError(f"No device_operation_supervisor_id found for agent_id: {agent_id}")
 
-        created_by_device_operation_supervisor_id = device_operation_supervisor_id
-        created_at = datetime.now()
         updated_by_device_operation_supervisor_id = device_operation_supervisor_id
         updated_at = datetime.now()
-        device_model_name = request_data.get("device_model_name", None)
+        device_model_id = request_data.get("device_model_id", 1)
+        device_position_id = request_data.get("device_position_id", 1)
         device_name = request_data.get("device_name", None)
         customer_id = request_data.get("customer_id", None)
         location = request_data.get("location", None)
-        max_session_length = request_data.get("max_session_length", None)
         max_input_hertz = request_data.get("max_input_hertz", None)
-        consulting_services_cost = request_data.get("consulting_services_cost", None)
-        regulatory_compliance_cost = request_data.get("regulatory_compliance_cost", None)
-        product_design_cost = request_data.get("product_design_cost", None)
-        customer_service_cost = request_data.get("customer_service_cost", None)
-        advertising_cost = request_data.get("advertising_cost", None)
-        sales_cost = request_data.get("sales_cost", None)
-        software_cost = request_data.get("software_cost", None)
-        electronics_cost = request_data.get("electronics_cost", request_data.get("hardware_cost", None))
-        box_cost = request_data.get("box_cost", None)
-        landscape_cost = request_data.get("landscape_cost", None)
-        operational_cost = request_data.get("operational_cost", None)
-        logistics_cost = request_data.get("logistics_cost", request_data.get("transport_fee", None))
-        installation_cost = request_data.get("installation_cost", request_data.get("installation_fee", None))
-        maintenance_cost = request_data.get("maintenance_cost", None)
-        total_price = request_data.get("total_price", None)
-        monthly_fee = request_data.get("monthly_fee", None)
-        annual_fee = request_data.get("annual_fee", None)
-        supply_chain_id = request_data.get("supply_chain_id")
 
-        if supply_chain_id is None:
-            logging.error("supply_chain_id is required to create a device")
-            raise ValueError("supply_chain_id is required")
-
-        # insert agent and get specific id
         connection, cursor = self.db.connect()
         try:
-            cursor.execute(self.script_insert_device, (agent_id,
-                                                        supply_chain_id,
+            cursor.execute(self.script_insert_device, (device_operation_agent_id,
                                                         device_strategy_id,
-                                                        device_model_name,
+                                                        device_model_id,
+                                                        device_position_id,
+                                                        None,
+                                                        customer_id,
+                                                        updated_by_device_operation_supervisor_id,
+                                                        updated_at,
                                                         require_config_update,
                                                         require_firmware_update,
                                                         device_secret,
-                                                        created_by_device_operation_supervisor_id,
-                                                        created_at,
-                                                        updated_by_device_operation_supervisor_id,
-                                                        updated_at,
                                                         device_name,
-                                                        customer_id,
                                                         location,
-                                                        max_session_length,
-                                                        max_input_hertz,
-                                                        consulting_services_cost,
-                                                        regulatory_compliance_cost,
-                                                        product_design_cost,
-                                                        customer_service_cost,
-                                                        advertising_cost,
-                                                        sales_cost,
-                                                        software_cost,
-                                                        electronics_cost,
-                                                        box_cost,
-                                                        landscape_cost,
-                                                        operational_cost,
-                                                        logistics_cost,
-                                                        installation_cost,
-                                                        maintenance_cost,
-                                                        total_price,
-                                                        monthly_fee,
-                                                        annual_fee))
+                                                        max_input_hertz))
         except pymysql.err.OperationalError as msg:
             logging.error(f"Failed running SQL query\n {self.script_insert_device}\n {msg}")
             connection.close()
             raise msg
 
-        # Fetch all results
         device_id = cursor.lastrowid
+        cursor.execute(self.script_update_agent_set_device_id, (device_id, device_operation_agent_id))
         connection.commit()
         connection.close()
         return device_id

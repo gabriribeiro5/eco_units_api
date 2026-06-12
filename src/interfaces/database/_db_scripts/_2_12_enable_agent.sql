@@ -1,5 +1,5 @@
--- Enable device_operation_agent
-UPDATE `device_operation_agent`
+-- Enable an agent
+UPDATE `agent`
 SET
-is_enabled = 1
-WHERE `device_operation_agent_id` = %s;
+`is_enabled` = 1
+WHERE `agent_id` = %s;

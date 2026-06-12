@@ -1,7 +1,9 @@
--- insert session token
+-- Insert a session token for an agent
 INSERT IGNORE INTO `session`
-(`device_operation_agent_id`,
-`token`)
+(`agent_id`,
+`token`,
+`max_lenght_session`)
 VALUES
 (%s,
-%s);
+%s,
+NULL);

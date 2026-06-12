@@ -1,3 +1,3 @@
--- delete first auth token for a device_operation_agent
+-- Delete the first-auth token for an agent
 DELETE IGNORE FROM `first_auth_agent`
-WHERE `device_operation_agent_id` = %s;
+WHERE `agent_id` = %s;

@@ -1,7 +1,7 @@
--- Select device_operation_agent enabled state
+-- Select the enabled state of an agent
 SELECT
     `is_enabled`
 FROM
-    `device_operation_agent`
+    `agent`
 WHERE
-    device_operation_agent_id = %s;
+    `agent_id` = %s;
