@@ -99,7 +99,6 @@ GOAL: A complete api service, ready to balance incoming requests between two ide
     - [x] refactor(supply_chain_order): depends on device_id only
     - [x] feat(sales_service): will insert device and open supply_chain order
     - [x] refactor(device_model): depends on supply_chain and absorbs device details
-    - [ ] refactor(db): adapt db to supply chain and sales context
     - [x] feat(chart): depends on customer
     - [x] feat(payment): depends on chart, payment_status and payment_method
     - [x] refactor(sales_service): relate only with customer
