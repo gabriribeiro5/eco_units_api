@@ -20,7 +20,7 @@ Check TODO.md to see descriptions of future versions
 
 
 ## Design
-This API leverages from Clean Architecture principles to build a microservice.
+This API leverages from Clean Architecture.
 Modules are organized as follows:
 
 - **Entities/Interfaces**: Core business rules and models.
