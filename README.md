@@ -16,7 +16,7 @@ There, you'll see that the development proccess follows a learning roadmap that 
 This long roadmap aims to provide me with a solid background to work with RESTfull APIs. Specially in python.
 
 ## Versioning plan:
-Check TODO.md to see descriptions of future versions
+Check TODO.md to see descriptions of future versions.
 
 
 ## Design
