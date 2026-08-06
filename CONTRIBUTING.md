@@ -11,6 +11,7 @@ Here I'll provide you with all necessary instructions on how to:
 * 📄 Read application outputs
 * 👨‍💻 Change source code dynamically
 * 🧪 Test and debug your changes
+* 📝 **Name your branches propperlly**
 * 📝 **Commit your updates correctly**
 * 📬 Send acceptable pull requests
 
@@ -169,6 +170,34 @@ sudo apt update && sudo apt install curl
 curl -v -X OPTIONS http://localhost:9999/api
 ```
 
+
+### ✅ Branch Naming Guidelines
+
+All branch names in this project **must follow the [Conventional Branch](https://conventionalbranch.org/) specification**. This ensures consistent, readable branch history and enables automated tooling like Continuous Integration/Continuous Deployment pipelines.
+
+#### Prefixes
+- feature/ (or feat/): For new features (e.g., feature/add-login-page, feat/add-login-page)
+- bugfix/ (or fix/): For bug fixes (e.g., bugfix/fix-header-bug, fix/header-bug)
+- hotfix/: For urgent fixes (e.g., hotfix/security-patch)
+- release/: For branches preparing a release (e.g., release/v1.2.0)
+- chore/: For non-code tasks like dependency, docs updates (e.g., chore/update-dependencies)
+
+
+#### Formatting Rules
+- Use lowercase: Write all letters in lower case.
+- Use hyphens: Separate words with a hyphen (-) instead of spaces or underscores.
+- Keep it short: Limit descriptions to 3 to 5 clear words.
+- No special characters.
+
+#### Tools to adopt and enforce Conventional Branch in your project:
+
+- commit-check: Check branch names, commit messages, and related Git metadata locally.
+- commit-check-action: Validate branch names automatically in GitHub Actions.
+- VSCode Conventional Branch: Create Conventional Branch names from Visual Studio Code.
+- Conventional Branch Skill: Teach AI coding assistants how to create valid Conventional Branch names.
+
+
+
 ### ✅ Commit Message Guidelines
 
 All commits in this project **must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification**. This ensures consistent, readable commit history and enables automated tooling like changelogs and semantic versioning.
@@ -222,6 +251,7 @@ For more details, see the [Conventional Commits documentation](https://www.conve
 Make sure that:
 1. The application runs as expected
 2. Your commit messages follow the Conventional Commit guidelines
+3. Your branch name follows the Conventional Branch guidelines
 
 Then:
 You’re ready to open your pull request 🥳
