@@ -170,7 +170,6 @@ sudo apt update && sudo apt install curl
 curl -v -X OPTIONS http://localhost:9999/api
 ```
 
-
 ### ✅ Branch Naming Guidelines
 
 All branch names in this project **must follow the [Conventional Branch](https://conventionalbranch.org/) specification**. This ensures consistent, readable branch history and enables automated tooling like Continuous Integration/Continuous Deployment pipelines.
